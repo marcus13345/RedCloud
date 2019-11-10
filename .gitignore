@@ -1,0 +1,9 @@
+credentials.js
+node_modules
+.DS_Store
+test
+vids
+testVids
+*.nedb
+store.json
+dist
