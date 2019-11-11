@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.0.174",
+  "version": "0.0.202",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "dependencies": {
     "@github/time-elements": "^3.0.2",
     "@vaadin/vaadin": "^13.0.8",
+    "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
     "chokidar": "^2.1.6",
     "chokidar-cli": "^1.2.2",

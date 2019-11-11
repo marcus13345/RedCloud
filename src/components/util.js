@@ -80,7 +80,7 @@ module.exports = class Util {
 			} catch (e) {
 				log.error(e)
 				// TODO maybe do something about not being able to get the video, idk
-				if(e instanceof this.Details.E_VIDEO_NOT_FOUND) rej(new E_INVALID_VIDEO_ID())
+				if(e instanceof thPis.Details.E_VIDEO_NOT_FOUND) rej(new E_INVALID_VIDEO_ID())
 				else rej (e)
 				return;
 			}
@@ -105,7 +105,7 @@ module.exports = class Util {
 			log.info('downloading ' + details.title);
 			let youtubedlProcess = spawn(program, args, {
 				windowsHide: true,
-				detached: true,
+				// detached: true,
 				shell: false
 			});
 			let bufferOut = "";
@@ -174,81 +174,5 @@ module.exports = class Util {
 	}
 
 
-	async getRecentlyViewed(user, {authenticate = false} = {}) {
-		const puppeteer = require('puppeteer');
-		const browser = await puppeteer.launch(windowOptions);
-		let videos = [];
-
-
-		try {
-			const page = await browser.newPage();
-			await page.goto(`https://www.pornhub.com/users/${user}/videos/recent`);
-			
-			if(authenticate) {
-				await page.waitForSelector('ul.videos#moreData');
-
-				await page.evaluate(() => {
-					let loginButton = document.querySelector('#headerLoginLink');
-					loginButton.click();
-
-				})
-
-				await page.waitForNavigation();
-				
-				await page.waitForSelector('#submit');
-				await page.evaluate(`
-				let usernameInput = document.querySelector('#username');
-				let passwordInput = document.querySelector('#password');
-				usernameInput.value = '${cred.name}';
-				passwordInput.value = '${cred.pass}';
-				console.log('WAITING');
-				setTimeout(() => {
-					document.querySelector('#submit').click()
-					console.log('CLICKED');
-				}, 5000)`);
-				// log.watch('logged in')
-				await page.waitForNavigation();
-			}
-
-			
-			// log.watch('navigated to user');
-
-			await page.waitForSelector('ul.videos#moreData');
-			// log.watch('videos loaded');
-
-			videos = await page.evaluate(() => {
-				return (function map(children){
-					let arr = [];
-					for(let i = 0; i < children.length; i ++) {
-						let e = children[i];
-						arr.push(e.getAttribute('_vkey'))
-					}
-					return arr;
-				})(document.querySelector('ul.videos#moreData').children)
-			});
-			
-			// console.dir(videos)
-
-
-			// log.watch(`${videos.length} videos obtained`);
-
-
-			// page.close();
-		} catch (e) {
-			console.log('FUCK', e.name);
-			console.dir(e);
-			
-			
-		}
-
-
-		await new Promise(res => {
-			setTimeout(res, 3000);
-		});
-		browser.close();
-		// log.watch(`waited 3 seconds`);
-
-		return (videos);
-	}
 
 }

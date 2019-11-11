@@ -15,7 +15,8 @@ new Collexion({
 		Data: {
 			routes: {
 				videos: 'Videos',
-				search: 'Search'
+				search: 'Search',
+				sources: 'PorhubCron'
 			}
 		}
 	},
@@ -31,4 +32,7 @@ new Collexion({
 	Util: {
 		Code: require('./src/components/util.js')
 	},
+	PorhubCron: {
+		Code: require('./src/components/pornhub.js')
+	}
 })
