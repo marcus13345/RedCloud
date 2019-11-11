@@ -103,7 +103,12 @@ module.exports = class Util {
 			];
 
 			log.info('downloading ' + details.title);
+			log.debug(path.resolve(__dirname, '../../axel'));
 			let youtubedlProcess = spawn(program, args, {
+				env: {
+					// ...process.env,
+					PATH: process.env.PATH + ";" + path.resolve(__dirname, '../../axel')
+				},
 				windowsHide: true,
 				// detached: true,
 				shell: false
@@ -111,9 +116,11 @@ module.exports = class Util {
 			let bufferOut = "";
 			let bufferErr = ""
 			youtubedlProcess.stdout.on('data', data => {
+				process.stdout.write(data);
 				bufferOut += (data.toString());
 			})
 			youtubedlProcess.stderr.on('data', data => {
+				process.stderr.write(data);
 				bufferErr += (data.toString());
 			})
 			youtubedlProcess.on('exit', (code, signal) => {
