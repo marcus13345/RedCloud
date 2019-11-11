@@ -32,9 +32,19 @@ module.exports = class PornhubAdapter {
 			};
 
 			this.addSource(obj);
+		});
+
+		router.get('/delete/:id', async (req, res) => {
+			this.deleteSource(req.params.id);
 		})
 
 		return router;
+	}
+
+	deleteSource(id) {
+		this.sources.remove({_id: id}, {}, (err, doc) => {
+			log.success('removed source', id, doc);
+		})
 	}
 
 	addSource(obj) {
@@ -75,10 +85,11 @@ module.exports = class PornhubAdapter {
 						}
 					}
 				}
+				
 				setTimeout(loop, 1000);
 			})
 		};
-
-		setTimeout(loop, 0);
+		if(process.argv.indexOf('--disable-cron') === -1)
+			setTimeout(loop, 0);
 	}
 }

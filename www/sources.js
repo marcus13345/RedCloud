@@ -5,6 +5,7 @@ $(document).ready(_ => {
 		for(const source of data) {
 			$('#sourcesTable').append(`
 				<tr>
+					<td><a href="/api/sources/delete/${source._id}">delete</a></td>
 					<td>${source.source}</td>
 					<td>${source.type}</td>
 					<td>${source.data}</td>
