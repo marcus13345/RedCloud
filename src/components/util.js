@@ -53,6 +53,7 @@ module.exports = class Util {
 		try {
 			fs.mkdirSync(`./${savePath}/!VR!`);
 		} catch (e) { ''; }
+
 		// * remove all instances of part files, because resuming downloads if for plebs
 		try {
 			// log.info('trying to remove part files...')
@@ -73,11 +74,10 @@ module.exports = class Util {
 			let details;
 			// log.info(vid)
 			try {
-				details = await this.Details.videoDetails(vid);
+				details = await this._links.Details.videoDetails(vid);
 				// log.info(details.title)
 				// this.printVideo(vid)
 			} catch (e) {
-				console.log('asdfasdfasdfasffassdfasdfasdfasdfasdfsf')
 				log.error(e)
 				// TODO maybe do something about not being able to get the video, idk
 				if(e instanceof this.Details.E_VIDEO_NOT_FOUND) rej(new E_INVALID_VIDEO_ID())

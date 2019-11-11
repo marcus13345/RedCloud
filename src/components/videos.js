@@ -18,8 +18,6 @@ module.exports = class Videos {
 			res.json(await this.getVideos(20));
 		});
 
-		
-
 		router.get('/stream/:vid', (req, res) => {
 			res.setHeader("WWW-Authenticate", "Basic");
 			// res.contentType = 'video/mp4'
@@ -58,6 +56,11 @@ module.exports = class Videos {
 				}
 
 			});
+		});
+
+		router.post('/:vid', (req, res) => {
+			this.addVideo(req.params.vid);
+			res.json({});
 		})
 
 		return router;
@@ -66,7 +69,7 @@ module.exports = class Videos {
 	async start() {
 		// await new Promise(res => setTimeout(res, 3000));
 
-
+		console.log(__dirname);
 		this.database = new nedb({
 			filename: `videos.nedb`
 		});
@@ -115,7 +118,7 @@ module.exports = class Videos {
 		// console.dir(this)
 		let details;
 		try {
-			details = await this.Details.videoDetails(vid);
+			details = await this._links.Details.videoDetails(vid);
 		} catch (e) {
 			//TODO the video was probably removed, or never existed if this fails. so its like,
 			// PROBABLY not an issue.
@@ -133,6 +136,7 @@ module.exports = class Videos {
 			})
 		})))) {
 			//make it
+			log.info('adding', vid)
 			await new Promise((res, rej) => {
 				this.database.insert({
 					_id: vid,
@@ -149,7 +153,7 @@ module.exports = class Videos {
 
 		try {
 			// this.Util.printVideo(vid);
-			let filepath = await this.Util.downloadVideo(vid);
+			let filepath = await this._links.Util.downloadVideo(vid);
 			await new Promise((res, rej) => {
 				this.database.update({
 					_id: vid
@@ -159,24 +163,25 @@ module.exports = class Videos {
 				});
 			});
 		} catch(e) {
-			switch(e.constructor) {
-				case this.Util.E_VIDEO_PAID_PRIVATE_OR_DELETED: {
+			log.error(e);
+			// switch(e.constructor) {
+			// 	case this.Util.E_VIDEO_PAID_PRIVATE_OR_DELETED: {
 					
-					break;
-				}
-				case this.Util.E_UNEXPECTED_HTTP_403: {
+			// 		break;
+			// 	}
+			// 	case this.Util.E_UNEXPECTED_HTTP_403: {
 					
-					break;
-				}
-				case this.Util.E_YOUTUBE_DL_UNEXPECTED_TERMINATION: {
+			// 		break;
+			// 	}
+			// 	case this.Util.E_YOUTUBE_DL_UNEXPECTED_TERMINATION: {
 					
-					break;
-				}
-				default: {
-					log.error(e)
-					break;
-				}
-			}
+			// 		break;
+			// 	}
+			// 	default: {
+			// 		log.error(e)
+			// 		break;
+			// 	}
+			// }
 		}
 	}
 

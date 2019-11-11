@@ -24,9 +24,8 @@ module.exports = class RestServer{
 			}
 
 			const router = this._links[link].getRouter();
-
 			this.app.use(routePath, router);
-			log.success('added ' + routePath)
+			log.success('route ' + routePath)
 		}
 
 		const staticFolder = this._data.static || './dist';

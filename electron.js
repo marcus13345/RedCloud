@@ -1,3 +1,6 @@
+process.env.ELECTRON_ENABLE_LOGGING = "false";
+// process.env.ELECTRON_RUN_AS_NODE = true;
+
 const { app, BrowserWindow } = require('electron')
 
 function createWindow () {

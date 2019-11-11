@@ -51,6 +51,7 @@ function compile(filepath) {
 			entry: {
 				[name]: `./${filepath}`
 			},
+			performance: { hints: false },
 			watch: true,
 			output: {
 				filename: '[name].bundle.js', 

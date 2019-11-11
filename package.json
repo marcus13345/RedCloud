@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.0.135",
+  "version": "0.0.174",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "forever-stop": "forever stop phub",
     "start": "concurrently -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
-    "electron": "electron electron.js"
+    "electron": "electron --v=-1 electron.js"
   },
   "author": "",
   "license": "ISC",
@@ -60,6 +60,6 @@
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5",
     "webpack-livereload-plugin": "^2.2.0",
-    "youtube-dl": "1.11.1"
+    "youtube-dl": "^2.1.0"
   }
 }

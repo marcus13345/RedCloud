@@ -1,8 +1,8 @@
-const pornhub = require('./../pornhub.js');
+const pornhub = require('./../lib/pornhub.js');
 const Database = require('nedb');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: 'DETAILS'
+	scope: 'DTLS'
 });
 const createErrorClass = require('./../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
@@ -15,6 +15,10 @@ module.exports = class Details {
 		this.db.loadDatabase();
 
 
+	}
+
+	async connected() {
+		log.info('Details connected')
 	}
 
 	async videoDetails(vid) {
