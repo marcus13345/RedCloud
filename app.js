@@ -9,14 +9,14 @@ console.log('\\____________________/')
 console.log('     ');
 console.log('     ');
 
-new Collexion({
+const config = {
 	Server: {
 		Code: require('./src/components/RestServer.js'),
 		Data: {
 			routes: {
 				videos: 'Videos',
 				search: 'Search',
-				sources: 'PorhubCron'
+				sources: 'Cron'
 			}
 		}
 	},
@@ -32,7 +32,19 @@ new Collexion({
 	Util: {
 		Code: require('./src/components/util.js')
 	},
-	PorhubCron: {
-		Code: require('./src/components/pornhub.js')
+	Cron: {
+		Code: require('./src/components/cron.js')
 	}
-})
+};
+
+if (typeof require('electron') !== 'string') {
+	
+	config['Electron'] = {
+		Code: require('./src/components/electron.js')
+	}
+}
+
+
+
+new Collexion(config)
+

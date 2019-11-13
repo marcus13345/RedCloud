@@ -1,10 +1,11 @@
-const pornhub = require('./../lib/pornhub.js');
+const pornhub = require('../lib/pornhub.js');
 const nedb = require('nedb');
 const express = require('express');
 const {Signale} = require('signale');
 const bodyParser = require('body-parser');
+const createSemaphore = require('./../lib/semaphore.js')
 const log = new Signale({
-	scope: 'SRCS'
+	scope: 'CRON'
 });
 
 module.exports = class PornhubAdapter {
@@ -12,6 +13,7 @@ module.exports = class PornhubAdapter {
 		this.sources = new nedb({
 			filename: `sources.nedb`
 		});
+		this.pauseSemaphore = createSemaphore();
 	}
 
 	getRouter() {
@@ -36,7 +38,23 @@ module.exports = class PornhubAdapter {
 
 		router.get('/delete/:id', async (req, res) => {
 			this.deleteSource(req.params.id);
-		})
+		});
+
+		router.get('/status', (req, res) => {
+			res.json({running: this.pauseSemaphore.resolved});
+		});
+
+		router.get('/pause', (req, res) => {
+			if(this.pauseSemaphore.resolved) {
+				this.pauseSemaphore = createSemaphore();
+			}
+		});
+
+		router.get('/unpause', (req, res) => {
+			if(!this.pauseSemaphore.resolved) {
+				this.pauseSemaphore.resolve();
+			}
+		});
 
 		return router;
 	}
@@ -73,7 +91,14 @@ module.exports = class PornhubAdapter {
 
 			this.sources.find({}, async (err, docs) => {
 				for(const doc of docs) {
+					if(this.pauseSemaphore.resolved === false) {
+						log.info('cron has been paused');
+						await this.pauseSemaphore;
+						log.info('cron unpaused');
+					}
+					log.info(`${doc.source}:${doc.type}:${doc.data}`)
 					switch(doc.type) {
+						case 'history':
 						case 'user': {
 							const username = doc.data;
 							// log.watch('checking ' + username + ' recently viewed')
@@ -89,7 +114,12 @@ module.exports = class PornhubAdapter {
 				setTimeout(loop, 1000);
 			})
 		};
-		if(process.argv.indexOf('--disable-cron') === -1)
-			setTimeout(loop, 0);
+		
+		if(process.argv.indexOf('--disable-cron') === -1){
+			//unpause it, if we're goin
+			this.pauseSemaphore.resolve();
+		}
+		log.info('cron starting (paused: ' + !this.pauseSemaphore.resolved + ')')
+		setTimeout(loop, 0);
 	}
 }

@@ -17,7 +17,7 @@ module.exports = class VideosRouter {
 	}
 
 	connected() {
-		console.log('videos router connected to restServer')
+		// console.log('videos router connected to restServer')
 	}
 
 	getRouter() {

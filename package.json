@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.0.211",
+  "version": "0.0.213",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -11,13 +11,13 @@
     "api-hotreload-start": "npm run forever-restart && chokidar \"app.js\" \"src/**/*.js\" -c \"npm run release && npm run forever-restart\"",
     "pack": "webpack",
     "release": "npm test && node -e \"require('fs').writeFileSync('package.json', JSON.stringify({...(require('./package.json')), version: require('./package.json').version.split('.').map((v, i) => {if(i==2) return Number(v) + 1; return v}).join('.')}, null, 2))\"",
-    "forever-start": "forever start --uid phub -a app.js",
+    "forever-start": "forever start --uid phub -a app.js --disable-cron",
     "forever-restart": "forever restart phub || npm run forever-start",
     "forever-stop": "forever stop phub",
     "start": "concurrently -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
-    "electron": "node_modules\\electron\\dist\\electron.exe electron.js",
-    "production": "node app.js"
+    "electron": "node_modules\\electron\\dist\\electron.exe ./src/components/electron.js",
+    "production": "node_modules\\electron\\dist\\electron.exe app.js"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +25,7 @@
     "@github/time-elements": "^3.0.2",
     "@vaadin/vaadin": "^13.0.8",
     "body-parser": "^1.19.0",
+    "chalk": "^3.0.0",
     "cheerio": "^1.0.0-rc.3",
     "chokidar": "^2.1.6",
     "chokidar-cli": "^1.2.2",

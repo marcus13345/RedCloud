@@ -28,5 +28,21 @@ $(document).ready(_ => {
 			dataType: "json",
 			data: JSON.stringify(obj)
 		})
-	})
+	});
+
+
+
+	$.ajax('/api/sources/status').done(data => {
+		$('#status').html(data.running ? 'up' : 'paused')
+	});
+
+	$('#pause').click(_ => {
+		$.ajax('/api/sources/pause').done(_ => _);
+	});
+	
+	$('#unpause').click(_ => {
+		$.ajax('/api/sources/unpause').done(_ => _);
+	});
+
+
 });

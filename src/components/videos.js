@@ -23,36 +23,42 @@ module.exports = class Videos {
 			// res.contentType = 'video/mp4'
 			
 			this._links.Videos.database.findOne({_id: req.params.vid}, (err, doc) => {
-				if(err || !doc || doc.length == 0) {
-					return res.end('Video Not Downloaded!')
-				}
-				const path = doc.filepath;
-				const stat = fs.statSync(path);
-				const fileSize = stat.size;
-				const range = req.headers.range;
-				if (range) {
-					const parts = range.replace(/bytes=/, "").split("-")
-					const start = parseInt(parts[0], 10);
-					const end = parts[1] 
-						? parseInt(parts[1], 10)
-						: fileSize-1;
-					const chunksize = (end-start)+1;
-					const file = fs.createReadStream(path, {start, end});
-					const head = {
-						'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-						'Accept-Ranges': 'bytes',
-						'Content-Length': chunksize,
-						'Content-Type': 'video/mp4',
+				try {
+					if(err || !doc || doc.length == 0) {
+						return res.end('Video Not Downloaded!')
 					}
-					res.writeHead(206, head);
-					file.pipe(res);
-				} else {
-					const head = {
-						'Content-Length': fileSize,
-						'Content-Type': 'video/mp4',
-					};
-					res.writeHead(200, head);
-					fs.createReadStream(path).pipe(res);
+					const path = doc.filepath;
+					const stat = fs.statSync(path);
+					const fileSize = stat.size;
+					const range = req.headers.range;
+					if (range) {
+						const parts = range.replace(/bytes=/, "").split("-")
+						const start = parseInt(parts[0], 10);
+						const end = parts[1] 
+							? parseInt(parts[1], 10)
+							: fileSize-1;
+						const chunksize = (end-start)+1;
+						const file = fs.createReadStream(path, {start, end});
+						const head = {
+							'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+							'Accept-Ranges': 'bytes',
+							'Content-Length': chunksize,
+							'Content-Type': 'video/mp4',
+						}
+						res.writeHead(206, head);
+						file.pipe(res);
+					} else {
+						const head = {
+							'Content-Length': fileSize,
+							'Content-Type': 'video/mp4',
+						};
+						res.writeHead(200, head);
+						fs.createReadStream(path).pipe(res);
+					}
+				
+				} catch (e) {
+					res.statusCode = 500;
+					res.end();
 				}
 
 			});
@@ -69,7 +75,7 @@ module.exports = class Videos {
 	async start() {
 		// await new Promise(res => setTimeout(res, 3000));
 
-		console.log(__dirname);
+		// console.log(__dirname);
 		this.database = new nedb({
 			filename: `videos.nedb`
 		});
@@ -83,25 +89,27 @@ module.exports = class Videos {
 	}
 
 	async connected() {
-		const videos = await new Promise(res => {
-			this.database.find({}, (err, docs) => {
-				res(docs.map(v => v._id));
-			})
-		});
-		// log.info('here?????')
-		// const startup = new progress.Bar({}, progress.Presets.rect);
-		log.info(`sanity checking database...`);
-		// startup.start(videos.length, 0);
-		
-		
-		const startTime = new Date().getTime();
-		let i = 0;
-		for(const vid of videos) {
-			await this.addVideo(vid);
-			i ++;
-			// startup.update(i);
-		}
-		log.success(`checked ${videos.length} videos ${(new Date().getTime() - startTime) / 1000}s`);
+		(async () => {
+			const videos = await new Promise(res => {
+				this.database.find({}, (err, docs) => {
+					res(docs.map(v => v._id));
+				})
+			});
+			// log.info('here?????')
+			// const startup = new progress.Bar({}, progress.Presets.rect);
+			log.info(`sanity checking database...`);
+			// startup.start(videos.length, 0);
+			
+			
+			const startTime = new Date().getTime();
+			let i = 0;
+			for(const vid of videos) {
+				await this.addVideo(vid);
+				i ++;
+				// startup.update(i);
+			}
+			log.success(`checked ${videos.length} videos ${(new Date().getTime() - startTime) / 1000}s`);
+		})();
 		// startup.stop();
 	}
 
