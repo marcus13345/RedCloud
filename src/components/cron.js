@@ -96,13 +96,37 @@ module.exports = class PornhubAdapter {
 						await this.pauseSemaphore;
 						log.info('cron unpaused');
 					}
-					log.info(`${doc.source}:${doc.type}:${doc.data}`)
+					log.info(`${doc.source}:${doc.type}:${doc.data}`);
+					const cap = 15;
 					switch(doc.type) {
 						case 'history':
 						case 'user': {
 							const username = doc.data;
 							// log.watch('checking ' + username + ' recently viewed')
-							const videos = (await pornhub.getRecentlyViewed(username));
+							let count = -1;
+							let videos = [];
+							for(let page = 1; count !== 0 && page < cap; page ++) {
+								// log.info('page', page);
+								let newVideos = await pornhub.getRecentlyViewed(username, {page});
+								count = newVideos.length;
+								videos.push(...newVideos);
+							}
+							for(const vid of videos) {
+								await this._links.Videos.addVideo(vid)
+							}
+							break;
+						}
+						case 'uploads': {
+							const username = doc.data;
+							// log.watch('checking ' + username + ' recently viewed')
+							let count = -1;
+							let videos = [];
+							for(let page = 1; count !== 0 && page < cap; page ++) {
+								// log.info('page', page);
+								let newVideos = await pornhub.getUploads(username, {page});
+								count = newVideos.length;
+								videos.push(...newVideos);
+							}
 							for(const vid of videos) {
 								await this._links.Videos.addVideo(vid)
 							}
@@ -111,7 +135,7 @@ module.exports = class PornhubAdapter {
 					}
 				}
 				
-				setTimeout(loop, 1000);
+				setTimeout(loop, 0);
 			})
 		};
 		

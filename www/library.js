@@ -9,7 +9,7 @@ $.ajax('/api/videos').done((data) => {
 
 	for(const vid of videos) {
 		if(vid.downloaded) {
-			content.append(`<a href="api/videos/stream/${vid._id}"><div class="videoItem"><video width="160" height="90">
+			content.append(`<a href="/watch?v=${vid._id}"><div class="videoItem"><video volume="0" width="160" height="90">
 		<source src="api/videos/stream/${vid._id}#t=20" type="video/mp4">
 	</video></div></a>`)
 
