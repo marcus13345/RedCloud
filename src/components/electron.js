@@ -1,4 +1,5 @@
 process.env.ELECTRON_ENABLE_LOGGING = "false";
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true"
 // process.env.ELECTRON_RUN_AS_NODE = true;
 
 const { app, BrowserWindow } = require('electron');
@@ -7,6 +8,7 @@ const electronReady = createSemaphore();
 app.on('ready', _ => {
   electronReady.resolve()
 });
+const path = require('path');
 
 
 class Electron {
@@ -35,7 +37,7 @@ class Electron {
 
     // and load the index.html of the app.
     // win.loadFile('index.html')
-    win.loadURL('http://localhost:52310/');
+    win.loadFile(path.join(__dirname, './../../dist/index.html'));
   }
 }
 

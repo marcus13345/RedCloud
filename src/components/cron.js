@@ -1,6 +1,7 @@
 const pornhub = require('../lib/pornhub.js');
 const nedb = require('nedb');
 const express = require('express');
+const Video = require('./../lib/Video.js');
 const {Signale} = require('signale');
 const bodyParser = require('body-parser');
 const createSemaphore = require('./../lib/semaphore.js')
@@ -77,6 +78,25 @@ module.exports = class PornhubAdapter {
 		})
 	}
 
+	async addVideo(vid) {
+		try {
+			// log.debug(vid)
+			const details = {
+				...await this._links.Details.videoDetails(vid),
+				source: 'pornhub',
+				downloaded: false,
+				filepath: null,
+				addedTimestamp: new Date().getTime()
+			};
+			// log.debug(details)
+			const video = new Video(details);
+
+			await this._links.Videos.addVideo(video)
+		}catch(e) {
+			log.error(e);
+		}
+	}
+
 	async connected () {
 		await new Promise(res => {
 			this.sources.loadDatabase(() => {
@@ -97,7 +117,7 @@ module.exports = class PornhubAdapter {
 						log.info('cron unpaused');
 					}
 					log.info(`${doc.source}:${doc.type}:${doc.data}`);
-					const cap = 15;
+					const cap = 16;
 					switch(doc.type) {
 						case 'history':
 						case 'user': {
@@ -112,26 +132,26 @@ module.exports = class PornhubAdapter {
 								videos.push(...newVideos);
 							}
 							for(const vid of videos) {
-								await this._links.Videos.addVideo(vid)
+								await this.addVideo(vid)
 							}
 							break;
 						}
-						case 'uploads': {
-							const username = doc.data;
-							// log.watch('checking ' + username + ' recently viewed')
-							let count = -1;
-							let videos = [];
-							for(let page = 1; count !== 0 && page < cap; page ++) {
-								// log.info('page', page);
-								let newVideos = await pornhub.getUploads(username, {page});
-								count = newVideos.length;
-								videos.push(...newVideos);
-							}
-							for(const vid of videos) {
-								await this._links.Videos.addVideo(vid)
-							}
-							break;
-						}
+						// case 'uploads': {
+						// 	const username = doc.data;
+						// 	// log.watch('checking ' + username + ' recently viewed')
+						// 	let count = -1;
+						// 	let videos = [];
+						// 	for(let page = 1; count !== 0 && page < cap; page ++) {
+						// 		// log.info('page', page);
+						// 		let newVideos = await pornhub.getUploads(username, {page});
+						// 		count = newVideos.length;
+						// 		videos.push(...newVideos);
+						// 	}
+						// 	for(const vid of videos) {
+						// 		await this._links.Videos.addVideoByVid(vid)
+						// 	}
+						// 	break;
+						// }
 					}
 				}
 				

@@ -8,6 +8,12 @@ const createErrorClass = require('./../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
 
 module.exports = class Details {
+	get errors(){
+		return {
+			E_VIDEO_NOT_FOUND
+		}
+	}
+
 	async start() {
 		this.db = new Database({
 			filename: 'videoDetails.nedb'
@@ -54,7 +60,7 @@ module.exports = class Details {
 					// console.dir(details)
 					if(err) {
 						// console.log(`Failed to get details for ${vid}`);
-						return rej(err);
+						return rej(new E_VIDEO_NOT_FOUND());
 					}
 					log.info(`cached [[${details.title}]]`)
 					// log.info('asdfasdfasdfasdf')

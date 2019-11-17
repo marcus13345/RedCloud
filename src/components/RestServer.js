@@ -14,6 +14,9 @@ module.exports = class RestServer{
 	async connected() {
 		this.app = express();
 
+		// this.app.use((req, res, next) => {
+		// 	res.setHeader('Content-Security-Policy', "script-src 'self' http://localhost:52310")
+		// })
 
 		for(const route in this._data.routes) {
 			const link = this._data.routes[route];

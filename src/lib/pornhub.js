@@ -77,7 +77,7 @@ PornHub.details = function details(url, cb) {
 			// console.log('body', body);
 
 			var title;
-			if(!('video' in data)) return cb("unknown error", null)
+			if(!('video' in data)) return cb(new Error("unknown error"), null)
 			title = data.video.title;
 
 			var duration;

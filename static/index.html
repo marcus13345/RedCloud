@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="/app.bundle.js"></script>
+		<script src="./index.bundle.js"></script>
 		<script src="http://localhost:35729/livereload.js"></script>
-		<link rel="stylesheet" href="/style.css">
+		<link rel="stylesheet" href="./style.css">
 	</head>
 	<body>
 		<div style="display:grid; grid-template-columns: 120px 1fr">
@@ -18,13 +18,18 @@
 					Discover
 				</vaadin-tab>
 				<br>
-				<vaadin-tab>
+				<vaadin-tab id="settings">
 					Settings
+				</vaadin-tab>
+				<hr>
+				<h3>Developer Stuff</h3>
+				<vaadin-tab id="tags">
+					Tags
 				</vaadin-tab>
 			</vaadin-tabs>
 			<div id="viewport">
 			</div>
 		</div>
-		<script src="/native.js"></script>
+		<script src="./native.js"></script>
 	</body>
 </html>

@@ -1,7 +1,8 @@
 import $ from 'jquery';
+import { html } from 'lit-element';
 
 $(document).ready(_ => {
-	$.ajax('/api/sources').done(data => {
+	ajax('/sources').done(data => {
 		for(const source of data) {
 			$('#sourcesTable').append(`
 				<tr>
@@ -21,8 +22,8 @@ $(document).ready(_ => {
 			data: $('#data').val()
 		};
 
-		$.ajax({
-			url: '/api/sources',
+		ajax({
+			url: '/sources',
 			method: 'POST',
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
@@ -32,16 +33,16 @@ $(document).ready(_ => {
 
 
 
-	$.ajax('/api/sources/status').done(data => {
+	ajax('/sources/status').done(data => {
 		$('#status').html(data.running ? 'up' : 'paused')
 	});
 
 	$('#pause').click(_ => {
-		$.ajax('/api/sources/pause').done(_ => _);
+		ajax('/sources/pause').done(_ => _);
 	});
 	
 	$('#unpause').click(_ => {
-		$.ajax('/api/sources/unpause').done(_ => _);
+		ajax('/sources/unpause').done(_ => _);
 	});
 
 

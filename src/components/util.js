@@ -26,13 +26,15 @@ const log = new Signale({
 // }
 
 module.exports = class Util {
-	start() {
-		this.Errors = {
+	get errors() {
+		return {
 			E_YOUTUBE_DL_UNEXPECTED_TERMINATION,
 			E_VIDEO_PAID_PRIVATE_OR_DELETED,
 			E_UNEXPECTED_HTTP_403,
 			E_INVALID_VIDEO_ID
 		}
+	}
+	start() {
 		this._queue = Promise.resolve();
 	}
 
@@ -48,7 +50,7 @@ module.exports = class Util {
 
 	async downloadVideo(vid) {
 		return this._queue.then(async () => {
-			log.debug('DOWNLOAD', vid)
+			// log.debug('DOWNLOAD', vid)
 			try {
 				fs.mkdirSync(`./${savePath}/`);
 			} catch (e) { ''; }
@@ -68,9 +70,9 @@ module.exports = class Util {
 					// log.info(details.title)
 					// this.printVideo(vid)
 				} catch (e) {
-					log.error(e)
+					// log.error(e)
 					// TODO maybe do something about not being able to get the video, idk
-					if(e instanceof thPis.Details.E_VIDEO_NOT_FOUND) rej(new E_INVALID_VIDEO_ID())
+					if(e instanceof this._links.Details.errors.E_VIDEO_NOT_FOUND) rej(new E_INVALID_VIDEO_ID())
 					else rej (e)
 					return;
 				}
@@ -84,7 +86,7 @@ module.exports = class Util {
 				}
 				// TODO lol hax
 				if(fs.existsSync(filepath)) {
-					log.debug('already downloaded')
+					// log.debug('already downloaded')
 					return res(filepath);
 				}
 				
@@ -122,11 +124,11 @@ module.exports = class Util {
 				let bufferOut = "";
 				let bufferErr = ""
 				youtubedlProcess.stdout.on('data', data => {
-					// process.stdout.write(data);
+					process.stdout.write(data);
 					bufferOut += (data.toString());
 				})
 				youtubedlProcess.stderr.on('data', data => {
-					// process.stderr.write(data);
+					process.stderr.write(data);
 					bufferErr += (data.toString());
 				})
 				youtubedlProcess.on('exit', (code, signal) => {
@@ -158,7 +160,7 @@ module.exports = class Util {
 
 			return filepath;
 
-		});
+		}).catch();
 
 	}
 

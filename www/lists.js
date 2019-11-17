@@ -2,7 +2,7 @@ import $ from 'jquery'
 
 // console.log('asdfasdfasdfasdfasdfasdfasdfdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf');
 
-$.ajax('/tags').done((data) => {
+ajax('/tags').done((data) => {
 
   const listsArr = JSON.parse(data);
 

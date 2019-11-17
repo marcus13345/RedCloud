@@ -118,7 +118,7 @@ import $ from 'jquery';
 })()
 
 
-$.ajax('/tagAliases').done((data) => {
+ajax('/tagAliases').done((data) => {
 
   const listsArr = JSON.parse(data);
   
@@ -128,7 +128,7 @@ $.ajax('/tagAliases').done((data) => {
 
 })
 
-$.ajax('/aliases').done((data) => {
+ajax('/aliases').done((data) => {
 
   const aliases = JSON.parse(data);
   

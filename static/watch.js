@@ -1,12 +1,13 @@
 const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get('v');
+console.log(window.location.search, urlParams);
+const vid = urlParams.get('v');
 const $ = require('jquery');
 
 const elem = $(`
 
 <video style="
-    height: 80%;">
-		<source src="api/videos/stream/${myParam}#t=20" type="video/mp4">
+    height: 80%;" onloadstart="this.volume=0" autoplay>
+		<source src="${redcloud.store.get('settings.apiBasePath')}/videos/stream/${vid}" type="video/mp4">
 	</video>
 
 `)

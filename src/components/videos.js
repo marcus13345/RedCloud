@@ -5,6 +5,7 @@ const log = new Signale({
 });
 const express = require('express');
 const fs = require('fs');
+const Video = require('./../lib/Video.js');
 
 // const progress = require('cli-progress');
 
@@ -22,10 +23,15 @@ module.exports = class Videos {
 			res.setHeader("WWW-Authenticate", "Basic");
 			// res.contentType = 'video/mp4'
 			
-			this._links.Videos.database.findOne({_id: req.params.vid}, (err, doc) => {
+			this._links.Videos.database.findOne({vid: req.params.vid}, (err, doc) => {
 				try {
 					if(err || !doc || doc.length == 0) {
-						return res.end('Video Not Downloaded!')
+						res.statusCode = 404;
+						res.write('Video not found!\n\nERR: ');
+						res.write(JSON.stringify(err, null, 2));
+						res.write("\n\nDOC: ");
+						res.write(JSON.stringify(doc, null, 2));
+						return res.end();
 					}
 					const path = doc.filepath;
 					const stat = fs.statSync(path);
@@ -58,7 +64,11 @@ module.exports = class Videos {
 				
 				} catch (e) {
 					res.statusCode = 500;
-					res.end();
+					res.write(JSON.stringify(err, null, 2));
+					res.write("\n\n");
+					res.write(JSON.stringify(doc, null, 2));
+					res.write("\n\n");
+					res.end(e.stack);
 				}
 
 			});
@@ -88,110 +98,233 @@ module.exports = class Videos {
 		
 	}
 
+	async migrate(search, transform) {
+
+		let videos = await new Promise(res => {
+			this.database.find(search, (err, docs) => {
+				res(docs);
+			})
+		})
+
+		videos = videos.map(transform).map(doc => {
+			return {
+				...doc,
+				_id: undefined
+			}
+		});
+
+		for(let video of videos) {
+			await new Promise(res => {
+				this.database.insert(video, _ => res());
+			})
+		}
+
+		await new Promise(res => {
+			this.database.remove(search, {multi: true}, _ => res())
+		});
+
+		await this.database.persistence.compactDatafile();
+
+		log.success('migrated ' + videos.length + ' videos (' + JSON.stringify(search).replace(/{/g, '{ ').replace(/}/g, ' }').replace(/:/g, ': ') + ')');
+
+	}
+
 	async connected() {
 		(async () => {
-			const videos = await new Promise(res => {
-				this.database.find({}, (err, docs) => {
-					res(docs.map(v => v._id));
-				})
-			});
+			log.info(`sanity checking database...`);
+			const startTime = new Date().getTime();
+			// const vids = await new Promise(res => {
+			// 	this.database.find({}, (err, docs) => {
+			// 		res(docs.map(v => v._id));
+			// 	})
+			// });
+			//UPDATE VID VALUE TO _ID VALUE, REPLACE OLD ID, AND ADD SOURCE
+			
+			await this.migrate({
+				vid: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					vid: doc._id
+				}
+			})
+			// NORMALIZE THE DOWNLOADED PARAMETER
+			await this.migrate({
+				filepath: null,
+				downloaded: true
+			}, doc => {
+				return {
+					...doc,
+					downloaded: false
+				}
+			})
+			await this.migrate({
+				addedTimestamp: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					addedTimestamp: new Date().getTime()
+				}
+			})
+			await this.migrate({
+				filepath: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					filepath: null
+				}
+			})
+			await this.migrate({
+				downloaded: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					downloaded: !!doc.filepath
+				}
+			})
+			await this.migrate({
+				source: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					source: 'pornhub'
+				}
+			})
+
+			const videos = await this.getVideos();
+			
+			// const videos = await this.getVideos();
 			// log.info('here?????')
 			// const startup = new progress.Bar({}, progress.Presets.rect);
-			log.info(`sanity checking database...`);
-			// startup.start(videos.length, 0);
+			// startup.start(vids.length, 0);
 			
+			// for(const doc of videos) {
+			// 	log.debug(doc._id);
+			// 	const newDoc = {
+			// 		...doc
+			// 	}
+			// 	newDoc.vid = doc._id;
+			// 	newDoc.source = 'pornhub';
+			// 	newDoc._id = undefined;
+			// 	await new Promise(res => {
+			// 		this.database.insert(newDoc, (err, doc) => {
+			// 			log.debug(err, doc);
+			// 			res();
+			// 		});
+			// 	});
+			// }
 			
-			const startTime = new Date().getTime();
-			let i = 0;
-			for(const vid of videos) {
-				await this.addVideo(vid);
-				i ++;
-				// startup.update(i);
-			}
-			log.success(`checked ${videos.length} videos ${(new Date().getTime() - startTime) / 1000}s`);
+
+			// for(const video of videos) {
+			// 	await this.addVideo(video);
+			// }
+			log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
 		})();
 		// startup.stop();
 	}
 
-	getVideos(limit = Number.POSITIVE_INFINITY) {
-		return new Promise(res => {
-			this.database.find({}).sort({addedTimestamp: -1}).limit(limit).exec((err, docs) => {
-				if(docs) res(docs);
-				else rej('lol idk');
+	async videoFromVid(source, vid) {
+		return (await new Promise((res => {
+			this.database.findOne({
+				vid,
+				source
+			}, (err, doc) => {
+				if(doc) res(new Video(doc));
+				else res(null);
+			})
+		})));
+	}
+
+	async getVideos(limit = Number.POSITIVE_INFINITY) {
+		return await new Promise(res => {
+			this.database.find({
+				source: {$exists: true},
+				vid: {$exists: true}
+			}).sort({addedTimestamp: -1}).limit(limit).exec((err, docs) => {
+
+				if(!err && docs) res(docs.map(doc => {
+					return new Video(doc);
+				}));
+				else {
+					log.error('y\'alls muthafuckas need jesus', err)
+					rej(null);
+				}
 			})
 		})
 	}
 
-	async addVideo(vid) {
-		// console.dir(this)
-		let details;
-		try {
-			details = await this._links.Details.videoDetails(vid);
-		} catch (e) {
-			//TODO the video was probably removed, or never existed if this fails. so its like,
-			// PROBABLY not an issue.
-			// log.error('50 ' + e)
-			return;
-		}
-		
-		// if it doesnt yet exist
-		if(!(await new Promise((res => {
+	async exists(source, vid) {
+		return (await new Promise((res => {
 			this.database.findOne({
-				_id: vid
+				vid,
+				source
 			}, (err, doc) => {
 				if(doc) res(true);
 				else res(false);
 			})
-		})))) {
+		})));
+	}
+
+	async addVideo(video) {
+		{ // TYPECHECKING
+			if(video === null) throw new TypeError('expected Video, got null');
+			if(typeof video !== 'object') throw new TypeError('expected Video, got ' + typeof video);
+			if(!(video instanceof Video)) throw new TypeError('expected Video, got ' + video.__proto__.constructor.name);
+		}
+		// log.debug('adding', video)
+
+
+		// if it doesnt yet exist
+		if(!(await this.exists(video.source, video.vid))) {
 			//make it
-			log.info('adding', vid)
+
 			await new Promise((res, rej) => {
-				this.database.insert({
-					_id: vid,
-					...details,
-					addedTimestamp: new Date().getTime()
-				}, (err, doc) => {
+				this.database.insert(video, (err, doc) => {
 					if(err) return rej(err);
 					else res(doc);
 				});
 			});
 		}
 
-		
-
+		// try {
+		// this.Util.printVideo(vid);
+		let filepath;
 		try {
-			// this.Util.printVideo(vid);
-			let filepath = await this._links.Util.downloadVideo(vid);
+			filepath = await this._links.Util.downloadVideo(video.vid);
 			await new Promise((res, rej) => {
-				this.database.update({
-					_id: vid
-				}, {$set: {downloaded:true, filepath}}, {}, (err, count) => {
-					if(err) return rej(err);
-					else res(count);
-				});
+				this.database.update(
+					video,
+					{
+						$set: {
+							downloaded:true,
+							filepath
+						}
+					},
+					{},
+					(err) => {
+						if(err) return rej(err);
+						else res();
+					}
+				);
 			});
 		} catch(e) {
-			log.error(e);
-			// switch(e.constructor) {
-			// 	case this.Util.E_VIDEO_PAID_PRIVATE_OR_DELETED: {
-					
-			// 		break;
-			// 	}
-			// 	case this.Util.E_UNEXPECTED_HTTP_403: {
-					
-			// 		break;
-			// 	}
-			// 	case this.Util.E_YOUTUBE_DL_UNEXPECTED_TERMINATION: {
-					
-			// 		break;
-			// 	}
-			// 	default: {
-			// 		log.error(e)
-			// 		break;
-			// 	}
-			// }
+			// log.debug(e);
+			if(e instanceof this._links.Util.errors.E_VIDEO_PAID_PRIVATE_OR_DELETED) {
+				log.debug(video.title + ' got DELeTED');
+			} else if (e instanceof this._links.Util.errors.E_INVALID_VIDEO_ID) {
+				log.debug(video.title + ' inVALID');
+			} else if (e instanceof this._links.Util.errors.E_UNEXPECTED_HTTP_403) {
+				log.debug('403\'d on ' + video.title)
+			} else if (e instanceof this._links.Util.errors.E_YOUTUBE_DL_UNEXPECTED_TERMINATION) {
+				log.debug('literally no idea what happened to ' + video.title);
+			} else {
+				log.error(e)
+			}
 		}
+
 	}
+	// } catch(e) {
+	// 	// log.error(e);
+}
 
 	
-}

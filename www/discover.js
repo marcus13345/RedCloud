@@ -8,7 +8,7 @@ function clear() {
 }
 // something else
 function loadMore() {
-	$.ajax(`/api/search/${searchText}?page=${page}`).done((data) => {
+	ajax(`/search/${searchText}?page=${page}`).done((data) => {
 		
 		const videos = JSON.parse(data);
 
@@ -34,8 +34,8 @@ function loadMore() {
 //test
 
 content.on('click', 'img', e => {
-	$.ajax({
-		url: '/api/videos/' + $(e.target).parent().parent().attr('vid'),
+	ajax({
+		url: '/videos/' + $(e.target).parent().parent().attr('vid'),
 		method: 'POST'
 	}).done(_ => {
 		// alert('asdfasdf')

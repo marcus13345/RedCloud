@@ -1,11 +1,11 @@
 const {Collexion} = require('collexion');
 
-console.log('     ')
-console.log(' ____________________ ')
-console.log('/                    \\ ')
-console.log('|      RedCloud      | ')
-console.log('|    ' + require('./package.json').version.padStart(10, ' ') + '      | ')
-console.log('\\____________________/')
+console.log('     ');
+console.log(' ____________________ ');
+console.log('/                    \\ ');
+console.log('|      RedCloud      | ');
+console.log('|    ' + require('./package.json').version.padStart(10, ' ') + '      | ');
+console.log('\\____________________/');
 console.log('     ');
 console.log('     ');
 
@@ -26,15 +26,15 @@ const config = {
 	Search: {
 		Code: require('./src/components/search.js')
 	},
+	Cron: {
+		Code: require('./src/components/cron.js')
+	},
 	Details: {
 		Code: require('./src/components/details.js')
 	},
 	Util: {
 		Code: require('./src/components/util.js')
 	},
-	Cron: {
-		Code: require('./src/components/cron.js')
-	}
 };
 
 if (typeof require('electron') !== 'string') {
@@ -44,7 +44,4 @@ if (typeof require('electron') !== 'string') {
 	}
 }
 
-
-
 new Collexion(config)
-
