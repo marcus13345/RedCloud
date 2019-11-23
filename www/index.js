@@ -8,7 +8,17 @@ import $ from 'jquery'
 import pkg from './../package.json';
 
 window.ajax = function ajax(url) {
-	return $.ajax('http://localhost:52310/api' + url)
+	if(typeof url === 'string')
+		return $.ajax('http://localhost:52310/api' + url)
+	else {
+		const options = {...url};
+		options.url = undefined;
+		url = url.url;
+		return $.ajax({
+			...options,
+			url: 'http://localhost:52310/api' + url
+		});
+	}
 }
 
 $(document).ready(() => {
