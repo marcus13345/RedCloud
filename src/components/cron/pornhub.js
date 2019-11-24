@@ -2,15 +2,10 @@ const log = new (require('signale').Signale)({
 	scope: 'PHCR'
 });
 const pornhub = require('./../../lib/pornhub.js');
-const Video = require('./../../lib/Video.js')
-
+const Video = require('./../../lib/Video.js');
 
 class PornhubCron {
 	static cap = 10;
-
-	start() {
-
-	}
 
 	async evoke() {
 		const username = this._data.data;
