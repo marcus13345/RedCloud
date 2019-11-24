@@ -44,6 +44,7 @@ module.exports = class ChaturbateCron {
 					thumb: null,
 					html: null,
 					downloaded: false,
+					transcode: false,
 					addedTimestamp,
 					filepath,
 				});
