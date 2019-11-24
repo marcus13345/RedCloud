@@ -1,18 +1,51 @@
-process.env.ELECTRON_ENABLE_LOGGING = "false";
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true"
-// process.env.ELECTRON_RUN_AS_NODE = true;
+// process.env.ELECTRON_ENABLE_LOGGING = false;
+// process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true"
+// process.env.ELECTRON_RUN_AS_NODE = "true";
 
-const { app, BrowserWindow } = require('electron');
+const { spawn } = require('child_process');
 const createSemaphore = require('../lib/semaphore.js')
+const { app, BrowserWindow } = require('electron');
 const electronReady = createSemaphore();
-app.on('ready', _ => {
-  electronReady.resolve()
-});
-const path = require('path');
 
+const path = require('path');
+const log = new (require('signale').Signale)({
+	scope: 'ELEC'
+});
 
 class Electron {
   async connected() {
+
+    if(typeof require('electron') === 'string') {
+      
+      const electronProcess = spawn(
+        path.resolve(
+          __dirname,
+          './../../node_modules/.bin/electron.cmd'
+        ),
+        [
+          __filename
+        ],
+        {
+          "windowsHide": true,
+          stdio: 'inherit'
+        }
+      );
+
+      // process.on('exit', _ => {
+      //   electronProcess.kill(0);
+      // });
+
+      // electronProcess.stdout.on("end", process.exit)
+      
+      return;
+    }
+
+    
+
+    app.on('ready', _ => {
+      electronReady.resolve()
+    });
+
     await electronReady;
     // Create the browser window.
     let win = new BrowserWindow({
@@ -26,9 +59,12 @@ class Electron {
     });
     // console.log('loading URL')
 
-    win.webContents.openDevTools();
 
     win.autoHideMenuBar = true;
+    
+    process.on('exit', _ => {
+      win.webContents.openDevTools();
+    })
 
     win.on('ready-to-show', _ => {
       // console.log('opening Window')
@@ -42,7 +78,6 @@ class Electron {
 }
 
 module.exports = Electron;
-
 
 if(module === require.main) {
   // we're being RUN

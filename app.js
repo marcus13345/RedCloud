@@ -44,13 +44,13 @@ const config = {
 			}
 		}
 	},
-};
-
-if (typeof require('electron') !== 'string') {
-	
-	config['Electron'] = {
+	Electron: {
 		Code: require('./src/components/electron.js')
 	}
+};
+
+if (process.argv.indexOf('--disable-electron') > -1) {
+	config['Electron'] = undefined;
 }
 
 new Collexion(config)
