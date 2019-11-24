@@ -50,7 +50,6 @@ module.exports = class Util {
 
 	async downloadVideo(vid) {
 		return this._queue.then(async () => {
-			// log.debug('DOWNLOAD', vid)
 			try {
 				fs.mkdirSync(`./${savePath}/`);
 			} catch (e) { ''; }
@@ -86,7 +85,6 @@ module.exports = class Util {
 				}
 				// TODO lol hax
 				if(fs.existsSync(filepath)) {
-					// log.debug('already downloaded')
 					return res(filepath);
 				}
 				
@@ -124,11 +122,11 @@ module.exports = class Util {
 				let bufferOut = "";
 				let bufferErr = ""
 				youtubedlProcess.stdout.on('data', data => {
-					process.stdout.write(data);
+					// process.stdout.write(data);
 					bufferOut += (data.toString());
 				})
 				youtubedlProcess.stderr.on('data', data => {
-					process.stderr.write(data);
+					// process.stderr.write(data);
 					bufferErr += (data.toString());
 				})
 				youtubedlProcess.on('exit', (code, signal) => {

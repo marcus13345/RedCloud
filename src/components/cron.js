@@ -10,6 +10,9 @@ const log = new Signale({
 });
 
 module.exports = class PornhubAdapter {
+
+	cronTasks = [];
+
 	constructor() {
 		this.sources = new nedb({
 			filename: `sources.nedb`
@@ -63,11 +66,13 @@ module.exports = class PornhubAdapter {
 	deleteSource(id) {
 		this.sources.remove({_id: id}, {}, (err, doc) => {
 			log.success('removed source', id, doc);
-		})
+		});
+		// TODO remove this task from this.cronTasks
 	}
 
 	addSource(obj) {
-		this.sources.insert(obj, (err, doc) => {
+		this.sources.insert(obj, async (err, doc) => {
+			await this.addCronTask(obj.source, obj.type, obj.data)
 			log.success('added source', obj);
 		})
 	}
@@ -78,92 +83,62 @@ module.exports = class PornhubAdapter {
 		})
 	}
 
-	async addVideo(vid) {
-		try {
-			// log.debug(vid)
-			const details = {
-				...await this._links.Details.videoDetails(vid),
-				source: 'pornhub',
-				downloaded: false,
-				filepath: null,
-				addedTimestamp: new Date().getTime()
-			};
-			// log.debug(details)
-			const video = new Video(details);
-
-			await this._links.Videos.addVideo(video)
-		}catch(e) {
-			log.error(e);
-		}
+	// todo lol
+	async addCronTask(source, type, data) {
+		this._data.cron.types[source]
+		this.cronTasks.push();
 	}
 
 	async connected () {
-		await new Promise(res => {
-			this.sources.loadDatabase(() => {
+		log.info('Cron connected');
+
+		// load database and set it to maintain itself
+		await new Promise(res => this.sources.loadDatabase(res));
+		this.sources.persistence.setAutocompactionInterval(10000);
+
+		// contruct the list of cronTasks
+		await new Promise((res) => {
+			this.sources.find({}, async (err, sources) => {
+				for(const source of sources) {
+					const sourceType = source.source;
+					const cronClass = this._data.cron.types[sourceType];
+					const cronTask = await this._collexion.createInstance({
+						Code: cronClass,
+						Data: {
+							data: source.data,
+							type: source.type
+						}
+					});
+					this.cronTasks.push(cronTask);
+				}
 				res();
 			});
 		});
 
-		this.sources.persistence.setAutocompactionInterval(10000);
-
-		const loop = async () => {
-			// log.watch(`checking for new content...`);
-
-			this.sources.find({}, async (err, docs) => {
-				for(const doc of docs) {
-					if(this.pauseSemaphore.resolved === false) {
-						log.info('cron has been paused');
-						await this.pauseSemaphore;
-						log.info('cron unpaused');
-					}
-					log.info(`${doc.source}:${doc.type}:${doc.data}`);
-					const cap = 16;
-					switch(doc.type) {
-						case 'history':
-						case 'user': {
-							const username = doc.data;
-							// log.watch('checking ' + username + ' recently viewed')
-							let count = -1;
-							let videos = [];
-							for(let page = 1; count !== 0 && page < cap; page ++) {
-								// log.info('page', page);
-								let newVideos = await pornhub.getRecentlyViewed(username, {page});
-								count = newVideos.length;
-								videos.push(...newVideos);
-							}
-							for(const vid of videos) {
-								await this.addVideo(vid)
-							}
-							break;
-						}
-						// case 'uploads': {
-						// 	const username = doc.data;
-						// 	// log.watch('checking ' + username + ' recently viewed')
-						// 	let count = -1;
-						// 	let videos = [];
-						// 	for(let page = 1; count !== 0 && page < cap; page ++) {
-						// 		// log.info('page', page);
-						// 		let newVideos = await pornhub.getUploads(username, {page});
-						// 		count = newVideos.length;
-						// 		videos.push(...newVideos);
-						// 	}
-						// 	for(const vid of videos) {
-						// 		await this._links.Videos.addVideoByVid(vid)
-						// 	}
-						// 	break;
-						// }
-					}
-				}
-				
-				setTimeout(loop, 0);
-			})
-		};
-		
-		if(process.argv.indexOf('--disable-cron') === -1){
-			//unpause it, if we're goin
+		// unpause it, if we dont specify to disable cron
+		if (process.argv.indexOf('--disable-cron') === -1)
 			this.pauseSemaphore.resolve();
+
+		// boot up the cron loop
+		log.info(`cron starting (paused: ${!this.pauseSemaphore.resolved})`);
+		setTimeout(this.cronLoop.bind(this), 0);
+	}
+
+	async cronLoop() {
+		for(const task of this.cronTasks) {
+			if(this.pauseSemaphore.resolved === false) {
+				log.info('cron has been paused');
+				await this.pauseSemaphore;
+				log.info('cron unpaused');
+			}
+
+			// tell the task it should run
+			await task.evoke();
+
+			// give it a sec to cool down
+			await new Promise(res => setTimeout(res, 1000));
 		}
-		log.info('cron starting (paused: ' + !this.pauseSemaphore.resolved + ')')
-		setTimeout(loop, 0);
+		
+		setTimeout(this.cronLoop.bind(this), 0);
 	}
 }

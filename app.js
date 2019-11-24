@@ -1,3 +1,4 @@
+process.env.FORCE_COLOR = 1;
 const {Collexion} = require('collexion');
 
 console.log('     ');
@@ -26,14 +27,22 @@ const config = {
 	Search: {
 		Code: require('./src/components/search.js')
 	},
-	Cron: {
-		Code: require('./src/components/cron.js')
-	},
 	Details: {
 		Code: require('./src/components/details.js')
 	},
 	Util: {
 		Code: require('./src/components/util.js')
+	},
+	Cron: {
+		Code: require('./src/components/cron.js'),
+		Data: {
+			cron: {
+				types: {
+					pornhub: require('./src/components/cron/pornhub.js'),
+					chaturbate: require('./src/components/cron/chaturbate.js'),
+				}
+			}
+		}
 	},
 };
 

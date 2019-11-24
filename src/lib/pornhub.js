@@ -1,4 +1,4 @@
-var cheerio = require("cheerio"),
+const cheerio = require("cheerio"),
 		https = require("https"),
 		http = require("http"),
 		qs = require("querystring"),

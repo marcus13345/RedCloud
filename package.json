@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.0.273",
+  "version": "0.0.287",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -17,7 +17,8 @@
     "start": "concurrently -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node_modules\\electron\\dist\\electron.exe ./src/components/electron.js",
-    "production": "node_modules\\electron\\dist\\electron.exe app.js"
+    "production": "node_modules\\electron\\dist\\electron.exe app.js",
+    "clear": "RMDIR /S /Q vids && DEL /Q videos.nedb"
   },
   "author": "",
   "license": "ISC",
@@ -30,7 +31,7 @@
     "chokidar": "^2.1.6",
     "chokidar-cli": "^1.2.2",
     "cli-progress": "^2.1.1",
-    "collexion": "0.0.7",
+    "collexion": "0.0.8",
     "concurrently": "^5.0.0",
     "copy-webpack-plugin": "^5.0.2",
     "custom-electron-titlebar": "^3.1.0",
@@ -62,6 +63,7 @@
     "streamlink": "^1.0.4",
     "terminal-kit": "^1.26.5",
     "tmp": "0.0.33",
+    "uuid": "^3.3.3",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5",
     "webpack-livereload-plugin": "^2.2.0",

@@ -199,7 +199,6 @@ module.exports = class Videos {
 			// startup.start(vids.length, 0);
 			
 			// for(const doc of videos) {
-			// 	log.debug(doc._id);
 			// 	const newDoc = {
 			// 		...doc
 			// 	}
@@ -208,7 +207,6 @@ module.exports = class Videos {
 			// 	newDoc._id = undefined;
 			// 	await new Promise(res => {
 			// 		this.database.insert(newDoc, (err, doc) => {
-			// 			log.debug(err, doc);
 			// 			res();
 			// 		});
 			// 	});
@@ -271,7 +269,6 @@ module.exports = class Videos {
 			if(typeof video !== 'object') throw new TypeError('expected Video, got ' + typeof video);
 			if(!(video instanceof Video)) throw new TypeError('expected Video, got ' + video.__proto__.constructor.name);
 		}
-		// log.debug('adding', video)
 
 
 		// if it doesnt yet exist
@@ -308,15 +305,14 @@ module.exports = class Videos {
 				);
 			});
 		} catch(e) {
-			// log.debug(e);
 			if(e instanceof this._links.Util.errors.E_VIDEO_PAID_PRIVATE_OR_DELETED) {
-				log.debug(video.title + ' got DELeTED');
+				log.error(video.title + ' got DELeTED');
 			} else if (e instanceof this._links.Util.errors.E_INVALID_VIDEO_ID) {
-				log.debug(video.title + ' inVALID');
+				log.error(video.title + ' inVALID');
 			} else if (e instanceof this._links.Util.errors.E_UNEXPECTED_HTTP_403) {
-				log.debug('403\'d on ' + video.title)
+				log.error('403\'d on ' + video.title)
 			} else if (e instanceof this._links.Util.errors.E_YOUTUBE_DL_UNEXPECTED_TERMINATION) {
-				log.debug('literally no idea what happened to ' + video.title);
+				log.error('literally no idea what happened to ' + video.title);
 			} else {
 				log.error(e)
 			}
