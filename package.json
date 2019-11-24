@@ -17,7 +17,7 @@
     "start": "concurrently --success first --kill-others -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node ./src/components/electron.js",
-    "production": "(npm run forever-stop >nul || true) && node app.js",
+    "production": "(npm run forever-stop >nul 2>&1 || true) && node app.js",
     "clear": "RMDIR /S /Q vids && DEL /Q videos.nedb"
   },
   "author": "",
