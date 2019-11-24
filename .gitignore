@@ -7,3 +7,4 @@ testVids
 *.nedb
 store.json
 dist
+*.pyc
