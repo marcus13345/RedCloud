@@ -13,72 +13,63 @@ const log = new (require('signale').Signale)({
 });
 
 class Electron {
-  async connected() {
+	async start() {
 
-    if(typeof require('electron') === 'string') {
-      
-      const electronProcess = spawn(
-        path.resolve(
-          __dirname,
-          './../../node_modules/.bin/electron.cmd'
-        ),
-        [
-          __filename
-        ],
-        {
-          "windowsHide": true,
-          stdio: 'inherit'
-        }
-      );
+		await (async () => {
+			if(typeof require('electron') === 'string') {
+				const electronProcess = spawn(require('electron'), [__filename]);
 
-      // process.on('exit', _ => {
-      //   electronProcess.kill(0);
-      // });
+				// process.on('exit', _ => {
+				//   electronProcess.kill(0);
+				// });
 
-      // electronProcess.stdout.on("end", process.exit)
-      
-      return;
-    }
+				electronProcess.stdout.on("end", process.exit)
+				
+				// await new Promise(res => setTimeout(res, 2000));
 
-    
+				return;
+			}
 
-    app.on('ready', _ => {
-      electronReady.resolve()
-    });
+			
 
-    await electronReady;
-    // Create the browser window.
-    let win = new BrowserWindow({
-      width: 800,
-      height: 600,
-      frame: false,
-      webPreferences: {
-        nodeIntegration: true
-      },
-      show: false,
-    });
-    // console.log('loading URL')
+			app.on('ready', _ => {
+				electronReady.resolve()
+			});
+
+			await electronReady;
+			// Create the browser window.
+			let win = new BrowserWindow({
+				width: 800,
+				height: 600,
+				frame: false,
+				webPreferences: {
+					nodeIntegration: true
+				},
+				show: false,
+			});
+			// console.log('loading URL')
 
 
-    win.autoHideMenuBar = true;
-    
-    win.webContents.openDevTools();
+			win.autoHideMenuBar = true;
+			
+			win.webContents.openDevTools();
 
-    win.on('ready-to-show', _ => {
-      // console.log('opening Window')
-      win.show()
-    });
+			win.on('ready-to-show', _ => {
+				// console.log('opening Window')
+				win.show()
+			});
 
-    // and load the index.html of the app.
-    // win.loadFile('index.html')
-    win.loadFile(path.join(__dirname, './../../dist/index.html'));
-  }
+			// and load the index.html of the app.
+			// win.loadFile('index.html')
+			win.loadFile(path.join(__dirname, './../../dist/index.html'));
+		})();
+	}
 }
 
 module.exports = Electron;
 
 if(module === require.main) {
-  // we're being RUN
-  const electron = new Electron()
-  electron.connected();
+	// we're being RUN
+	const electron = new Electron()
+	electron.start();
 }
