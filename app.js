@@ -1,12 +1,13 @@
 process.env.FORCE_COLOR = 1;
 const {Collexion} = require('collexion');
+const chalk = require('chalk');
 
 console.log('     ');
-console.log(' ____________________ ');
-console.log('/                    \\ ');
-console.log('|      RedCloud      | ');
-console.log('|    ' + require('./package.json').version.padStart(10, ' ') + '      | ');
-console.log('\\____________________/');
+console.log(chalk.red(' ____________________ '));
+console.log(chalk.red('/                    \\ '));
+console.log(chalk.red('|') + '      Red' + chalk.red('Cloud') + '      ' + chalk.red('|'));
+console.log(chalk.red('|') + '    ' + require('./package.json').version.padStart(10, ' ') + '      ' + chalk.red('|') + ' ');
+console.log(chalk.red('\\____________________/'));
 console.log('     ');
 console.log('     ');
 
