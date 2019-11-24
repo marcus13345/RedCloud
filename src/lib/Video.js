@@ -30,6 +30,7 @@ class Video extends Struct{
 			thumb: 'string',
 			html: 'string',
 			downloaded: 'boolean',
+			transcode: 'boolean',
 			addedTimestamp: 'number',
 			filepath: 'string'
 		}

@@ -190,6 +190,14 @@ module.exports = class Videos {
 					source: 'pornhub'
 				}
 			})
+			await this.migrate({
+				transcode: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					transcode: doc.source === 'chaturbate'
+				}
+			})
 
 			const videos = await this.getVideos();
 			
