@@ -3,11 +3,7 @@ const log = new (require('signale').Signale)({
 	scope: 'CBCR'
 });
 
-module.exports = class ChaturbateCron{
-	start() {
-		// this.
-	}
-
+module.exports = class ChaturbateCron {
 	async evoke() {
 	}
 }
