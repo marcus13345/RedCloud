@@ -41,7 +41,7 @@ module.exports = class Util {
 	async printVideo(vid) {
 		try {
 			let details = await this.Details.videoDetails(vid);
-			console.log(details.title)
+			// console.log(details.title)
 		} catch(e) {
 			if(e instanceof E_VIDEO_NOT_FOUND) return;
 			console.error(e);
@@ -49,6 +49,8 @@ module.exports = class Util {
 	}
 
 	async downloadVideo(vid) {
+		// TODO split the filepath creation into its own method to allocate a filepath.
+		// TODO then have download video be its own thing.
 		return this._queue.then(async () => {
 			try {
 				fs.mkdirSync(`./${savePath}/`);
@@ -99,7 +101,7 @@ module.exports = class Util {
 						fs.unlinkSync('./vids/' + file);
 					}
 				} catch (e) {
-					console.log(e)
+					// console.log(e)
 				}
 				
 				let program = `youtube-dl.exe`;

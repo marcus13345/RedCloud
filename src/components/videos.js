@@ -283,8 +283,11 @@ module.exports = class Videos {
 			});
 		}
 
+		if(video.downloaded || video.filepath) return;
+
 		// try {
 		// this.Util.printVideo(vid);
+		// TODO why does this try to download AGAIN???
 		let filepath;
 		try {
 			filepath = await this._links.Util.downloadVideo(video.vid);

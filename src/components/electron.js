@@ -62,9 +62,7 @@ class Electron {
 
     win.autoHideMenuBar = true;
     
-    process.on('exit', _ => {
-      win.webContents.openDevTools();
-    })
+    win.webContents.openDevTools();
 
     win.on('ready-to-show', _ => {
       // console.log('opening Window')
