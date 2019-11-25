@@ -26,6 +26,9 @@ const log = new Signale({
 // }
 
 module.exports = class Util {
+
+	transcodeQueue = Promise.resolve();
+
 	get errors() {
 		return {
 			E_YOUTUBE_DL_UNEXPECTED_TERMINATION,
@@ -34,6 +37,7 @@ module.exports = class Util {
 			E_INVALID_VIDEO_ID
 		}
 	}
+
 	start() {
 		this._queue = Promise.resolve();
 	}
@@ -191,6 +195,17 @@ module.exports = class Util {
 		return (videos);
 	}
 
-
+	transcode(inputFile, outputFile) {
+		return this.transcodeQueue = this.transcodeQueue.then(async () => {
+			const handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
+			const transcoder = spawn(handbrake, [
+				'-i', inputFile,
+				'-o', outputFile
+			], {
+				// stdio: 'inherit'
+			});
+			await new Promise(res => transcoder.once('exit', res));
+		});
+	}
 
 }

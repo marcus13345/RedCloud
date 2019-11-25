@@ -7,8 +7,68 @@ const Video = require('./../../lib/Video.js');
 const path = require('path');
 const fs = require('fs');
 
+const { spawn } = require('child_process');
+
 module.exports = class ChaturbateCron {
 	online = false;
+
+	async start() {
+		const username = this._data.data;
+		try {
+			fs.mkdirSync(`./vids/`);
+		} catch (e) { ''; }
+		try {
+			fs.mkdirSync(`./temp/`);
+		} catch (e) { ''; }
+		try {
+			fs.mkdirSync(`./temp/chaturbate/`);
+		} catch (e) { ''; }
+		try {
+			fs.mkdirSync(`./temp/chaturbate/${username}/`);
+		} catch (e) { ''; }
+	}
+
+	async connected () {
+		const username = this._data.data;
+		try {
+			fs.readdir(`./temp/chaturbate/${username}/`, async (err, files) => {
+				for(const file of files) {
+					const vid = path.parse(file).name;
+					const video = await this._links.Videos.videoFromVid('chaturbate', vid);
+					// log.info(video)
+					this.queueTranscode(video);
+				}
+			})
+		} catch (e) {
+			log.error(e);
+		}
+	}
+
+	/**
+	 * @param {Video} video
+	 */
+	async queueTranscode(video) {
+		log.info('transcoding', video.title);
+		const inputFile = video.filepath;
+		const outputFile = `vids/${path.parse(video.filepath).base}`;
+		await this._links.Util.transcode(inputFile, outputFile);
+
+		await this._links.Videos.update({
+			source: 'chaturbate',
+			vid: video.vid
+		}, doc => {
+			const obj = {
+				...doc,
+				downloaded: true,
+				filepath: outputFile
+			}
+			return obj;
+		});
+
+		fs.unlink(inputFile, _ => _);
+
+		log.success('transcoded ', video.title);
+	}
 
 	async evoke() {
 
@@ -23,46 +83,36 @@ module.exports = class ChaturbateCron {
 
 	async startRecording() {
 		try {
-			try {
-				fs.mkdirSync(`./vids/`);
-			} catch (e) { ''; }
-			try {
-				fs.mkdirSync(`./vids/transcode/`);
-			} catch (e) { ''; }
+			const username = this._data.data;
 
 			const vid = uuid();
-			const addedTimestamp = new Date().getTime();
-			const title = `${this._data.data} - ${addedTimestamp.toLocaleString()}`;
-			const filepath = `vids/transcode/${vid}.stream.mp4`;
-			const recorder = chaturbate.record(this._data.data, filepath);
+			const addedTimestamp = new Date();
+			const title = `${username} - ${addedTimestamp.toLocaleString()}`;
+			const filepath = `temp/chaturbate/${username}/${vid}.mp4`;
+			const recorder = chaturbate.record(username, filepath);
 
-			try {
-				const video = new Video({
-					source: 'chaturbate',
-					vid, title, duration: null,
-					tags: null,
-					thumb: null,
-					html: null,
-					downloaded: false,
-					transcode: false,
-					addedTimestamp,
-					filepath,
-				});
+			const video = new Video({
+				source: 'chaturbate',
+				vid, title, duration: null,
+				tags: null,
+				thumb: null,
+				html: null,
+				downloaded: false,
+				addedTimestamp: addedTimestamp.getTime(),
+				filepath,
+			});
 
-				await this._links.Videos.addVideo(video)
-			} catch(e) {
-				log.error(e);
-			}
+			await this._links.Videos.addVideo(video)
 
-			log.debug('now recording ' + this._data.data);
+			log.info('now recording ' + username);
 			recorder.on('done', async () => {
 				this.online = false;
-				log.debug('finished recording ' + this._data.data);
+				log.success('finished recording ' + username);
 
-
+				this.queueTranscode(video)
 			})
 
-		} catch (e) {
+		} catch(e) {
 			log.error(e);
 			this.online = false;
 		}

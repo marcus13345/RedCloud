@@ -18,7 +18,7 @@ const Struct = require('./Struct.js');
  * @property {string} html
  * @property {boolean} downloaded
 */
-class Video extends Struct{
+class Video extends Struct {
 	//TODO figure out how to make this static
 	properties() {
 		return {
@@ -30,7 +30,6 @@ class Video extends Struct{
 			thumb: 'string',
 			html: 'string',
 			downloaded: 'boolean',
-			transcode: 'boolean',
 			addedTimestamp: 'number',
 			filepath: 'string'
 		}

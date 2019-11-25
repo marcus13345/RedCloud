@@ -125,7 +125,42 @@ module.exports = class Videos {
 
 		await this.database.persistence.compactDatafile();
 
-		log.success('migrated ' + videos.length + ' videos (' + JSON.stringify(search).replace(/{/g, '{ ').replace(/}/g, ' }').replace(/:/g, ': ') + ')');
+		log.success('migrated ' + videos.length + ' videos', search);
+
+	}
+
+	async update(search, transform) {
+
+		let videos = await new Promise(res => {
+			this.database.find(search, (err, docs) => {
+				res(docs);
+			})
+		})
+
+		const oldIds = videos.map(video => video._id);
+
+		videos = videos.map(transform).map(doc => {
+			return {
+				...doc,
+				_id: undefined
+			}
+		});
+
+		for(let video of videos) {
+			await new Promise(res => {
+				this.database.insert(video, _ => res());
+			})
+		}
+
+		await new Promise(res => {
+			this.database.remove({
+				_id: { $in: oldIds }
+			}, {multi: true}, _ => res())
+		});
+
+		await this.database.persistence.compactDatafile();
+
+		log.success('updated ' + videos.length + ' videos', search);
 
 	}
 
@@ -191,11 +226,11 @@ module.exports = class Videos {
 				}
 			})
 			await this.migrate({
-				transcode: {$exists: false}
+				transcode: {$exists: true}
 			}, doc => {
 				return {
 					...doc,
-					transcode: doc.source === 'chaturbate'
+					transcode: undefined
 				}
 			})
 
@@ -245,7 +280,9 @@ module.exports = class Videos {
 		return await new Promise(res => {
 			this.database.find({
 				source: {$exists: true},
-				vid: {$exists: true}
+				vid: {$exists: true},
+				downloaded: true,
+				source: 'chaturbate'
 			}).sort({addedTimestamp: -1}).limit(limit).exec((err, docs) => {
 
 				if(!err && docs) res(docs.map(doc => {

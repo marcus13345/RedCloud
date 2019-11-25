@@ -8,3 +8,4 @@ testVids
 store.json
 dist
 *.pyc
+temp
