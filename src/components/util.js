@@ -18,6 +18,7 @@ const {Signale} = require('signale');
 const log = new Signale({
 	scope: 'UTIL'
 });
+const logFile = require('./../lib/LogFile.js')
 
 // module.exports = {
 // 	printVideo,
@@ -115,7 +116,7 @@ module.exports = class Util {
 					// console.log(e)
 				}
 				
-				let program = `youtube-dl.exe`;
+				let program = `tools/youtube-dl/youtube-dl` + (process.platform == 'win32' ? '.exe' : '');
 				let args = [
 					`--external-downloader`, `axel`, `--external-downloader-args`,
 					`-n 20 -a`, `-o`, `${filepath}`, `-f`, `best`,
@@ -126,14 +127,15 @@ module.exports = class Util {
 				let youtubedlProcess = spawn(program, args, {
 					env: {
 						// ...process.env,
-						PATH: process.env.PATH + ";" + path.resolve(__dirname, '../../axel')
+						PATH: process.env.PATH + ";" + path.resolve(__dirname, '../../tools/axel')
 					},
 					windowsHide: true,
 					// detached: true,
 					shell: false
 				});
 				let bufferOut = "";
-				let bufferErr = ""
+				let bufferErr = "";
+				const logStream = logFile.createStream('youtube-dl');
 				youtubedlProcess.stdout.on('data', data => {
 					// process.stdout.write(data);
 					bufferOut += (data.toString());
@@ -144,6 +146,9 @@ module.exports = class Util {
 				})
 				
 				this.events.on('kill', youtubedlProcess.kill);
+				
+				youtubedlProcess.stdout.pipe(logStream);
+				youtubedlProcess.stderr.pipe(logStream);
 				youtubedlProcess.on('exit', (code, signal) => {
 					this.events.off('kill', youtubedlProcess.kill);
 
