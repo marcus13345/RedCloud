@@ -68,6 +68,10 @@ try {
 		console.log('trying to shut down gracefully...');
 		process.exit(0)
 	})
+	process.on( 'exit', function() {
+		// sometimes you just gotta hard hard
+		process.kill( process.pid, 'SIGTERM' );
+	});
 } catch (e) {
 	console.log(e);
 }
