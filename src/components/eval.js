@@ -43,6 +43,5 @@ module.exports = class Eval {
 				}
 			}
 		}
-		console.dir(this.library);
 	}
 }
