@@ -9,6 +9,7 @@ module.exports = class RestServer{
 	}
 
 	async start() {
+		log.info('Starting API on port ' + this._data.port);
 	}
 
 	async connected() {
@@ -20,6 +21,7 @@ module.exports = class RestServer{
 
 			if (!('getRouter' in this._links[link])) {
 				log.warn('getRouter not defined for route ' + route);
+				continue;
 			}
 
 			const router = this._links[link].getRouter();

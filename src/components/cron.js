@@ -20,16 +20,9 @@ module.exports = class PornhubAdapter {
 		this.pauseSemaphore = createSemaphore();
 	}
 
-	get library() {
-		let that = this;
+	getLibrary() {
 		return {
-			get cron() {
-				return {
-					get jobs() {
-						return that.cronTasks;
-					}
-				}
-			}
+			cron: this
 		}
 	}
 

@@ -13,17 +13,46 @@ if (window && window.process && window.process.type) {
 		window.titlebar.updateTitle();
 	});
 
+	console.log('defining redcloud');
 	window.redcloud = {
 		store: new Store({
 			defaults: {
 				settings: {
 					apiBasePath: 'http://localhost:52310/api'
+				},
+				navigation: {
+					currentPage: 'library'
 				}
-			}
+			},
+			name: require('./../options.json').app.id
 		})
 	};
 
-	window.exec = function exec() {
-		
+	window.exec = async function exec(input) {
+		if(typeof input === 'string') {
+			return await new Promise(res => {
+				ajax({
+					method: 'POST',
+					url: '/eval',
+					data: input,
+					contentType: 'text/plain'
+				}).done((a) => {
+					res(JSON.parse(a));
+				})
+			})
+		} else { //function
+			return await new Promise(res => {
+				ajax({
+					method: 'POST',
+					url: '/eval',
+					data: `(${input.toString()})()`,
+					contentType: 'text/plain'
+				}).done((a) => {
+					res(JSON.parse(a));
+				})
+			})
+		}
+
+
 	}
 }
