@@ -21,5 +21,9 @@ if (window && window.process && window.process.type) {
 				}
 			}
 		})
+	};
+
+	window.exec = function exec() {
+		
 	}
 }

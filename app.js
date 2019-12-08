@@ -59,3 +59,8 @@ if (process.argv.indexOf('--disable-electron') > -1) {
 }
 
 new Collexion(config)
+
+process.on('SIGINT', _ => {
+	console.log('trying to shut down gracefully...');
+	process.exit(0)
+})

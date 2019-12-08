@@ -9,14 +9,14 @@ import pkg from './../package.json';
 
 window.ajax = function ajax(url) {
 	if(typeof url === 'string')
-		return $.ajax('http://localhost:52310/api' + url)
+		return $.ajax(redcloud.store.get('settings.apiBasePath') + url)
 	else {
 		const options = {...url};
 		options.url = undefined;
 		url = url.url;
 		return $.ajax({
 			...options,
-			url: 'http://localhost:52310/api' + url
+			url: redcloud.store.get('settings.apiBasePath') + url
 		});
 	}
 }
