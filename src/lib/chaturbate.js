@@ -34,7 +34,7 @@ module.exports.record = function record(username, filepath) {
 			try {
 				fs.mkdirSync(`./logs/`);
 			} catch (e) { ''; }
-			fs.writeFile('logs/chaturbate-' + username + '-' + new Date.getTime() + '.log', buffer);
+			fs.writeFile('logs/chaturbate-' + username + '-' + new Date().getTime() + '.log', buffer, _ => _);
 		}
 		eventEmitter.emit('done', code);
 	})

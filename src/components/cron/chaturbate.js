@@ -48,10 +48,12 @@ module.exports = class ChaturbateCron {
 	 * @param {Video} video
 	 */
 	async queueTranscode(video) {
-		log.info('transcoding', video.title);
+		log.info('queueing transcode', video.title);
 		const inputFile = video.filepath;
 		const outputFile = `vids/${path.parse(video.filepath).base}`;
-		await this._links.Util.transcode(inputFile, outputFile);
+		const success = await this._links.Util.transcode(inputFile, outputFile);
+
+		if(!success) return;
 
 		await this._links.Videos.update({
 			source: 'chaturbate',
@@ -67,7 +69,8 @@ module.exports = class ChaturbateCron {
 
 		fs.unlink(inputFile, _ => _);
 
-		log.success('transcoded ', video.title);
+		log.success('transcoded', video.title);
+		// log.info(queueSize, 'videos left in the queue');
 	}
 
 	async evoke() {

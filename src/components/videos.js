@@ -7,8 +7,6 @@ const express = require('express');
 const fs = require('fs');
 const Video = require('./../lib/Video.js');
 
-// const progress = require('cli-progress');
-
 module.exports = class Videos {
 	getRouter() {
 		// this.restServer = restServer;
@@ -34,6 +32,16 @@ module.exports = class Videos {
 						return res.end();
 					}
 					const path = doc.filepath;
+					if(!fs.existsSync(path)) {
+						this._links.Videos.update({vid: req.params.vid}, doc => {
+							return {
+								...doc,
+								downloaded: false
+							}
+						})
+						res.statusCode = 204;
+						return res.end();
+					}
 					const stat = fs.statSync(path);
 					const fileSize = stat.size;
 					const range = req.headers.range;
@@ -282,7 +290,7 @@ module.exports = class Videos {
 				source: {$exists: true},
 				vid: {$exists: true},
 				downloaded: true,
-				source: 'chaturbate'
+				// source: 'chaturbate'
 			}).sort({addedTimestamp: -1}).limit(limit).exec((err, docs) => {
 
 				if(!err && docs) res(docs.map(doc => {

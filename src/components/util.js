@@ -28,6 +28,7 @@ const log = new Signale({
 module.exports = class Util {
 
 	transcodeQueue = Promise.resolve();
+	transcodeQueueSize = 0;
 
 	get errors() {
 		return {
@@ -196,15 +197,30 @@ module.exports = class Util {
 	}
 
 	transcode(inputFile, outputFile) {
+		this.transcodeQueueSize ++;
 		return this.transcodeQueue = this.transcodeQueue.then(async () => {
+			log.info('transcode starting')
 			const handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
 			const transcoder = spawn(handbrake, [
 				'-i', inputFile,
 				'-o', outputFile
 			], {
-				// stdio: 'inherit'
+				// stdio: 'inherit',
+				windowsHide: true
 			});
-			await new Promise(res => transcoder.once('exit', res));
+			let buffer = "";
+			transcoder.stdout.on('data', data => buffer += data);
+			transcoder.stderr.on('data', data => buffer += data);
+			const exitCode = await new Promise(res => transcoder.once('exit', res));
+			if(exitCode !== 0) {
+				try {
+					fs.mkdirSync(`./logs/`);
+				} catch (e) { ''; }
+				fs.writeFile('logs/transcode-Job-' + new Date().getTime() + '.log', buffer, _ => _);
+			}
+			this.transcodeQueueSize --;
+			// log.success('transcode finished', `(queue size: ${this.transcodeQueueSize})`)
+			return exitCode === 0;
 		});
 	}
 

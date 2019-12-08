@@ -9,3 +9,4 @@ store.json
 dist
 *.pyc
 temp
+logs

@@ -54,6 +54,10 @@ class PornhubCron {
 
 			await this._links.Videos.addVideo(video)
 		} catch(e) {
+			if(e instanceof this._links.Details.errors.E_VIDEO_NOT_FOUND) {
+				// TODO figure out why these fail. like, paid? private? deleted?
+				return;
+			}
 			log.error(e);
 		}
 	}

@@ -18,9 +18,13 @@ const config = {
 			routes: {
 				videos: 'Videos',
 				search: 'Search',
-				sources: 'Cron'
+				sources: 'Cron',
+				inspector: 'Inspector',
 			}
 		}
+	},
+	Inspector: {
+		Code: require('./src/components/inspector.js')
 	},
 	Videos: {
 		Code: require('./src/components/videos.js')

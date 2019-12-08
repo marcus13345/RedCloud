@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.0.287",
+  "version": "0.0.293",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "electron-titlebar-windows": "^3.0.0",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
+    "fast-safe-stringify": "^2.0.7",
     "forever": "^1.0.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "fs-extra": "^8.1.0",
