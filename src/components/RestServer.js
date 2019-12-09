@@ -3,13 +3,13 @@ const log = new (require('signale').Signale)({
 	scope: 'HTTP'
 });
 const fs = require('fs');
+const chalk = require('chalk');
 
 module.exports = class RestServer{
 	constructor() {
 	}
 
 	async start() {
-		log.info('Starting API on port ' + this._data.port);
 	}
 
 	async connected() {
@@ -35,6 +35,11 @@ module.exports = class RestServer{
 		}))
 
 
-		this.app.listen(this._data.port);
+		this.httpServer = this.app.listen(this._data.port);
+		log.success('Started API on port ' + chalk.bgGreen.black(` ${this._data.port} `));
+	}
+
+	async stop() {
+		await new Promise(res => this.httpServer.close(res));
 	}
 }

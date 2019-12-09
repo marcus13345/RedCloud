@@ -12,6 +12,14 @@ const { spawn } = require('child_process');
 module.exports = class ChaturbateCron {
 	online = false;
 
+	async stop() {
+		try {
+			this.currentRecorder.kill();
+		} catch (e) {
+			
+		}
+	}
+
 	async start() {
 		const username = this._data.data;
 		try {
@@ -93,6 +101,7 @@ module.exports = class ChaturbateCron {
 			const title = `${username} - ${addedTimestamp.toLocaleString()}`;
 			const filepath = `temp/chaturbate/${username}/${vid}.mp4`;
 			const recorder = chaturbate.record(username, filepath);
+			this.currentRecorder = recorder;
 
 			const video = new Video({
 				source: 'chaturbate',

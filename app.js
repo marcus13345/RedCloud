@@ -1,6 +1,10 @@
+const WHY = require('why-is-node-running')
 process.env.FORCE_COLOR = 1;
 const {Collexion} = require('collexion');
 const chalk = require('chalk');
+const log = new (require('signale').Signale)({
+	scope: '_APP'
+});
 try {
 	const __options = require('./options.json') || {};
 	global.__options = __options;
@@ -62,10 +66,20 @@ try {
 		config['Electron'] = undefined;
 	}
 
-	new Collexion(config)
+	const app = new Collexion(config)
 
 	process.on('SIGINT', _ => {
-		console.log('trying to shut down gracefully...');
+		log.info(chalk.bgYellow.black('trying to shut down gracefully...'));
+		for(const instanceName in app._instances) {
+			const instance = app._instances[instanceName];
+			try {
+				log.info('stopping', instanceName);
+				instance.stop();
+			} catch (e) {
+
+			}
+		}
+		// WHY();
 		process.exit(0)
 	})
 	process.on( 'exit', function() {

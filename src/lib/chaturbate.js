@@ -39,5 +39,9 @@ module.exports.record = function record(username, filepath) {
 		eventEmitter.emit('done', code);
 	})
 
+	eventEmitter.kill = function kill() {
+		proc.kill(0);
+	}
+
 	return eventEmitter;
 }

@@ -7,6 +7,10 @@ const Video = require('./../../lib/Video.js');
 class PornhubCron {
 	static cap = 10;
 
+	async stop() {
+		
+	}
+
 	async evoke() {
 		const username = this._data.data;
 		switch(this._data.type) {
