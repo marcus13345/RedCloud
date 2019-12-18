@@ -139,10 +139,12 @@ module.exports = class Util {
 				youtubedlProcess.stdout.on('data', data => {
 					// process.stdout.write(data);
 					bufferOut += (data.toString());
+					logStream.write(data)
 				})
 				youtubedlProcess.stderr.on('data', data => {
 					// process.stderr.write(data);
 					bufferErr += (data.toString());
+					logStream.write(data)
 				})
 				
 				this.events.on('kill', youtubedlProcess.kill);
