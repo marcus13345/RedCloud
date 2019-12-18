@@ -20,6 +20,12 @@ module.exports = class PornhubAdapter {
 		this.pauseSemaphore = createSemaphore();
 	}
 
+	getLibrary() {
+		return {
+			cron: this
+		}
+	}
+
 	getRouter() {
 		const router = express.Router();
 
@@ -72,7 +78,7 @@ module.exports = class PornhubAdapter {
 
 	addSource(obj) {
 		this.sources.insert(obj, async (err, doc) => {
-			await this.addCronTask(obj.source, obj.type, obj.data)
+			await this.createJob(obj.source, obj.type, obj.data)
 			log.success('added source', obj);
 		})
 	}
@@ -84,9 +90,18 @@ module.exports = class PornhubAdapter {
 	}
 
 	// todo lol
-	async addCronTask(source, type, data) {
-		this._data.cron.types[source]
-		this.cronTasks.push();
+	async createJob(source, type, data) {
+		const sourceType = source;
+		const cronClass = this._data.cron.types[sourceType];
+		const cronTask = await this._collexion.createInstance({
+			Code: cronClass,
+			Data: {
+				data: data,
+				type: type
+			}
+		});
+		this.cronTasks.push(cronTask);
+		return cronTask;
 	}
 
 	async connected () {
@@ -94,22 +109,12 @@ module.exports = class PornhubAdapter {
 
 		// load database and set it to maintain itself
 		await new Promise(res => this.sources.loadDatabase(res));
-		this.sources.persistence.setAutocompactionInterval(10000);
 
 		// contruct the list of cronTasks
 		await new Promise((res) => {
 			this.sources.find({}, async (err, sources) => {
 				for(const source of sources) {
-					const sourceType = source.source;
-					const cronClass = this._data.cron.types[sourceType];
-					const cronTask = await this._collexion.createInstance({
-						Code: cronClass,
-						Data: {
-							data: source.data,
-							type: source.type
-						}
-					});
-					this.cronTasks.push(cronTask);
+					await this.createJob(source.source, source.type, source.data)
 				}
 				res();
 			});
@@ -140,5 +145,13 @@ module.exports = class PornhubAdapter {
 		}
 		
 		setTimeout(this.cronLoop.bind(this), 0);
+	}
+
+	async stop() {
+		this.sources.persistence.compactDatafile()
+		await new Promise(res => this.sources.once('compaction.done', res));
+		for(const job of this.cronTasks) {
+			await job.stop();
+		}
 	}
 }

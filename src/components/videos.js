@@ -3,11 +3,10 @@ const {Signale} = require('signale');
 const log = new Signale({
 	scope: 'VIDS'
 });
+const chalk = require('chalk')
 const express = require('express');
 const fs = require('fs');
 const Video = require('./../lib/Video.js');
-
-// const progress = require('cli-progress');
 
 module.exports = class Videos {
 	getRouter() {
@@ -34,6 +33,16 @@ module.exports = class Videos {
 						return res.end();
 					}
 					const path = doc.filepath;
+					if(!fs.existsSync(path)) {
+						this._links.Videos.update({vid: req.params.vid}, doc => {
+							return {
+								...doc,
+								downloaded: false
+							}
+						})
+						res.statusCode = 204;
+						return res.end();
+					}
 					const stat = fs.statSync(path);
 					const fileSize = stat.size;
 					const range = req.headers.range;
@@ -94,7 +103,6 @@ module.exports = class Videos {
 				res();
 			});
 		});
-		this.database.persistence.setAutocompactionInterval(10000);
 		
 	}
 
@@ -125,7 +133,10 @@ module.exports = class Videos {
 
 		await this.database.persistence.compactDatafile();
 
-		log.success('migrated ' + videos.length + ' videos', search);
+		if(videos.length > 0)
+			log.success(chalk.blue('migrated ' + videos.length + ' videos'), search);
+		else
+			log.note('migrated ' + videos.length + ' videos', search);
 
 	}
 
@@ -282,7 +293,7 @@ module.exports = class Videos {
 				source: {$exists: true},
 				vid: {$exists: true},
 				downloaded: true,
-				source: 'chaturbate'
+				// source: 'chaturbate'
 			}).sort({addedTimestamp: -1}).limit(limit).exec((err, docs) => {
 
 				if(!err && docs) res(docs.map(doc => {
@@ -366,6 +377,11 @@ module.exports = class Videos {
 			}
 		}
 
+	}
+
+	async stop() {
+		this.database.persistence.compactDatafile()
+		await new Promise(res => this.database.once('compaction.done', res));
 	}
 	// } catch(e) {
 	// 	// log.error(e);

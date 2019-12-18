@@ -12,6 +12,14 @@ const { spawn } = require('child_process');
 module.exports = class ChaturbateCron {
 	online = false;
 
+	async stop() {
+		try {
+			this.currentRecorder.kill();
+		} catch (e) {
+			
+		}
+	}
+
 	async start() {
 		const username = this._data.data;
 		try {
@@ -48,10 +56,12 @@ module.exports = class ChaturbateCron {
 	 * @param {Video} video
 	 */
 	async queueTranscode(video) {
-		log.info('transcoding', video.title);
+		log.info('queueing transcode', video.title);
 		const inputFile = video.filepath;
 		const outputFile = `vids/${path.parse(video.filepath).base}`;
-		await this._links.Util.transcode(inputFile, outputFile);
+		const success = await this._links.Util.transcode(inputFile, outputFile);
+
+		if(!success) return;
 
 		await this._links.Videos.update({
 			source: 'chaturbate',
@@ -67,7 +77,8 @@ module.exports = class ChaturbateCron {
 
 		fs.unlink(inputFile, _ => _);
 
-		log.success('transcoded ', video.title);
+		log.success('transcoded', video.title);
+		// log.info(queueSize, 'videos left in the queue');
 	}
 
 	async evoke() {
@@ -90,6 +101,7 @@ module.exports = class ChaturbateCron {
 			const title = `${username} - ${addedTimestamp.toLocaleString()}`;
 			const filepath = `temp/chaturbate/${username}/${vid}.mp4`;
 			const recorder = chaturbate.record(username, filepath);
+			this.currentRecorder = recorder;
 
 			const video = new Video({
 				source: 'chaturbate',

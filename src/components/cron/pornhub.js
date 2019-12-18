@@ -7,6 +7,10 @@ const Video = require('./../../lib/Video.js');
 class PornhubCron {
 	static cap = 10;
 
+	async stop() {
+		
+	}
+
 	async evoke() {
 		const username = this._data.data;
 		switch(this._data.type) {
@@ -54,6 +58,10 @@ class PornhubCron {
 
 			await this._links.Videos.addVideo(video)
 		} catch(e) {
+			if(e instanceof this._links.Details.errors.E_VIDEO_NOT_FOUND) {
+				// TODO figure out why these fail. like, paid? private? deleted?
+				return;
+			}
 			log.error(e);
 		}
 	}

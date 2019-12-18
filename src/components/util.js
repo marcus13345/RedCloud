@@ -9,6 +9,7 @@ const windowOptions = {
 	// headless: false,
 	// devtools: true
 };
+const { EventEmitter } = require('events');
 const E_YOUTUBE_DL_UNEXPECTED_TERMINATION = createErrorClass('E_YOUTUBE_DL_UNEXPECTED_TERMINATION');
 const E_VIDEO_PAID_PRIVATE_OR_DELETED = createErrorClass('E_VIDEO_PAID_PRIVATE_OR_DELETED');
 const E_UNEXPECTED_HTTP_403 = createErrorClass('E_UNEXPECTED_HTTP_403');
@@ -28,6 +29,8 @@ const log = new Signale({
 module.exports = class Util {
 
 	transcodeQueue = Promise.resolve();
+	transcodeQueueSize = 0;
+	events = new EventEmitter();
 
 	get errors() {
 		return {
@@ -36,6 +39,10 @@ module.exports = class Util {
 			E_UNEXPECTED_HTTP_403,
 			E_INVALID_VIDEO_ID
 		}
+	}
+
+	async stop() {
+		this.events.emit('kill');
 	}
 
 	start() {
@@ -135,7 +142,11 @@ module.exports = class Util {
 					// process.stderr.write(data);
 					bufferErr += (data.toString());
 				})
+				
+				this.events.on('kill', youtubedlProcess.kill);
 				youtubedlProcess.on('exit', (code, signal) => {
+					this.events.off('kill', youtubedlProcess.kill);
+
 					if(code != 0) {
 						if(bufferErr.indexOf('Unable to download webpage: HTTP Error 404: Not Found') > -1) {
 							//THIS MEANS THE video is probably paid, private, or deleted.
@@ -196,15 +207,35 @@ module.exports = class Util {
 	}
 
 	transcode(inputFile, outputFile) {
+		this.transcodeQueueSize ++;
 		return this.transcodeQueue = this.transcodeQueue.then(async () => {
+			log.info('transcode starting')
 			const handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
 			const transcoder = spawn(handbrake, [
 				'-i', inputFile,
 				'-o', outputFile
 			], {
-				// stdio: 'inherit'
+				// stdio: 'inherit',
+				windowsHide: true
 			});
-			await new Promise(res => transcoder.once('exit', res));
+			let buffer = "";
+			transcoder.stdout.on('data', data => buffer += data);
+			transcoder.stderr.on('data', data => buffer += data);
+
+			// for abrupt stops
+			this.events.on('kill', transcoder.kill);
+			const exitCode = await new Promise(res => transcoder.once('exit', res));
+			this.events.off('kill', transcoder.kill);
+
+			if(exitCode !== 0) {
+				try {
+					fs.mkdirSync(`./logs/`);
+				} catch (e) { ''; }
+				fs.writeFile('logs/transcode-Job-' + new Date().getTime() + '.log', buffer, _ => _);
+			}
+			this.transcodeQueueSize --;
+			// log.success('transcode finished', `(queue size: ${this.transcodeQueueSize})`)
+			return exitCode === 0;
 		});
 	}
 

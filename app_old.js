@@ -126,6 +126,5 @@ async function addVideo(vid) {
 	}
 
 })().catch((e) => {
-	console.log()
 	log.error(e);
 })

@@ -3,6 +3,7 @@ const log = new (require('signale').Signale)({
 	scope: 'HTTP'
 });
 const fs = require('fs');
+const chalk = require('chalk');
 
 module.exports = class RestServer{
 	constructor() {
@@ -14,16 +15,13 @@ module.exports = class RestServer{
 	async connected() {
 		this.app = express();
 
-		// this.app.use((req, res, next) => {
-		// 	res.setHeader('Content-Security-Policy', "script-src 'self' http://localhost:52310")
-		// })
-
 		for(const route in this._data.routes) {
 			const link = this._data.routes[route];
 			const routePath = `/api/${route}`;
 
 			if (!('getRouter' in this._links[link])) {
 				log.warn('getRouter not defined for route ' + route);
+				continue;
 			}
 
 			const router = this._links[link].getRouter();
@@ -37,6 +35,11 @@ module.exports = class RestServer{
 		}))
 
 
-		this.app.listen(52310);
+		this.httpServer = this.app.listen(this._data.port);
+		log.success('Started API on port ' + chalk.bgGreen.black(` ${this._data.port} `));
+	}
+
+	async stop() {
+		await new Promise(res => this.httpServer.close(res));
 	}
 }

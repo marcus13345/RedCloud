@@ -1,41 +1,66 @@
-const CopyPlugin = require('copy-webpack-plugin');
-const LiveReloadPlugin = require('webpack-livereload-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const webpack = require('webpack');
 const chokidar = require('chokidar');
-const livereload = require('livereload').createServer();
 const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
 let queue = Promise.resolve();
+const once = process.argv.indexOf('--once') !== -1;
+const REGISTER_LISTENER = once ? 'once' : 'on';
+const glob = require('glob');
 
-chokidar.watch('./www/*.js', {
-	persistent: true
-}).on('all', (evt, filepath) => {
-	if(evt === 'add') {
-		queueCompile(filepath);
-		console.log(`${evt}: ${filepath}`);
-	}
-});
-chokidar.watch('./static/**/*.*', {
-	persistent: true
-}).on('all', (evt, filepath) => {
-	console.log(`${evt}: ${filepath}`);
-	copy(filepath)
-});
+console.log('once', once)
+if(once) {
 
-livereload.watch(__dirname + "/dist");
+	glob('./www/*.js', (err, files) => {
+		for(const filepath of files) {
+			queueCompile(filepath);
+		}
+	});
+	
+	glob('./static/**/*.*', (evt, files) => {
+		for(const filepath of files) {
+			copy(filepath)
+		}
+	});
+} else {
+	
+	require('livereload')
+		.createServer()
+		.watch(__dirname + "/dist");
+
+	chokidar.watch('./www/*.js', {
+		persistent: true
+	}).on('all', (evt, filepath) => {
+		if(evt === 'add') {
+			console.log(`${evt}: ${filepath}`);
+			queueCompile(filepath);
+		}
+	});
+
+	chokidar.watch('./static/**/*.*', {
+		persistent: true
+	}).on('all', (evt, filepath) => {
+		// console.log(`${evt}: ${filepath}`);
+		copy(filepath)
+	});
+}
+
+
+// livereload
 
 async function copy(filepath) {
 	const newpath = path.join('./dist', path.relative('./static', filepath));
 	fse.ensureDirSync(path.parse(newpath).dir);
-	console.log(filepath, '=>', newpath)
+	console.log('copy', filepath.padEnd(30), '=>', newpath)
 	fs.copyFile(filepath, newpath, _ => _);
 }
 
 async function queueCompile(filepath) {
 	// await queue;
 	queue = queue.then(async function() {
+		console.log('-'.repeat(80));
+		console.log(filepath);
 		console.time('webpack')
 		await compile(filepath);
 		console.timeEnd('webpack')
@@ -52,7 +77,7 @@ function compile(filepath) {
 				[name]: `./${filepath}`
 			},
 			performance: { hints: false },
-			watch: true,
+			watch: !once,
 			output: {
 				filename: '[name].bundle.js', 
 			},

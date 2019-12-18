@@ -8,15 +8,18 @@ import $ from 'jquery'
 import pkg from './../package.json';
 
 window.ajax = function ajax(url) {
-	if(typeof url === 'string')
-		return $.ajax('http://localhost:52310/api' + url)
+	if(typeof url === 'string') {
+		const fullUrl = redcloud.store.get('settings.apiBasePath') + url;
+		return $.ajax(fullUrl);
+	}
 	else {
 		const options = {...url};
 		options.url = undefined;
 		url = url.url;
+		const fullUrl = redcloud.store.get('settings.apiBasePath') + url;
 		return $.ajax({
 			...options,
-			url: 'http://localhost:52310/api' + url
+			url: fullUrl
 		});
 	}
 }
@@ -28,23 +31,30 @@ $(document).ready(() => {
 			// console.log($(e.target).attr('id'));
 			loadPage($(e.target).attr('id'));
 		});
-		pages[0].click();
 		
 		ajax('/version').done((version) => {
 			console.log(`client: ${pkg.name}@${pkg.version}`);
 			console.log(`server: ${pkg.name}@${version}`);
 			// if(version !== pkg.version)console.log('version mismatch, please wait for a reload!');
 		})
-	}, 0)
+	}, 0);
+
+	loadPage(redcloud.store.get('navigation.currentPage'))
 })
 
 function loadPage(page) {
 	// console.log($('#viewport'))
+	const pages = $('#navigation').find('vaadin-tab');
+	const pageNames = pages.toArray().map(v => $(v).attr('id'));
 	document.title = page;
 	setTimeout(_ => {
 		$('#viewport').load(page + '.html');
-	}, 0)
+	}, 0);
+	redcloud.store.set('navigation.currentPage', page)
 	document.dispatchEvent(new CustomEvent('pageLoad', {}));
+	const pageIndex = pageNames.indexOf(page);
+	if($('#navigation')[0].selected != pageIndex)
+		$('#navigation')[0].selected = pageIndex;
 }
 
 
