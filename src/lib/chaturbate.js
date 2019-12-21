@@ -6,7 +6,7 @@ const log = new (require('signale').Signale)({
 });
 let streamlink = path.resolve(__dirname, './../../tools/streamlink/Streamlink_Portable/Streamlink.exe');
 if(process.platform === 'darwin') {
-	streamlink = path.resolve(__dirname, './../../tools/macos/streamlink/streamlink');
+	streamlink = path.resolve(__dirname, './../../tools/macos/streamlink/streamlink/Streamlink.py');
 }
 const { EventEmitter } = require('events');
 const logFile = require('./../lib/LogFile');
