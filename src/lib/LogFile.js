@@ -7,7 +7,7 @@ module.exports.createStream = function createStream(scope, name) {
 	const filename = name ? `${name}-${timestamp}.log`
 											  : `${timestamp}.log`;
 	const filepath = path.resolve('logs', scope, filename);
-	console.log(filepath);
+	// console.log(filepath);
 	fse.ensureFileSync(filepath);
 	return fs.createWriteStream(filepath);
 }
