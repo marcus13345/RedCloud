@@ -5,7 +5,7 @@ const pornhub = require('./../../lib/pornhub.js');
 const Video = require('./../../lib/Video.js');
 
 class PornhubCron {
-	static cap = 10;
+	static cap = 3;
 
 	async stop() {
 		

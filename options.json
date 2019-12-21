@@ -4,5 +4,8 @@
 	},
 	"app": {
 		"id": "development"
+	},
+	"content": {
+		"censor": true
 	}
 }

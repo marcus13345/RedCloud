@@ -9,5 +9,10 @@ store.json
 dist
 *.pyc
 temp
+
+# fix this, brother.
+nul
 logs
 options.json
+
+*.log
