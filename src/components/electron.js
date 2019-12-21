@@ -18,7 +18,6 @@ class Electron {
 
 		await (async () => {
 			const iconPath = path.resolve(__dirname, '../../static', 'tray.png');
-			log.debug(iconPath);
 
 			if(typeof require('electron') === 'string') {
 				this.electronProcess = spawn(require('electron'), [__filename]);

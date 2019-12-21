@@ -16,7 +16,7 @@
 			"output": false
 		},
 		"streamlink": {
-			"output" : true
+			"output" : false
 		}
 	}
 }

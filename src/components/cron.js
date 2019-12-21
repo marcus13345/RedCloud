@@ -141,7 +141,7 @@ module.exports = class PornhubAdapter {
 			await task.evoke();
 
 			// give it a sec to cool down
-			await new Promise(res => setTimeout(res, 1000));
+			await new Promise(res => setTimeout(res, 10000));
 		}
 		
 		setTimeout(this.cronLoop.bind(this), 0);
