@@ -54,14 +54,15 @@ module.exports = class Util {
 	async printVideo(vid) {
 		try {
 			let details = await this.Details.videoDetails(vid);
-			// console.log(details.title)
 		} catch(e) {
 			if(e instanceof E_VIDEO_NOT_FOUND) return;
-			console.error(e);
+			log.error(e);
 		}
 	}
 
 	async downloadVideo(vid) {
+		log.debug('does this ever get called?');
+
 		// TODO split the filepath creation into its own method to allocate a filepath.
 		// TODO then have download video be its own thing.
 		return this._queue.then(async () => {
@@ -72,19 +73,12 @@ module.exports = class Util {
 				fs.mkdirSync(`./${savePath}/!VR!`);
 			} catch (e) { ''; }
 
-			
-
-			
 			let filepath = await new Promise(async (res, rej) => {
 
 				let details;
-				// log.info(vid)
 				try {
 					details = await this._links.Details.videoDetails(vid);
-					// log.info(details.title)
-					// this.printVideo(vid)
 				} catch (e) {
-					// log.error(e)
 					// TODO maybe do something about not being able to get the video, idk
 					if(e instanceof this._links.Details.errors.E_VIDEO_NOT_FOUND) rej(new E_INVALID_VIDEO_ID())
 					else rej (e)
