@@ -1,2 +1,0 @@
-Streamlink will attempt to load standalone plugins from this directory.
-If a plugin is added with the same name as a built-in plugin then the added plugin will take precedence. This is useful if you want to upgrade plugins independently of the Streamlink version.

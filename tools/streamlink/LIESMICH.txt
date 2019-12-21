@@ -1,0 +1,24 @@
+ 
+ Tutorial Video: https://www.youtube.com/watch?v=5EL7vlkCFQI
+
+ Hilfe zur Software: http://xstreamloader.techweb.at/faq.html
+
+ ---
+ 
+ Installation:
+ --------------- 
+
+ 1. Öffne den Tab 'Einstellungen' in der GUI
+ 2. Trage den Pfad für die benötigten Programme ein
+
+ Die Datei 'Streamlink.exe' befindet sich im Ordner /Streamlink_Portable
+ Die Datei 'rtmpdump.exe' befindet sich im Ordner /Streamlink_Portable/Streamlink/Dependencies/rtmpdump
+
+ ---
+ 
+ Bei Fragen, Anregungen, oder Problemen besuche Google Groups - https://groups.google.com/d/forum/x-streamloader
+
+ oder sende eine Email an xstreamloader@gmail.com
+
+
+ Viel Spass mit der GUI :)
