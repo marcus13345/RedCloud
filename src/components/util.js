@@ -232,13 +232,13 @@ module.exports = class Util {
 			let buffer = "";
 			transcoder.stdout.on('data', function (data) {
 				buffer += data
-				if (__options.tools.handbreak.output) {
+				if (__options.tools.handbrake.output) {
 					process.stdout.write(data)
 				}
 			});
 			transcoder.stderr.on('data', function (data) {
 				buffer += data
-				if (__options.tools.handbreak.output) {
+				if (__options.tools.handbrake.output) {
 					process.stdout.write(data)
 				}
 			});
