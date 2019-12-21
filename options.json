@@ -10,11 +10,13 @@
 	},
 	"tools": {
 		"handbrake":{
-			"output" : true
+			"output" : false
 		},
 		"axel": {
 			"output": false
+		},
+		"streamlink": {
+			"output" : true
 		}
 	}
-	
 }
