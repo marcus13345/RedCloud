@@ -14,7 +14,9 @@
 		},
 		"axel": {
 			"output": false
+		},
+		"streamlink": {
+			"output" : true
 		}
 	}
-	
 }
