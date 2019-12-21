@@ -4,12 +4,16 @@ const fs = require('fs');
 const log = new (require('signale').Signale)({
 	scope: 'CHBT'
 });
-const streamlink = path.resolve(__dirname, './../../tools/streamlink/Streamlink_Portable/Streamlink.exe');
+let streamlink = path.resolve(__dirname, './../../tools/streamlink/Streamlink_Portable/Streamlink.exe');
+if(process.platform === 'darwin') {
+	streamlink = path.resolve(__dirname, './../../tools/macos/streamlink/streamlink');
+}
 const { EventEmitter } = require('events');
 const logFile = require('./../lib/LogFile');
 const __options = require('../../options.json');
 
 module.exports.online = function online(username) {
+	log.debug('calling chaturbate API')
 	return new Promise(async (res) => {
 		const proc = spawn(streamlink, [`https://chaturbate.com/${username}`]);
 		proc.on('exit', code => {
@@ -21,6 +25,7 @@ module.exports.online = function online(username) {
 module.exports.record = function record(username, filepath) {
 	const eventEmitter = new EventEmitter();
 
+	log.debug('calling chaturbate API from record!')
 	const proc = spawn(streamlink, [
 		`https://chaturbate.com/${username}`,
 		'-o', filepath,

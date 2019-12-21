@@ -84,6 +84,7 @@ module.exports = class ChaturbateCron {
 	async evoke() {
 
 		const online = await chaturbate.online(this._data.data);
+		log.debug('online', online)
 
 		if(online && !this.online) {
 			this.startRecording();
