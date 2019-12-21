@@ -11,9 +11,9 @@
 	"tools": {
 		"handbrake":{
 			"output" : true
-    },
+		},
 		"axel": {
-			"output": true
+			"output": false
 		}
 	}
 	

@@ -5,7 +5,7 @@ const cred = require('./../cred.js');
 const fs = require('fs');
 const savePath = 'vids';
 const createErrorClass = require('./../customError.js')
-const __options = require('../../options.json')
+const __options = require('../../options.json');
 const windowOptions = {
 	// headless: false,
 	// devtools: true
@@ -20,7 +20,6 @@ const log = new Signale({
 	scope: 'UTIL'
 });
 const logFile = require('./../lib/LogFile.js');
-const __options = require('./../../options.json');
 
 // module.exports = {
 // 	printVideo,
