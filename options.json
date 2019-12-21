@@ -6,6 +6,12 @@
 		"id": "development"
 	},
 	"content": {
-		"censor": true
+		"censor": false
+	},
+	"tools": {
+		"handbreak":{
+			"output" : true
+		}
 	}
+	
 }

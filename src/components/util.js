@@ -5,6 +5,7 @@ const cred = require('./../cred.js');
 const fs = require('fs');
 const savePath = 'vids';
 const createErrorClass = require('./../customError.js')
+const __options = require('../../options.json')
 const windowOptions = {
 	// headless: false,
 	// devtools: true
@@ -226,8 +227,18 @@ module.exports = class Util {
 				windowsHide: true
 			});
 			let buffer = "";
-			transcoder.stdout.on('data', data => buffer += data);
-			transcoder.stderr.on('data', data => buffer += data);
+			transcoder.stdout.on('data', function (data) {
+				buffer += data
+				if (__options.tools.handbreak.output) {
+					process.stdout.write(data)
+				}
+			});
+			transcoder.stderr.on('data', function (data) {
+				buffer += data
+				if (__options.tools.handbreak.output) {
+					process.stdout.write(data)
+				}
+			});
 
 			// for abrupt stops
 			this.events.on('kill', transcoder.kill);
