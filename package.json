@@ -16,7 +16,7 @@
     "start": "(clear || cls || return 0) && node webpack.js --once && npm run production",
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node ./src/components/electron.js",
-    "production": "(npm run forever-stop >nul 2>&1 || true) && node app.js",
+    "production": "(npm run forever-stop >nul 2>&1 || return 0) && node app.js",
     "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb"
   },
   "author": "",
