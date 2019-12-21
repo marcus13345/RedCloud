@@ -19,7 +19,8 @@ const {Signale} = require('signale');
 const log = new Signale({
 	scope: 'UTIL'
 });
-const logFile = require('./../lib/LogFile.js')
+const logFile = require('./../lib/LogFile.js');
+const __options = require('./../../options.json');
 
 // module.exports = {
 // 	printVideo,
@@ -139,19 +140,22 @@ module.exports = class Util {
 				const logStream = logFile.createStream('youtube-dl');
 				youtubedlProcess.stdout.on('data', data => {
 					// process.stdout.write(data);
+					if(__options.tools.axel.output) process.stdout.write(data);
 					bufferOut += (data.toString());
 					logStream.write(data)
 				})
 				youtubedlProcess.stderr.on('data', data => {
 					// process.stderr.write(data);
+					if(__options.tools.axel.output) process.stdout.write(data);
 					bufferErr += (data.toString());
-					logStream.write(data)
+					logStream.write(data);
 				})
 				
 				this.events.on('kill', youtubedlProcess.kill);
 				
-				youtubedlProcess.stdout.pipe(logStream);
-				youtubedlProcess.stderr.pipe(logStream);
+				// youtubedlProcess.stdout.pipe(logStream);
+				// youtubedlProcess.stderr.pipe(logStream);
+
 				youtubedlProcess.on('exit', (code, signal) => {
 					this.events.off('kill', youtubedlProcess.kill);
 

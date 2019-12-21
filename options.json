@@ -9,8 +9,11 @@
 		"censor": false
 	},
 	"tools": {
-		"handbreak":{
+		"handbrake":{
 			"output" : true
+    }
+		"axel": {
+			"output": true
 		}
 	}
 	
