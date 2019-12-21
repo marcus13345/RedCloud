@@ -18,7 +18,7 @@ if (window && window.process && window.process.type) {
 		store: new Store({
 			defaults: {
 				settings: {
-					apiBasePath: 'http://localhost:52310/api'
+					apiBasePath: 'http://localhost:3333/api'
 				},
 				navigation: {
 					currentPage: 'library'
