@@ -13,7 +13,6 @@ const logFile = require('./../lib/LogFile');
 const __options = require('../../options.json');
 
 module.exports.online = function online(username) {
-	log.debug('calling chaturbate API')
 	return new Promise(async (res) => {
 		const proc = spawn(streamlink, [`https://chaturbate.com/${username}`]);
 
@@ -36,7 +35,6 @@ module.exports.online = function online(username) {
 module.exports.record = function record(username, filepath) {
 	const eventEmitter = new EventEmitter();
 
-	log.debug('calling chaturbate API from record!')
 	const proc = spawn(streamlink, [
 		`https://chaturbate.com/${username}`,
 		'-o', filepath,
