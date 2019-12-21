@@ -6,11 +6,15 @@
 		"id": "development"
 	},
 	"content": {
-		"censor": true
+		"censor": false
 	},
 	"tools": {
+		"handbrake":{
+			"output" : true
+		},
 		"axel": {
-			"output": true
+			"output": false
 		}
 	}
+	
 }
