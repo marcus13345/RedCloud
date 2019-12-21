@@ -6,6 +6,7 @@ const log = new (require('signale').Signale)({
 });
 const streamlink = path.resolve(__dirname, './../../tools/chaturbate/Streamlink_Portable/Streamlink.exe');
 const { EventEmitter } = require('events');
+const logFile = require('./../lib/LogFile');
 
 module.exports.online = function online(username) {
 	return new Promise(async (res) => {
@@ -30,12 +31,9 @@ module.exports.record = function record(username, filepath) {
 	proc.stderr.on('data', data => {buffer += data});
 	
 	proc.on('exit', code => {
-		if(code !== 0) {
-			try {
-				fs.mkdirSync(`./logs/`);
-			} catch (e) { ''; }
-			fs.writeFile('logs/chaturbate-' + username + '-' + new Date().getTime() + '.log', buffer, _ => _);
-		}
+
+		const logStream = logFile.createStream(`chaturbate/record/${username}/`);
+		logStream.write(buffer);
 		eventEmitter.emit('done', code);
 	})
 

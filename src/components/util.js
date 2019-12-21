@@ -248,13 +248,10 @@ module.exports = class Util {
 			const exitCode = await new Promise(res => transcoder.once('exit', res));
 			this.events.off('kill', transcoder.kill);
 
-			if(exitCode !== 0) {
-				try {
-					fs.mkdirSync(`./logs/`);
-				} catch (e) { ''; }
-				fs.writeFile('logs/transcode-Job-' + new Date().getTime() + '.log', buffer, _ => _);
-			}
 			this.transcodeQueueSize --;
+
+			const logStream = logFile.createStream('chaturbate/transcode', inputFile);
+			logStream.write(buffer);
 			// log.success('transcode finished', `(queue size: ${this.transcodeQueueSize})`)
 			return exitCode === 0;
 		});
