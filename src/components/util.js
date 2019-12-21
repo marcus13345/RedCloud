@@ -221,7 +221,10 @@ module.exports = class Util {
 		this.transcodeQueueSize ++;
 		return this.transcodeQueue = this.transcodeQueue.then(async () => {
 			log.info('transcode starting')
-			const handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
+			let handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
+			if(process.platform === 'darwin') {
+				handbrake = path.resolve(__dirname, './../../tools/macos/HandBrakeCLI');
+			}
 			const transcoder = spawn(handbrake, [
 				'-i', inputFile,
 				'-o', outputFile

@@ -16,6 +16,17 @@ module.exports.online = function online(username) {
 	log.debug('calling chaturbate API')
 	return new Promise(async (res) => {
 		const proc = spawn(streamlink, [`https://chaturbate.com/${username}`]);
+
+		proc.stdout.on('data', data => {
+			// buffer += data;
+			if(__options.tools.streamlink.output) process.stdout.write(data);
+		})
+
+		proc.stderr.on('data', data => {
+			// buffer += data;
+			if (__options.tools.streamlink.output) process.stdout.write(data);
+		})
+		
 		proc.on('exit', code => {
 			return res(code === 0)
 		});
