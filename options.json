@@ -7,5 +7,10 @@
 	},
 	"content": {
 		"censor": true
+	},
+	"tools": {
+		"axel": {
+			"output": true
+		}
 	}
 }
