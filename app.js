@@ -1,4 +1,3 @@
-const WHY = require('why-is-node-running')
 process.env.FORCE_COLOR = 1;
 const {Collexion} = require('collexion');
 const chalk = require('chalk');
@@ -9,14 +8,22 @@ try {
 	const __options = require('./options.json') || {};
 	global.__options = __options;
 
-	console.log('     ');
-	console.log(chalk.red(' ____________________ '));
-	console.log(chalk.red('/                    \\ '));
-	console.log(chalk.red('|') + '      Red' + chalk.red('Cloud') + '      ' + chalk.red('|'));
-	console.log(chalk.red('|') + '    ' + require('./package.json').version.padStart(10, ' ') + '      ' + chalk.red('|') + ' ');
-	console.log(chalk.red('\\____________________/'));
-	console.log('     ');
-	console.log('     ');
+	let lines = [
+		'',
+		chalk.red(' ____________________ '),
+		chalk.red('/                    \\ '),
+		chalk.red('|') + '      \033[3mRed' + chalk.red('Cloud') + '\033[0m      ' + chalk.red('|'),
+		chalk.red('|') + '    ' + chalk.grey(require('./package.json').version.padStart(10, ' ')) + '      ' + chalk.red('|') + ' ',
+		chalk.red('\\____________________/'),
+		'',
+		'',
+	]
+
+	const spacer = ' '.repeat((process.stdout.getWindowSize()[0] - lines[1].length) / 2 - 1);
+
+	for(const line of lines) {
+		console.log(spacer, line);
+	}
 
 	const config = {
 		Server: {
@@ -51,8 +58,8 @@ try {
 			Data: {
 				cron: {
 					types: {
-						pornhub: require('./src/components/cron/pornhub.js'),
-						chaturbate: require('./src/components/cron/chaturbate.js'),
+						// pornhub: require('./src/components/cron/pornhub.js'),
+						// chaturbate: require('./src/components/cron/chaturbate.js'),
 					}
 				}
 			}
@@ -68,20 +75,6 @@ try {
 
 	const app = new Collexion(config)
 
-	process.on('SIGINT', _ => {
-		log.info(chalk.bgYellow.black('trying to shut down gracefully...'));
-		for(const instanceName in app._instances) {
-			const instance = app._instances[instanceName];
-			try {
-				log.info('stopping', instanceName);
-				instance.stop();
-			} catch (e) {
-
-			}
-		}
-		// WHY();
-		process.exit(0)
-	})
 	process.on( 'exit', function() {
 		// sometimes you just gotta hard hard
 		process.kill( process.pid, 'SIGTERM' );

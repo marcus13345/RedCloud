@@ -33,15 +33,15 @@ module.exports = class Eval {
 
 	async start() {}
 
-	async connected() {
-		for(const linkName in this._links) {
-			const link = this._links[linkName];
-			if('getLibrary' in link) {
-				this.library = {
-					...this.library,
-					...link.getLibrary()
-				}
-			}
-		}
-	}
+	// async connected() {
+	// 	for(const linkName in this._links) {
+	// 		const link = this._links[linkName];
+	// 		if('getLibrary' in link) {
+	// 			this.library = {
+	// 				...this.library,
+	// 				...link.getLibrary()
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

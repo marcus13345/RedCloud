@@ -9,7 +9,7 @@ const log = new Signale({
 	scope: 'CRON'
 });
 
-module.exports = class PornhubAdapter {
+module.exports = class Cron {
 
 	cronTasks = [];
 
@@ -90,8 +90,14 @@ module.exports = class PornhubAdapter {
 	}
 
 	// todo lol
+	// WHY LOL????? NO SERIOUSLY. WHY LOL.
+	// FUCKING CHRIST PAST ME, E X P L A I N Y O U R S E L F
 	async createJob(source, type, data) {
 		const sourceType = source;
+		if(!(sourceType in this._data.cron.types)) {
+			log.warn('unknown source', source);
+			return null
+		}
 		const cronClass = this._data.cron.types[sourceType];
 		const cronTask = await this._collexion.createInstance({
 			Code: cronClass,
@@ -108,17 +114,22 @@ module.exports = class PornhubAdapter {
 		log.info('Cron connected');
 
 		// load database and set it to maintain itself
+		// in what way is this setting the database to maintain itself?
 		await new Promise(res => this.sources.loadDatabase(res));
 
 		// contruct the list of cronTasks
-		await new Promise((res) => {
+		const sources = await new Promise((res) => {
 			this.sources.find({}, async (err, sources) => {
-				for(const source of sources) {
-					await this.createJob(source.source, source.type, source.data)
-				}
-				res();
+				log.debug(err, sources);
+				res(sources);
 			});
 		});
+
+		log.debug(sources);
+
+		for(const source of sources) {
+			await this.createJob(source.source, source.type, source.data)
+		}
 
 		// unpause it, if we dont specify to disable cron
 		if (process.argv.indexOf('--disable-cron') === -1)

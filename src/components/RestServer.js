@@ -34,7 +34,6 @@ module.exports = class RestServer{
 			"extensions": ["html"]
 		}))
 
-
 		this.httpServer = this.app.listen(this._data.port);
 		log.success('Started API on port ' + chalk.bgGreen.black(` ${this._data.port} `));
 	}
