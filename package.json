@@ -17,8 +17,8 @@
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node ./src/components/electron.js",
     "production": "(npm run forever-stop >nul 2>&1 || true) && node app.js",
-    "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb",
-    "build:streamlink": "(rm -r ./tools/macos/streamlink || true) && pyinstaller --distpath ./tools/macos $(which streamlink) && rm -r build"
+    "dashboard": "(npm run forever-stop >nul 2>&1 || true) && nodejs-dashboard -- node -r nodejs-dashboard app.js",
+    "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb"
   },
   "author": "",
   "license": "ISC",
@@ -53,6 +53,7 @@
     "minimist": "^1.2.0",
     "multi-progress": "^2.0.0",
     "nedb": "^1.8.0",
+    "nodejs-dashboard": "^0.5.1",
     "npm-watch": "^0.6.0",
     "pace": "0.0.4",
     "pm2": "^4.1.2",

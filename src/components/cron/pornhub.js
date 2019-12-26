@@ -23,9 +23,9 @@ class PornhubCron {
 					count = newVideos.length;
 					videos.push(...newVideos);
 				}
-				for(const vid of videos) {
-					await this.addVideo(vid);
-				}
+				// for(const vid of videos) {
+				// 	await this.addVideo(vid);
+				// }
 				break;
 			}
 			case 'uploads': {

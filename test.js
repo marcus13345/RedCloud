@@ -6,11 +6,11 @@
 	const semaphore2 = createSemaphore();
 
 	(async () => {
-		await new Promise(res => setTimeout(res, 1000));
+		await new Promise(res => setTimeout(res, 10000));
 		console.log('1', semaphore.resolved)
 		semaphore.resolve();
 		console.log('1', semaphore.resolved)
-		await new Promise(res => setTimeout(res, 1000));
+		await new Promise(res => setTimeout(res, 10000));
 		console.log('2', semaphore.resolved)
 		semaphore2.resolve();
 		console.log('2', semaphore.resolved)
@@ -21,3 +21,7 @@
 	await semaphore2;
 	console.log('asdf')
 })()
+
+process.on('SIGINT', _ => {
+	console.log('fucking shite ass hoe');
+})

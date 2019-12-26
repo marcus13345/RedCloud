@@ -19,7 +19,12 @@ try {
 		'',
 	]
 
-	const spacer = ' '.repeat((process.stdout.getWindowSize()[0] - lines[1].length) / 2 - 1);
+	let spacer = '';
+	try {
+		spacer = ' '.repeat((process.stdout.getWindowSize()[0] - lines[1].length) / 2 - 1);
+	} catch (e) {
+		spacer = '    ';
+	}
 
 	for(const line of lines) {
 		console.log(spacer, line);
@@ -32,7 +37,7 @@ try {
 				routes: {
 					videos: 'Videos',
 					search: 'Search',
-					sources: 'Cron',
+					// sources: 'Cron',
 					eval: 'Eval',
 				},
 				port: __options.api.port
@@ -75,10 +80,10 @@ try {
 
 	const app = new Collexion(config)
 
-	process.on( 'exit', function() {
-		// sometimes you just gotta hard hard
-		process.kill( process.pid, 'SIGTERM' );
-	});
+	// process.on( 'exit', function() {
+	// 	// sometimes you just gotta hard hard
+	// 	process.kill( process.pid, 'SIGTERM' );
+	// });
 } catch (e) {
 	console.log(e);
 }

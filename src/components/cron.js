@@ -54,11 +54,7 @@ module.exports = class Cron {
 			res.json({running: this.pauseSemaphore.resolved});
 		});
 
-		router.get('/pause', (req, res) => {
-			if(this.pauseSemaphore.resolved) {
-				this.pauseSemaphore = createSemaphore();
-			}
-		});
+		router.get('/pause', (req, res) => this.pauseSemaphore.bind(this));
 
 		router.get('/unpause', (req, res) => {
 			if(!this.pauseSemaphore.resolved) {
@@ -120,12 +116,9 @@ module.exports = class Cron {
 		// contruct the list of cronTasks
 		const sources = await new Promise((res) => {
 			this.sources.find({}, async (err, sources) => {
-				log.debug(err, sources);
 				res(sources);
 			});
 		});
-
-		log.debug(sources);
 
 		for(const source of sources) {
 			await this.createJob(source.source, source.type, source.data)
@@ -158,9 +151,16 @@ module.exports = class Cron {
 		setTimeout(this.cronLoop.bind(this), 0);
 	}
 
+	pause() {
+		if(this.pauseSemaphore.resolved) {
+			this.pauseSemaphore = createSemaphore();
+		}
+	}
+
 	async stop() {
 		this.sources.persistence.compactDatafile()
 		await new Promise(res => this.sources.once('compaction.done', res));
+		this.pause();
 		for(const job of this.cronTasks) {
 			await job.stop();
 		}
