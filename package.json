@@ -17,7 +17,8 @@
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node ./src/components/electron.js",
     "production": "(npm run forever-stop >nul 2>&1 || true) && node app.js",
-    "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb"
+    "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb",
+    "build:streamlink": "(rm -r ./tools/macos/streamlink || true) && pyinstaller --distpath ./tools/macos $(which streamlink) && rm -r build"
   },
   "author": "",
   "license": "ISC",
