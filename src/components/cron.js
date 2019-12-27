@@ -8,10 +8,14 @@ const createSemaphore = require('./../lib/semaphore.js')
 const log = new Signale({
 	scope: 'CRON'
 });
+const uuid = require('uuid').v4;
+// const EventEmitter = require('events')
 
 module.exports = class Cron {
 
-	cronTasks = [];
+	cronTasks = {};
+	generators = {};
+	// emitter = new EventEmitter();
 
 	constructor() {
 		this.sources = new nedb({
@@ -89,11 +93,16 @@ module.exports = class Cron {
 	// WHY LOL????? NO SERIOUSLY. WHY LOL.
 	// FUCKING CHRIST PAST ME, E X P L A I N Y O U R S E L F
 	async createJob(source, type, data) {
+		const id = uuid();
+		
+		// make sure we can handle the cron type
 		const sourceType = source;
 		if(!(sourceType in this._data.cron.types)) {
 			log.warn('unknown source', source);
 			return null
 		}
+
+		// obtain the cron job code, and create a collexion instance.
 		const cronClass = this._data.cron.types[sourceType];
 		const cronTask = await this._collexion.createInstance({
 			Code: cronClass,
@@ -102,8 +111,15 @@ module.exports = class Cron {
 				type: type
 			}
 		});
-		this.cronTasks.push(cronTask);
-		return cronTask;
+
+		// add the instance to our cron tasks for tracking.
+		this.cronTasks[id] = cronTask;
+
+		// get the generator, and track it as well
+		const generator = cronTask.evoke()
+		this.generators[id] = generator;
+
+		return id;
 	}
 
 	async connected () {
@@ -125,7 +141,7 @@ module.exports = class Cron {
 		}
 
 		// unpause it, if we dont specify to disable cron
-		if (process.argv.indexOf('--disable-cron') === -1)
+		if (!process.yargv['--disable-cron'])
 			this.pauseSemaphore.resolve();
 
 		// boot up the cron loop
@@ -134,35 +150,40 @@ module.exports = class Cron {
 	}
 
 	async cronLoop() {
-		for(const task of this.cronTasks) {
-			if(this.pauseSemaphore.resolved === false) {
-				log.info('cron has been paused');
-				await this.pauseSemaphore;
-				log.info('cron unpaused');
-			}
+		if(this.pauseSemaphore.resolved === false) {
+			log.info('cron has been paused');
+			// this.emitter.emit('paused');
+			await this.pauseSemaphore;
+			log.info('cron unpaused');
+		}
+		for(const id in this.generators) {
+			const generator = this.generators[id];
+			const taskInstance = this.cronTasks[id];
+
 
 			// tell the task it should run
-			await task.evoke();
+			await generator.next();
 
 			// give it a sec to cool down
-			await new Promise(res => setTimeout(res, 10000));
+			await new Promise(res => setTimeout(res, 1000));
 		}
-		
-		setTimeout(this.cronLoop.bind(this), 0);
+
+		setTimeout(this.cronLoop.bind(this), 1000);
 	}
 
 	pause() {
 		if(this.pauseSemaphore.resolved) {
 			this.pauseSemaphore = createSemaphore();
+		} else {
 		}
 	}
 
 	async stop() {
-		this.sources.persistence.compactDatafile()
-		await new Promise(res => this.sources.once('compaction.done', res));
 		this.pause();
 		for(const job of this.cronTasks) {
 			await job.stop();
 		}
+		this.sources.persistence.compactDatafile()
+		await new Promise(res => this.sources.once('compaction.done', res));
 	}
 }

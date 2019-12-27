@@ -37,6 +37,7 @@ module.exports = class Util {
 	transcodeQueueSize = 0;
 	events = new EventEmitter();
 	transcoding = true;
+	running = true;
 
 	get errors() {
 		return {
@@ -61,29 +62,33 @@ module.exports = class Util {
 	async printVideo(vid) {
 		try {
 			let details = await this.Details.videoDetails(vid);
-			log.debug(details.title);
 		} catch(e) {
 			if(e instanceof E_VIDEO_NOT_FOUND) return;
 			log.error(e);
 		}
 	}
 
-	shutdown() {
+	async shutdown() {
+		if(!this.running) return;
+		this.running = false;
+
+		process.stdout.write('\r');
 		log.info(chalk.bgYellow.black('trying to shut down gracefully. . .'));
 		for(const instanceName in this._collexion.instances) {
 			const instance = this._collexion.instances[instanceName];
 			try {
-				log.info('stopping', instanceName);
-				instance.stop();
+				// log.time(instanceName);
+				// log.info('stopping', instanceName);
+				await instance.stop();
+				// log.timeEnd(instanceName);
 			} catch (e) {
-				log.warn('no stop function in', instanceName);
+				// log.warn('no stop function in', instanceName);
 			}
 		}
 	}
 
 	async downloadVideo(vid) {
 		// this.printVideo(vid)
-		log.debug('does this ever get called?');
 
 		// TODO split the filepath creation into its own method to allocate a filepath.
 		// TODO then have download video be its own thing.
@@ -139,7 +144,7 @@ module.exports = class Util {
 					`https://www.pornhub.com/view_video.php?viewkey=${vid}`
 				];
 
-				log.info('downloading ' + details.title);
+				// log.info('downloading ' + details.title);
 				let youtubedlProcess = spawn(youtubedl, args, {
 					env: {
 						// ...process.env,
@@ -182,18 +187,11 @@ module.exports = class Util {
 							// only once, with video ID: ph5cfa586b2b5a3
 							// which at the time of documentation, is public, and free.
 							return rej(new E_UNEXPECTED_HTTP_403());
+						} else {
+							return rej(new E_YOUTUBE_DL_UNEXPECTED_TERMINATION())
 						}
-						// console.log()
-						// console.log()
-						// console.log('=========================')
-						// console.error(bufferOut);
-						// console.log('=========================')
-						// console.error(bufferErr);
-						// console.log('=========================')
-						return rej(new E_YOUTUBE_DL_UNEXPECTED_TERMINATION())
 					}
-
-					log.success('finished');
+					
 					res(filepath);
 				})
 
@@ -235,17 +233,17 @@ module.exports = class Util {
 	transcode(inputFile, outputFile) {
 		this.transcodeQueueSize ++;
 		if(!this.transcoding) {
-			log.warn('no transcode jobs being accepted!', this.transcodeQueueSize, 'jobs left');
-			return Promise.resolve(true);
+			// log.warn('no transcode jobs being accepted!', this.transcodeQueueSize, 'jobs left');
+			return Promise.resolve(false);
 		}
 		return this.transcodeQueue = this.transcodeQueue.then(() => {
 			return new Promise(async (res, rej) => {
-				log.info('transcode starting', inputFile);
 				if(!this.transcoding) {
 					this.transcodeQueueSize --;
-					log.warn('skipping job', this.transcodeQueueSize, 'jobs left');
+					// log.warn('skipping job', this.transcodeQueueSize, 'jobs left');
 					return res(false);
 				}
+				log.info('transcode starting', inputFile);
 
 				const transcoder = spawn(handbrake, [
 					'-i', inputFile,
@@ -271,17 +269,16 @@ module.exports = class Util {
 				// for abrupt stops
 				let killJob = () => {
 					this.transcodeQueueSize --;
-					log.debug('killing job', inputFile, this.transcodeQueueSize, 'jobs left');
 					transcoder.kill('SIGINT');
 					this.transcoding = false;
 					this.events.off('kill', killJob);
-					res();
+					res(false);
 				}
 				this.events.on('kill', killJob);
 				const exitCode = await new Promise(res => transcoder.once('exit', res));
 
 
-				const logStream = logFile.createStream('chaturbate/transcode', inputFile);
+				const logStream = logFile.createStream('transcode', inputFile);
 				logStream.write(buffer);
 				// log.success('transcode finished', `(queue size: ${this.transcodeQueueSize})`)
 

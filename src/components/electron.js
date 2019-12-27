@@ -15,9 +15,7 @@ const path = require('path');
 
 class Electron {
 	async start() {
-		log.debug('does this work?')
 		if(typeof require('electron') === 'string') {
-			log.debug('starting electron subprocess')
 			this.electronProcess = spawn(require('electron'), [__filename]);
 			// this.electronProcess.stdout.on("end", _ => {
 			// 	log.debug('electron window closed, shutting down');
@@ -26,9 +24,7 @@ class Electron {
 			this.electronProcess.stderr.on('data', _ => {
 				log.warn(_.toString().trim())
 			})
-			log.debug('started electron subprocess')
 			this.electronProcess.on('close', _ => {
-				log.debug('electron process exitted, shutting down');
 				// TODO SHUT DOWN GRACEFULLY
 				this._links.Util.shutdown();
 			});

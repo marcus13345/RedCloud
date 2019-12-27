@@ -5,27 +5,32 @@ const pornhub = require('./../../lib/pornhub.js');
 const Video = require('./../../lib/Video.js');
 
 class PornhubCron {
-	static cap = 3;
+	static cap = 2;
 
 	async stop() {
 		
 	}
 
-	async evoke() {
+	async * evoke() {
 		const username = this._data.data;
 		switch(this._data.type) {
 			case 'history':
+			case 'views':
 			case 'user': {
-				let count = -1;
-				let videos = [];
-				for(let page = 1; count !== 0 && page < PornhubCron.cap; page ++) {
-					let newVideos = await pornhub.getRecentlyViewed(username, {page});
-					count = newVideos.length;
-					videos.push(...newVideos);
+				while(true) {
+					let count = -1;
+					let videos = [];
+					for(let page = 1; count !== 0 && page < PornhubCron.cap; page ++) {
+						let newVideos = await pornhub.getRecentlyViewed(username, {page});
+						count = newVideos.length;
+						videos.push(...newVideos);
+						yield;
+					}
+					for(const vid of videos) {
+						await this.addVideo(vid);
+						yield;
+					}
 				}
-				// for(const vid of videos) {
-				// 	await this.addVideo(vid);
-				// }
 				break;
 			}
 			case 'uploads': {
@@ -64,6 +69,10 @@ class PornhubCron {
 			}
 			log.error(e);
 		}
+	}
+
+	toString() {
+		return `pornhub:${this._data.type}/${this._data.data}`;
 	}
 }
 

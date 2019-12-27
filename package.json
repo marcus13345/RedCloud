@@ -4,6 +4,9 @@
   "version": "0.2.1",
   "description": "",
   "main": "app.js",
+  "mac": {
+    "icon": "./static/redcloud.icns"
+  },
   "scripts": {
     "test": "echo Error: no test specified && exit 0",
     "dev": "concurrently --success first --kill-others -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
@@ -17,8 +20,10 @@
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node ./src/components/electron.js",
     "production": "(npm run forever-stop >nul 2>&1 || true) && node app.js",
-    "dashboard": "(npm run forever-stop >nul 2>&1 || true) && nodejs-dashboard -- node -r nodejs-dashboard app.js",
-    "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb"
+    "dashboard": "(npm run forever-stop >nul 2>&1 || true) && nodejs-dashboard -- node -r nodejs-dashboard app.js --disable-electron",
+    "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb",
+    "compact": "node ./bin/db/compact",
+    "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron"
   },
   "author": "",
   "license": "ISC",

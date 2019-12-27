@@ -56,7 +56,6 @@ module.exports = class ChaturbateCron {
 	 * @param {Video} video
 	 */
 	async queueTranscode(video) {
-		log.info('queueing transcode', video.title);
 		const inputFile = video.filepath;
 		const outputFile = `vids/${path.parse(video.filepath).base}`;
 		const success = await this._links.Util.transcode(inputFile, outputFile);
@@ -81,15 +80,23 @@ module.exports = class ChaturbateCron {
 		// log.info(queueSize, 'videos left in the queue');
 	}
 
-	async evoke() {
+	async * evoke() {
+		while(true) {
+			if(this.online) {
+				// if we're online, were recording (probably) (i really hope)
+				yield;
+				continue;
+			}
 
-		const online = await chaturbate.online(this._data.data);
+			const online = await chaturbate.online(this._data.data);
 
-		if(online && !this.online) {
-			this.startRecording();
+			if(online) {
+				this.startRecording();
+			}
+
+			this.online = online;
+			yield;
 		}
-
-		this.online = online;
 	}
 
 	async startRecording() {
@@ -129,5 +136,8 @@ module.exports = class ChaturbateCron {
 			this.online = false;
 		}
 	}
-	
+
+	toString() {
+		return `chaturbate:${this._data.type}/${this._data.data}`;
+	}
 }

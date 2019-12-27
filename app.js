@@ -1,4 +1,5 @@
 process.env.FORCE_COLOR = 1;
+process.yargv = require('yargs').argv;
 const {Collexion} = require('collexion');
 const chalk = require('chalk');
 const log = new (require('signale').Signale)({
@@ -37,7 +38,7 @@ try {
 				routes: {
 					videos: 'Videos',
 					search: 'Search',
-					// sources: 'Cron',
+					sources: 'Cron',
 					eval: 'Eval',
 				},
 				port: __options.api.port
@@ -63,8 +64,8 @@ try {
 			Data: {
 				cron: {
 					types: {
-						// pornhub: require('./src/components/cron/pornhub.js'),
-						// chaturbate: require('./src/components/cron/chaturbate.js'),
+						pornhub: require('./src/components/cron/pornhub.js'),
+						chaturbate: require('./src/components/cron/chaturbate.js'),
 					}
 				}
 			}
@@ -74,7 +75,7 @@ try {
 		}
 	};
 
-	if (process.argv.indexOf('--disable-electron') > -1) {
+	if (process.yargv['disable-electron']) {
 		config['Electron'] = undefined;
 	}
 

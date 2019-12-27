@@ -1,11 +1,14 @@
+#!/usr/bin/env node
+
 const Datastore = require('nedb');
-const fs = require('fs')
+const fs = require('fs-extra')
 
 const db = new Datastore({
 	filename: 'videos.nedb'
 });
 
-fs.copyFileSync('videos.nedb', `backups/videos-${new Date().getTime()}.nedb`)
+fs.ensureDirSync('./backups');
+fs.copyFileSync('./videos.nedb', `./backups/videos-${new Date().getTime()}.nedb`)
 
 
 ;(async () => {
