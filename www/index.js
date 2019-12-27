@@ -32,7 +32,7 @@ $(document).ready(() => {
 			loadPage($(e.target).attr('id'));
 		});
 		
-		ajax('/version').done((version) => {
+		ajax('/util/version').done((version) => {
 			console.log(`client: ${pkg.name}@${pkg.version}`);
 			console.log(`server: ${pkg.name}@${version}`);
 			// if(version !== pkg.version)console.log('version mismatch, please wait for a reload!');

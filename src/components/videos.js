@@ -344,9 +344,13 @@ module.exports = class Videos {
 		// try {
 		// this.Util.printVideo(vid);
 		// TODO why does this try to download AGAIN???
+		// lol no this is the downloader, GOTEM
 		let filepath;
 		try {
 			filepath = await this._links.Util.downloadVideo(video.vid);
+			// if(typeof filepath === 'string') {
+			// 	log.debug('downloaded', video.title);
+			// }
 			await new Promise((res, rej) => {
 				this.database.update(
 					video,

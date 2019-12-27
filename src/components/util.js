@@ -20,19 +20,28 @@ const log = new Signale({
 	scope: 'UTIL'
 });
 const logFile = require('./../lib/LogFile.js');
+const chalk = require('chalk');
+const { Router } = require('express')
 
-// module.exports = {
-// 	printVideo,
-// 	downloadVideo,
-// 	getVideosInPlaylist,
-// 	getRecentlyViewed,
-// }
+
+
+
+let handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
+if(process.platform === 'darwin') {
+	handbrake = path.resolve(__dirname, './../../tools/macos/HandBrakeCLI');
+}
+let youtubedl = path.resolve(__dirname, `./../../tools/youtube-dl/youtube-dl` + (process.platform == 'win32' ? '.exe' : ''));
+
+log.info('youtubedl', youtubedl)
+log.info('handbrake', handbrake)
 
 module.exports = class Util {
 
 	transcodeQueue = Promise.resolve();
 	transcodeQueueSize = 0;
 	events = new EventEmitter();
+	transcoding = true;
+	running = true;
 
 	get errors() {
 		return {
@@ -47,8 +56,21 @@ module.exports = class Util {
 		this.events.emit('kill');
 	}
 
+	getRouter() {
+		const router = new Router();
+
+		router.get('/version', (req, res) => {
+			res.end(require('./../../package.json').version);
+		});
+
+		return router;
+	}
+
 	start() {
 		this._queue = Promise.resolve();
+		process.on('SIGINT', _ => {
+			this.shutdown();
+		})
 	}
 
 	async printVideo(vid) {
@@ -60,8 +82,27 @@ module.exports = class Util {
 		}
 	}
 
+	async shutdown() {
+		if(!this.running) return;
+		this.running = false;
+
+		process.stdout.write('\r');
+		log.info(chalk.bgYellow.black('trying to shut down gracefully. . .'));
+		for(const instanceName in this._collexion.instances) {
+			const instance = this._collexion.instances[instanceName];
+			try {
+				// log.time(instanceName);
+				// log.info('stopping', instanceName);
+				await instance.stop();
+				// log.timeEnd(instanceName);
+			} catch (e) {
+				// log.warn('no stop function in', instanceName);
+			}
+		}
+	}
+
 	async downloadVideo(vid) {
-		log.debug('does this ever get called?');
+		// this.printVideo(vid)
 
 		// TODO split the filepath creation into its own method to allocate a filepath.
 		// TODO then have download video be its own thing.
@@ -111,15 +152,14 @@ module.exports = class Util {
 					// console.log(e)
 				}
 				
-				let program = `tools/youtube-dl/youtube-dl` + (process.platform == 'win32' ? '.exe' : '');
 				let args = [
 					`--external-downloader`, `axel`, `--external-downloader-args`,
 					`-n 20 -a`, `-o`, `${filepath}`, `-f`, `best`,
 					`https://www.pornhub.com/view_video.php?viewkey=${vid}`
 				];
 
-				log.info('downloading ' + details.title);
-				let youtubedlProcess = spawn(program, args, {
+				// log.info('downloading ' + details.title);
+				let youtubedlProcess = spawn(youtubedl, args, {
 					env: {
 						// ...process.env,
 						PATH: process.env.PATH + ";" + path.resolve(__dirname, '../../tools/axel')
@@ -149,7 +189,7 @@ module.exports = class Util {
 				// youtubedlProcess.stdout.pipe(logStream);
 				// youtubedlProcess.stderr.pipe(logStream);
 
-				youtubedlProcess.on('exit', (code, signal) => {
+				youtubedlProcess.on('exit', async (code, signal) => {
 					this.events.off('kill', youtubedlProcess.kill);
 
 					if(code != 0) {
@@ -161,18 +201,18 @@ module.exports = class Util {
 							// only once, with video ID: ph5cfa586b2b5a3
 							// which at the time of documentation, is public, and free.
 							return rej(new E_UNEXPECTED_HTTP_403());
+						} else {
+							return rej(new E_YOUTUBE_DL_UNEXPECTED_TERMINATION())
 						}
-						// console.log()
-						// console.log()
-						// console.log('=========================')
-						// console.error(bufferOut);
-						// console.log('=========================')
-						// console.error(bufferErr);
-						// console.log('=========================')
-						return rej(new E_YOUTUBE_DL_UNEXPECTED_TERMINATION())
 					}
 
-					log.success('finished');
+					try {
+						const details = await this._links.Details.videoDetails(vid);
+						log.success('downloaded', details.title);
+					} catch (e) {
+						log.success('downloaded');
+						log.debug(e);
+					}
 					res(filepath);
 				})
 
@@ -213,45 +253,60 @@ module.exports = class Util {
 
 	transcode(inputFile, outputFile) {
 		this.transcodeQueueSize ++;
-		return this.transcodeQueue = this.transcodeQueue.then(async () => {
-			log.info('transcode starting')
-			let handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
-			if(process.platform === 'darwin') {
-				handbrake = path.resolve(__dirname, './../../tools/macos/HandBrakeCLI');
-			}
-			const transcoder = spawn(handbrake, [
-				'-i', inputFile,
-				'-o', outputFile
-			], {
-				// stdio: 'inherit',
-				windowsHide: true
-			});
-			let buffer = "";
-			transcoder.stdout.on('data', function (data) {
-				buffer += data
-				if (__options.tools.handbrake.output) {
-					process.stdout.write(data)
+		if(!this.transcoding) {
+			// log.warn('no transcode jobs being accepted!', this.transcodeQueueSize, 'jobs left');
+			return Promise.resolve(false);
+		}
+		return this.transcodeQueue = this.transcodeQueue.then(() => {
+			return new Promise(async (res, rej) => {
+				if(!this.transcoding) {
+					this.transcodeQueueSize --;
+					// log.warn('skipping job', this.transcodeQueueSize, 'jobs left');
+					return res(false);
 				}
-			});
-			transcoder.stderr.on('data', function (data) {
-				buffer += data
-				if (__options.tools.handbrake.output) {
-					process.stdout.write(data)
+				log.info('transcode starting', inputFile);
+
+				const transcoder = spawn(handbrake, [
+					'-i', inputFile,
+					'-o', outputFile
+				], {
+					// stdio: 'inherit',
+					windowsHide: true
+				});
+				let buffer = "";
+				transcoder.stdout.on('data', function (data) {
+					buffer += data
+					if (__options.tools.handbrake.output) {
+						process.stdout.write(data)
+					}
+				});
+				transcoder.stderr.on('data', function (data) {
+					buffer += data
+					if (__options.tools.handbrake.output) {
+						process.stdout.write(data)
+					}
+				});
+
+				// for abrupt stops
+				let killJob = () => {
+					this.transcodeQueueSize --;
+					transcoder.kill('SIGINT');
+					this.transcoding = false;
+					this.events.off('kill', killJob);
+					res(false);
 				}
-			});
+				this.events.on('kill', killJob);
+				const exitCode = await new Promise(res => transcoder.once('exit', res));
 
-			// for abrupt stops
-			this.events.on('kill', transcoder.kill);
-			const exitCode = await new Promise(res => transcoder.once('exit', res));
-			this.events.off('kill', transcoder.kill);
 
-			this.transcodeQueueSize --;
+				const logStream = logFile.createStream('transcode', inputFile);
+				logStream.write(buffer);
+				// log.success('transcode finished', `(queue size: ${this.transcodeQueueSize})`)
 
-			const logStream = logFile.createStream('chaturbate/transcode', inputFile);
-			logStream.write(buffer);
-			// log.success('transcode finished', `(queue size: ${this.transcodeQueueSize})`)
-			return exitCode === 0;
-		});
+				this.transcodeQueueSize --;
+				res(exitCode === 0);
+			})
+		})
 	}
 
 }

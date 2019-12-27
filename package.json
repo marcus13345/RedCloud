@@ -1,9 +1,12 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "main": "app.js",
+  "mac": {
+    "icon": "./static/redcloud.icns"
+  },
   "scripts": {
     "test": "echo Error: no test specified && exit 0",
     "dev": "concurrently --success first --kill-others -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
@@ -13,12 +16,15 @@
     "forever-start": "forever start --uid phub -a app.js --disable-electron --disable-cron",
     "forever-restart": "forever restart phub || npm run forever-start",
     "forever-stop": "forever stop phub",
-    "start": "(clear || cls || true) && node webpack.js --once && npm run production",
+    "start": "(clear || cls || true) && npm run compile && npm run production",
     "oddit": "npm shrinkwrap && npm audit && del npm-shrinkwrap.json",
     "electron": "node ./src/components/electron.js",
     "production": "(npm run forever-stop >nul 2>&1 || true) && node app.js",
+    "dashboard": "(npm run forever-stop >nul 2>&1 || true) && nodejs-dashboard -- node -r nodejs-dashboard app.js --disable-electron",
     "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb",
-    "build:streamlink": "(rm -r ./tools/macos/streamlink || true) && pyinstaller --distpath ./tools/macos $(which streamlink) && rm -r build"
+    "compact": "node ./bin/db/compact",
+    "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron",
+    "compile": "node webpack.js --once"
   },
   "author": "",
   "license": "ISC",
@@ -53,6 +59,7 @@
     "minimist": "^1.2.0",
     "multi-progress": "^2.0.0",
     "nedb": "^1.8.0",
+    "nodejs-dashboard": "^0.5.1",
     "npm-watch": "^0.6.0",
     "pace": "0.0.4",
     "pm2": "^4.1.2",
@@ -69,7 +76,6 @@
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5",
     "webpack-livereload-plugin": "^2.2.0",
-    "why-is-node-running": "^2.1.0",
     "youtube-dl": "^2.1.0"
   }
 }

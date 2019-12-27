@@ -62,7 +62,7 @@ module.exports = class Details {
 						// console.log(`Failed to get details for ${vid}`);
 						return rej(new E_VIDEO_NOT_FOUND());
 					}
-					log.info(`cached [[${details.title}]]`)
+					// log.info(`cached [[${details.title}]]`)
 					// log.info('asdfasdfasdfasdf')
 					this.db.update({_id: vid}, {
 						_id: vid,

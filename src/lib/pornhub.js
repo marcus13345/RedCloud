@@ -150,6 +150,7 @@ PornHub.search = function search(parameters, cb) {
 
 PornHub.getRecentlyViewed = async function getRecentlyViewed(user, {authenticate = false, page: pageNumber = 1} = {}) {
 	const browser = await puppeteer.launch({
+		handleSIGINT: false
 		// devtools: true
 	});
 	let videos = [];
@@ -184,15 +185,11 @@ PornHub.getRecentlyViewed = async function getRecentlyViewed(user, {authenticate
 			await page.waitForNavigation();
 		}
 
-		
-		// log.watch('navigated to user');
-
 		try {
 			await Promise.race([
 				page.waitForSelector('ul.videos#moreData'),
 				page.waitForSelector('.empty')
 			]);
-			// log.watch('videos loaded');
 
 			// await new Promise(res => setTimeout(res, 10000))
 
@@ -209,25 +206,17 @@ PornHub.getRecentlyViewed = async function getRecentlyViewed(user, {authenticate
 		} catch (e) {
 			
 		}
-		
-		// console.dir(videos)
-
-
-		// log.info(`${videos.length} videos obtained`);
-
 
 		// page.close();
 	} catch (e) {
 		log.error(e);
 	}
 
+	browser.close();
 
 	await new Promise(res => {
 		setTimeout(res, 3000);
 	});
-	browser.close();
-	// log.watch(`waited 3 seconds`);
-
 	return (videos);
 }
 
@@ -264,12 +253,8 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 				document.querySelector('#submit').click()
 				console.log('CLICKED');
 			}, 5000)`);
-			// log.watch('logged in')
 			await page.waitForNavigation();
 		}
-
-		
-		// log.watch('navigated to user');
 
 		try {
 			await Promise.race([
@@ -277,7 +262,6 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 				page.waitForSelector('.empty'),
 				page.waitForSelector('#streamContent')
 			]);
-			// log.watch('videos loaded');
 
 			// await new Promise(res => setTimeout(res, 10000))
 
@@ -294,14 +278,8 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 		} catch (e) {
 			
 		}
-		
-		// console.dir(videos)
 
-
-		// log.info(`${videos.length} videos obtained`);
-
-
-		// page.close();
+		page.close();
 	} catch (e) {
 		log.error(e);
 	}
