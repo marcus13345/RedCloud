@@ -21,6 +21,10 @@ const log = new Signale({
 });
 const logFile = require('./../lib/LogFile.js');
 const chalk = require('chalk');
+const { Router } = require('express')
+
+
+
 
 let handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
 if(process.platform === 'darwin') {
@@ -50,6 +54,16 @@ module.exports = class Util {
 
 	async stop() {
 		this.events.emit('kill');
+	}
+
+	getRouter() {
+		const router = new Router();
+
+		router.get('/version', (req, res) => {
+			res.end(require('./../../package.json').version);
+		});
+
+		return router;
 	}
 
 	start() {
@@ -175,7 +189,7 @@ module.exports = class Util {
 				// youtubedlProcess.stdout.pipe(logStream);
 				// youtubedlProcess.stderr.pipe(logStream);
 
-				youtubedlProcess.on('exit', (code, signal) => {
+				youtubedlProcess.on('exit', async (code, signal) => {
 					this.events.off('kill', youtubedlProcess.kill);
 
 					if(code != 0) {
@@ -191,7 +205,14 @@ module.exports = class Util {
 							return rej(new E_YOUTUBE_DL_UNEXPECTED_TERMINATION())
 						}
 					}
-					
+
+					try {
+						const details = await this._links.Details.videoDetails(vid);
+						log.success('downloaded', details.title);
+					} catch (e) {
+						log.success('downloaded');
+						log.debug(e);
+					}
 					res(filepath);
 				})
 

@@ -175,105 +175,105 @@ module.exports = class Videos {
 
 	}
 
-	// async connected() {
-	// 	(async () => {
-	// 		log.info(`sanity checking database...`);
-	// 		const startTime = new Date().getTime();
-	// 		// const vids = await new Promise(res => {
-	// 		// 	this.database.find({}, (err, docs) => {
-	// 		// 		res(docs.map(v => v._id));
-	// 		// 	})
-	// 		// });
-	// 		//UPDATE VID VALUE TO _ID VALUE, REPLACE OLD ID, AND ADD SOURCE
+	async connected() {
+		(async () => {
+			log.info(`sanity checking database...`);
+			const startTime = new Date().getTime();
+			// const vids = await new Promise(res => {
+			// 	this.database.find({}, (err, docs) => {
+			// 		res(docs.map(v => v._id));
+			// 	})
+			// });
+			//UPDATE VID VALUE TO _ID VALUE, REPLACE OLD ID, AND ADD SOURCE
 			
-	// 		await this.migrate({
-	// 			vid: {$exists: false}
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				vid: doc._id
-	// 			}
-	// 		})
-	// 		// NORMALIZE THE DOWNLOADED PARAMETER
-	// 		await this.migrate({
-	// 			filepath: null,
-	// 			downloaded: true
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				downloaded: false
-	// 			}
-	// 		})
-	// 		await this.migrate({
-	// 			addedTimestamp: {$exists: false}
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				addedTimestamp: new Date().getTime()
-	// 			}
-	// 		})
-	// 		await this.migrate({
-	// 			filepath: {$exists: false}
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				filepath: null
-	// 			}
-	// 		})
-	// 		await this.migrate({
-	// 			downloaded: {$exists: false}
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				downloaded: !!doc.filepath
-	// 			}
-	// 		})
-	// 		await this.migrate({
-	// 			source: {$exists: false}
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				source: 'pornhub'
-	// 			}
-	// 		})
-	// 		await this.migrate({
-	// 			transcode: {$exists: true}
-	// 		}, doc => {
-	// 			return {
-	// 				...doc,
-	// 				transcode: undefined
-	// 			}
-	// 		})
+			await this.migrate({
+				vid: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					vid: doc._id
+				}
+			})
+			// NORMALIZE THE DOWNLOADED PARAMETER
+			await this.migrate({
+				filepath: null,
+				downloaded: true
+			}, doc => {
+				return {
+					...doc,
+					downloaded: false
+				}
+			})
+			await this.migrate({
+				addedTimestamp: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					addedTimestamp: new Date().getTime()
+				}
+			})
+			await this.migrate({
+				filepath: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					filepath: null
+				}
+			})
+			await this.migrate({
+				downloaded: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					downloaded: !!doc.filepath
+				}
+			})
+			await this.migrate({
+				source: {$exists: false}
+			}, doc => {
+				return {
+					...doc,
+					source: 'pornhub'
+				}
+			})
+			await this.migrate({
+				transcode: {$exists: true}
+			}, doc => {
+				return {
+					...doc,
+					transcode: undefined
+				}
+			})
 
-	// 		const videos = await this.getVideos();
+			const videos = await this.getVideos();
 			
-	// 		// const videos = await this.getVideos();
-	// 		// log.info('here?????')
-	// 		// const startup = new progress.Bar({}, progress.Presets.rect);
-	// 		// startup.start(vids.length, 0);
+			// const videos = await this.getVideos();
+			// log.info('here?????')
+			// const startup = new progress.Bar({}, progress.Presets.rect);
+			// startup.start(vids.length, 0);
 			
-	// 		// for(const doc of videos) {
-	// 		// 	const newDoc = {
-	// 		// 		...doc
-	// 		// 	}
-	// 		// 	newDoc.vid = doc._id;
-	// 		// 	newDoc.source = 'pornhub';
-	// 		// 	newDoc._id = undefined;
-	// 		// 	await new Promise(res => {
-	// 		// 		this.database.insert(newDoc, (err, doc) => {
-	// 		// 			res();
-	// 		// 		});
-	// 		// 	});
-	// 		// }
+			// for(const doc of videos) {
+			// 	const newDoc = {
+			// 		...doc
+			// 	}
+			// 	newDoc.vid = doc._id;
+			// 	newDoc.source = 'pornhub';
+			// 	newDoc._id = undefined;
+			// 	await new Promise(res => {
+			// 		this.database.insert(newDoc, (err, doc) => {
+			// 			res();
+			// 		});
+			// 	});
+			// }
 			
 
-	// 		// for(const video of videos) {
-	// 		// 	await this.addVideo(video);
-	// 		// }
-	// 		log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
-	// 	})();
-	// 	// startup.stop();
-	// }
+			// for(const video of videos) {
+			// 	await this.addVideo(video);
+			// }
+			log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
+		})();
+		// startup.stop();
+	}
 
 	async videoFromVid(source, vid) {
 		return (await new Promise((res => {
@@ -344,9 +344,13 @@ module.exports = class Videos {
 		// try {
 		// this.Util.printVideo(vid);
 		// TODO why does this try to download AGAIN???
+		// lol no this is the downloader, GOTEM
 		let filepath;
 		try {
 			filepath = await this._links.Util.downloadVideo(video.vid);
+			// if(typeof filepath === 'string') {
+			// 	log.debug('downloaded', video.title);
+			// }
 			await new Promise((res, rej) => {
 				this.database.update(
 					video,

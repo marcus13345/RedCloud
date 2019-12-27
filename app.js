@@ -40,6 +40,7 @@ try {
 					search: 'Search',
 					sources: 'Cron',
 					eval: 'Eval',
+					util: 'Util'
 				},
 				port: __options.api.port
 			}

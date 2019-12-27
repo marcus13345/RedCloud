@@ -149,14 +149,20 @@ module.exports = class Cron {
 		setTimeout(this.cronLoop.bind(this), 0);
 	}
 
-	async cronLoop() {
+	// await this method to signify a stopping point for pausing
+	async pausePoint() {
 		if(this.pauseSemaphore.resolved === false) {
 			log.info('cron has been paused');
 			// this.emitter.emit('paused');
 			await this.pauseSemaphore;
 			log.info('cron unpaused');
 		}
+	}
+
+	async cronLoop() {
+		await this.pausePoint();
 		for(const id in this.generators) {
+			await this.pausePoint();
 			const generator = this.generators[id];
 			const taskInstance = this.cronTasks[id];
 
