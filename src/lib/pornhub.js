@@ -229,7 +229,6 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 
 	try {
 		const page = await browser.newPage();
-		console.log("Searching for usre");
 		await page.goto(`https://www.pornhub.com/model/${user}/videos/upload?page=${pageNumber}`);
 		
 		if(authenticate) {
