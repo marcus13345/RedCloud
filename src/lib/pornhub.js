@@ -302,7 +302,6 @@ PornHub.getPornstar = async function getPornstar(user, {authenticate = false, pa
 
 	try {
 		const page = await browser.newPage();
-		console.log("Searching for pro cum slut");
 		await page.goto(`https://www.pornhub.com/pornstar/${user}/videos/upload?page=${pageNumber}`);
 		
 		if(authenticate) {
