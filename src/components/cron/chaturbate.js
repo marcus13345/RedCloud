@@ -64,7 +64,7 @@ module.exports = class ChaturbateCron {
 		if(!success) return;
 
 		await this._links.Videos.update({
-			source: 'chaturbate',
+			'source.source': 'chaturbate',
 			vid: video.vid
 		}, doc => {
 			const obj = {

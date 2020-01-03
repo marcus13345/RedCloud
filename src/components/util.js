@@ -55,6 +55,8 @@ module.exports = class Util {
 
 	async stop() {
 		this.events.emit('kill');
+		this.transcoding = false;
+		this.running = false;
 	}
 
 	getRouter() {
