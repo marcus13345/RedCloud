@@ -193,7 +193,7 @@ module.exports = class Videos {
 					...doc,
 					vid: doc._id
 				}
-			})
+			});
 			// NORMALIZE THE DOWNLOADED PARAMETER
 			await this.migrate({
 				filepath: null,
@@ -203,7 +203,7 @@ module.exports = class Videos {
 					...doc,
 					downloaded: false
 				}
-			})
+			});
 			await this.migrate({
 				addedTimestamp: {$exists: false}
 			}, doc => {
@@ -211,7 +211,7 @@ module.exports = class Videos {
 					...doc,
 					addedTimestamp: new Date().getTime()
 				}
-			})
+			});
 			await this.migrate({
 				filepath: {$exists: false}
 			}, doc => {
@@ -219,7 +219,7 @@ module.exports = class Videos {
 					...doc,
 					filepath: null
 				}
-			})
+			});
 			await this.migrate({
 				downloaded: {$exists: false}
 			}, doc => {
@@ -227,7 +227,7 @@ module.exports = class Videos {
 					...doc,
 					downloaded: !!doc.filepath
 				}
-			})
+			});
 			await this.migrate({
 				source: {$exists: false}
 			}, doc => {
@@ -239,7 +239,7 @@ module.exports = class Videos {
 						data: 'unknown'
 					}
 				}
-			})
+			});
 			await this.migrate({
 				source: 'pornhub'
 			}, doc => {
@@ -251,7 +251,7 @@ module.exports = class Videos {
 						data: 'unknown'
 					}
 				}
-			})
+			});
 			await this.migrate({
 				source: 'chaturbate'
 			}, doc => {
@@ -264,6 +264,18 @@ module.exports = class Videos {
 					}
 				}
 			});
+			// await this.migrate({
+			// 	vid: { $regex: new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i) }
+			// }, doc => {
+			// 	return {
+			// 		...doc,
+			// 		source: {
+			// 			source: 'chaturbate',
+			// 			type: 'unknown',
+			// 			data: 'unknown'
+			// 		}
+			// 	}
+			// });
 			await this.migrate({
 				transcode: {$exists: true}
 			}, doc => {
@@ -273,7 +285,7 @@ module.exports = class Videos {
 				}
 			})
 
-			const videos = await this.getVideos();
+			// const videos = await this.getVideos();
 			
 			// const videos = await this.getVideos();
 			// log.info('here?????')
@@ -298,7 +310,7 @@ module.exports = class Videos {
 			// for(const video of videos) {
 			// 	await this.addVideo(video);
 			// }
-			log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
+			// log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
 		})();
 		// startup.stop();
 	}
