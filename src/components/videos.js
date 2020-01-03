@@ -263,7 +263,7 @@ module.exports = class Videos {
 						data: 'unknown'
 					}
 				}
-			})
+			});
 			await this.migrate({
 				transcode: {$exists: true}
 			}, doc => {
@@ -318,6 +318,7 @@ module.exports = class Videos {
 		return await new Promise(res => {
 			this.database.find({
 				source: {$exists: true},
+				'source.source': 'chaturbate',
 				vid: {$exists: true},
 				downloaded: true,
 				// source: 'chaturbate'

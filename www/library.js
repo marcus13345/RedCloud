@@ -30,9 +30,7 @@ ajax('/videos').done((data) => {
 								type="video/mp4">
 						</video>
 						<br>
-						${getSourceLogo(vid.source.source)}
-						<span class="title">${vid.title}</span>
-						<span class="subtitle">${vid.source.data}</span>
+						${getTextLine(vid)}
 					</div><!--
 				--></a>
 				</div><!--
@@ -55,7 +53,21 @@ ajax('/videos').done((data) => {
   // console.dir(listsArr)
 })
 
+function getTextLine(vid) {
+	switch(vid.source.source) {
+		case 'pornhub': return `
+			${getSourceLogo(vid.source.source)}
+			<span class="title">${vid.title}</span>
+			<span class="subtitle">${vid.source.data}</span>
+		`;
+		case 'chaturbate': return `
+			${getSourceLogo(vid.source.source)}
+			<span class="title">${vid.title.split(' ')[0]}</span>
+			<span class="subtitle">${new Date(vid.addedTimestamp).toLocaleString()}</span>
+		`;
 
+	}
+}
 
 function getSourceLogo(name) {
 	switch(name) {
@@ -70,6 +82,18 @@ function getSourceLogo(name) {
     border-radius: 5px;
     margin: 5px 6px 0px 6px;
 ">
-		`
+		`;
+		case 'chaturbate': return `<img src="./logos/chaturbate.jpg" style="
+    --size: 32px;
+    width: 100px;
+    height: var(--size);
+    background: white;
+    object-fit: contain;
+    display: block;
+    float: left;
+    border-radius: 5px;
+    margin: 5px 6px 0px 6px;
+">
+		`;
 	}
 }
