@@ -279,7 +279,6 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 			
 		}
 
-		page.close();
 	} catch (e) {
 		log.error(e);
 	}

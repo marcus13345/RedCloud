@@ -1,6 +1,6 @@
 {
 	"api": {
-		"port": 3333
+		"port": 52310
 	},
 	"app": {
 		"id": "development",

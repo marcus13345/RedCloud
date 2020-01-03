@@ -5,8 +5,8 @@
 		<link rel="stylesheet" href="./style.css">
 	</head>
 	<body>
-		<div style="display:grid; grid-template-columns: 120px 1fr">
-			<vaadin-tabs style="display: inline;" orientation="vertical" slot="menu" id="navigation">
+		<div>
+			<vaadin-tabs slot="menu" id="navigation">
 				<vaadin-tab id="library">
 					Library
 				</vaadin-tab>
@@ -16,19 +16,17 @@
 				<vaadin-tab id="discover">
 					Discover
 				</vaadin-tab>
-				<br>
 				<vaadin-tab id="settings">
 					Settings
-				</vaadin-tab>
-				<hr>
-				<h3>Developer Stuff</h3>
-				<vaadin-tab id="inspector">
-					Inspector
 				</vaadin-tab>
 			</vaadin-tabs>
 			<div id="viewport">
 			</div>
 		</div>
+		<script>
+		document.querySelector('#navigation')
+		
+		</script>
 		<script src="./native.js"></script>
 		<script src="./index.bundle.js"></script>
 	</body>

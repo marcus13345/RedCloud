@@ -54,7 +54,11 @@ class PornhubCron {
 		try {
 			const details = {
 				...await this._links.Details.videoDetails(vid),
-				source: 'pornhub',
+				source: {
+					source: 'pornhub',
+					type: this._data.type,
+					data: this._data.data
+				},
 				downloaded: false,
 				filepath: null,
 				addedTimestamp: new Date().getTime()

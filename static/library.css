@@ -1,6 +1,4 @@
-.content .videoItem > * {
-    background: black;
-}
+
 
 .content {
 	/* border: 1px solid red; */
@@ -10,7 +8,39 @@
 .content .videoItem {
 	display: inline-block;
     margin: 16px;
-    /* width: 320px; */
-    /* height: 180px; */
+    --video-size: 20;
+    --width: calc(16px * var(--video-size));
+    --height: calc(9px * var(--video-size));
+    width: var(--width);
+    height: var(--height);
     display: inline-block;
+}
+
+.content .videoItem > video {
+    background: black;
+    width: var(--width);
+    height: var(--height);
+}
+.content .videoItem > img.placeholder {
+    background: black;
+    width: var(--width);
+    height: var(--height);
+}
+
+
+.content .videoItem span {
+    color: white;
+    display:block;
+    text-align: left;
+    
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    
+    padding-left: 3px;
+}
+
+.video {
+    display: inline-block;
+    padding-bottom: 8px;
 }

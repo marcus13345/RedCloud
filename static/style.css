@@ -9,6 +9,10 @@ html, body {
 	--lumo-primary-text-color: #FF425E;
 }
 
+#navigation {
+	background-color: #242424;
+}
+
 vaadin-tab:not([selected]) {
 	color:white;
 }

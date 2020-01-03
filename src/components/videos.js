@@ -233,7 +233,35 @@ module.exports = class Videos {
 			}, doc => {
 				return {
 					...doc,
-					source: 'pornhub'
+					source: {
+						source: 'pornhub',
+						type: 'unknown',
+						data: 'unknown'
+					}
+				}
+			})
+			await this.migrate({
+				source: 'pornhub'
+			}, doc => {
+				return {
+					...doc,
+					source: {
+						source: 'pornhub',
+						type: 'unknown',
+						data: 'unknown'
+					}
+				}
+			})
+			await this.migrate({
+				source: 'chaturbate'
+			}, doc => {
+				return {
+					...doc,
+					source: {
+						source: 'chaturbate',
+						type: 'unknown',
+						data: 'unknown'
+					}
 				}
 			})
 			await this.migrate({
@@ -278,8 +306,7 @@ module.exports = class Videos {
 	async videoFromVid(source, vid) {
 		return (await new Promise((res => {
 			this.database.findOne({
-				vid,
-				source
+				vid
 			}, (err, doc) => {
 				if(doc) res(new Video(doc));
 				else res(null);
