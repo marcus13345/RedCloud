@@ -13,6 +13,6 @@ temp
 # fix this, brother.
 nul
 logs
-options.json
+options/local.json
 
 *.log

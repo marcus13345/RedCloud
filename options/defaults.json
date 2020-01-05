@@ -3,10 +3,11 @@
 		"port": 3333
 	},
 	"app": {
-		"id": "development"
+		"id": "development",
+		"path": ""
 	},
 	"content": {
-		"censor": false
+		"censor": true
 	},
 	"tools": {
 		"handbrake":{

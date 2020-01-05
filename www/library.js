@@ -1,5 +1,5 @@
 import $ from 'jquery'
-const __options = require('../options.json');
+const __options = require('../options');
 console.log(__options)
 
 ajax('/videos').done((data) => {

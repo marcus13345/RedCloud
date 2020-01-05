@@ -6,7 +6,7 @@ const log = new (require('signale').Signale)({
 	scope: '_APP'
 });
 try {
-	const __options = require('./options.json') || {};
+	const __options = require('./options') || {};
 	global.__options = __options;
 
 	let lines = [

@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+const fs = require('fs-extra');
+const path = require('path')
+
+
+//create empty local options
+const locaFilepath = path.join(__dirname, '../options/local.json');
+// // console.log(locaFilepath)
+if(!fs.existsSync(locaFilepath))
+	fs.writeFileSync(locaFilepath, '{}');

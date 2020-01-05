@@ -1,7 +1,7 @@
 import $ from 'jquery'
 const content = $('.content')
 let searchText = "", page = 1;
-const __options = require('./../options.json');
+const __options = require('./../options');
 
 function clear() {
 	content.children().remove();
