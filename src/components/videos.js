@@ -330,7 +330,7 @@ module.exports = class Videos {
 		return await new Promise(res => {
 			this.database.find({
 				source: {$exists: true},
-				'source.source': 'chaturbate',
+				// 'source.source': 'chaturbate',
 				vid: {$exists: true},
 				downloaded: true,
 				// source: 'chaturbate'

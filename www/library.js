@@ -10,36 +10,40 @@ ajax('/videos').done((data) => {
 	const content = $('.content')
 
 	for(const vid of videos) {
-		if(__options.content.censor) {
-			content.append(`<div class="videoItem"><img class="placeholder" width="160" height="90" src="https://via.placeholder.com/1600x900/000000/808080?text=Hidden"></img></div>`)
-		} else if(vid.downloaded) {
-			content.append(`<!--
-				below is a hack to remove whitespace, html ugh
-				--><div class="video">
-				<a" title="${vid.title}" href="./watch.html?v=${vid.vid}"><!-- 
-					--><div class="videoItem">
-						<video onloadstart="this.volume=0"
-									volume="0"
-									width="160"
-									height="90">
-							<source src="${
-									redcloud.store.get('settings.apiBasePath')
-								}/videos/stream/${
-									vid.vid
-								}#t=20"
-								type="video/mp4">
-						</video>
-						<br>
-						${getTextLine(vid)}
-					</div><!--
-				--></a>
-				</div><!--
-			-->`)
 
-			// content.append(`<div class="videoItem"><img width="160" height="90" src="https://via.placeholder.com/1600x900/000000/808080?text=Video"></img></div>`)
+		let videoElement;
+		
+		if(__options.content.censor) {
+			videoElement = `<div class="videoItem"><img class="placeholder" src="https://via.placeholder.com/1600x900/000000/808080?text=Hidden"></img></div>`;
+		} else if (vid.downloaded) {
+			videoElement = `<video onloadstart="this.volume=0"
+						volume="0"
+						width="160"
+						height="90">
+				<source src="${
+						redcloud.store.get('settings.apiBasePath')
+					}/videos/stream/${
+						vid.vid
+					}#t=20"
+					type="video/mp4">
+			</video>`;
 		} else {
-			content.append(`<div class="videoItem"><img width="160" class="placeholder"  height="90" src="https://via.placeholder.com/1600x900/000000/808080?text=Unavailable"></img></div>`)
+			videoElement = `<div class="videoItem"><img width="160" class="placeholder"  height="90" src="https://via.placeholder.com/1600x900/000000/808080?text=Unavailable"></img></div>`;
 		}
+
+		content.append(`<!--
+			below is a hack to remove whitespace, html ugh
+			--><div class="video">
+			<a title="${vid.title}" href="./watch.html?v=${vid.vid}"><!-- 
+				--><div class="videoItem">
+					${videoElement}
+					<br>
+					${getTextLine(vid)}
+				</div><!--
+			--></a>
+			</div><!--
+		-->`);
+
 	}
 
 	
