@@ -5,9 +5,6 @@
 	"app": {
 		"id": "development"
 	},
-	"content": {
-		"censor": false
-	},
 	"tools": {
 		"handbrake":{
 			"output" : false

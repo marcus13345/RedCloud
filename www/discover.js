@@ -1,7 +1,7 @@
 import $ from 'jquery'
 const content = $('.content')
 let searchText = "", page = 1;
-const __options = require('./../options.json');
+const censor = redcloud.store.get('settings.censor');
 
 function clear() {
 	content.children().remove();
@@ -16,10 +16,9 @@ function loadMore() {
 		for(const vid of videos) {
 			const downloaded = vid.downloaded;
 			console.log(vid);
-			if (__options.content.censor) {
+			if (censor) {
 				vid.thumb = 'https://via.placeholder.com/1600x900/000000/808080?text=Hidden';
-			}
-			if (downloaded) {
+			} else if (downloaded) {
 				content.append(`<a href="/api/videos/stream/${vid.vid}" vid="${vid.vid}"><div class="videoItem">
 					<img width="160" height="90" src="${vid.thumb}" style="border: 3px solid #A7C168"></img>
 				</div></a>`)
