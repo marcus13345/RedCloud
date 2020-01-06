@@ -1,6 +1,6 @@
 import $ from 'jquery'
-const __options = require('../options.json');
-console.log(__options)
+// console.log(__options)
+const censor = redcloud.store.get('settings.censor');
 
 ajax('/videos').done((data) => {
 	const videos = data;
@@ -10,7 +10,7 @@ ajax('/videos').done((data) => {
 	const content = $('.content')
 
 	for(const vid of videos) {
-		if(__options.content.censor) {
+		if(censor) {
 			content.append(`<div class="videoItem"><img width="160" height="90" src="https://via.placeholder.com/1600x900/000000/808080?text=Hidden"></img></div>`)
 		} else if(vid.downloaded) {
 			content.append(`<a href="./watch.html?v=${vid.vid}"><div class="videoItem"><video onloadstart="this.volume=0" volume="0" width="160" height="90">
