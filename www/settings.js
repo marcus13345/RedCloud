@@ -21,6 +21,11 @@ function loadSettings() {
 		else if (type === 'boolean')
 			$(`#viewport input[name=${property}]`)[0].checked = value;
 	}
+
+	ajax('/util/settings').done(data => {
+		$('#serverSettings').html(JSON.stringify(data, null, 2));
+		// console.log(data);
+	})
 }
 
 function saveSettings() {

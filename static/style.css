@@ -27,3 +27,10 @@ vaadin-tab[selected]::before {
 	width: 100px;
 	background-size: 90px;
 }
+
+pre {
+    background: #222;
+    padding: 12px;
+    border-radius: 14px;
+    margin: 12px;
+}

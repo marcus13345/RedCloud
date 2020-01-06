@@ -63,6 +63,10 @@ module.exports = class Util {
 			res.end(require('./../../package.json').version);
 		});
 
+		router.get('/settings', (req, res) => {
+			res.json(__options);
+		})
+
 		return router;
 	}
 
