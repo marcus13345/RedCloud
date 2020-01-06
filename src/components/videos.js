@@ -15,7 +15,7 @@ module.exports = class Videos {
 
 		// Car brands page
 		router.get('/', async (req, res) => {
-			res.json(await this.getVideos(20));
+			res.json(await this.getVideos(60));
 		});
 
 		router.get('/stream/:vid', (req, res) => {

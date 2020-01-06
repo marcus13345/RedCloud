@@ -3,44 +3,5 @@
 .content {
 	/* border: 1px solid red; */
 	text-align: center;
-}
-
-.content .videoItem {
-	display: inline-block;
-    margin: 16px;
-    --video-size: 20;
-    --width: calc(16px * var(--video-size));
-    --height: calc(9px * var(--video-size));
-    width: var(--width);
-    height: var(--height);
-    display: inline-block;
-}
-
-.content .videoItem > video {
-    background: black;
-    width: var(--width);
-    height: var(--height);
-}
-.content .videoItem > img.placeholder {
-    background: black;
-    width: var(--width);
-    height: var(--height);
-}
-
-
-.content .videoItem span {
-    color: white;
-    display:block;
-    text-align: left;
-    
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    
-    padding-left: 3px;
-}
-
-.video {
-    display: inline-block;
-    padding-bottom: 8px;
+    padding: 8px 0px;
 }

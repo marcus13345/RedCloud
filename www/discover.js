@@ -1,7 +1,7 @@
 import $ from 'jquery'
 const content = $('.content')
 let searchText = "", page = 1;
-const __options = require('./../options');
+import VideoItem from './lib/VideoItem';
 
 function clear() {
 	content.children().remove();
@@ -14,20 +14,19 @@ function loadMore() {
 		const videos = JSON.parse(data);
 
 		for(const vid of videos) {
-			const downloaded = vid.downloaded;
-			console.log(vid);
-			if (__options.content.censor) {
-				vid.thumb = 'https://via.placeholder.com/1600x900/000000/808080?text=Hidden';
-			}
-			if (downloaded) {
-				content.append(`<a href="/api/videos/stream/${vid.vid}" vid="${vid.vid}"><div class="videoItem">
-					<img width="160" height="90" src="${vid.thumb}" style="border: 3px solid #A7C168"></img>
-				</div></a>`)
-			} else {
-				content.append(`<a href="#" vid="${vid.vid}"><div class="videoItem">
-					<img width="160" height="90" src="${vid.thumb}" style="border: 3px solid #FE9766"></img>
-				</div></a>`)
-			}
+			// const downloaded = vid.downloaded;
+			// console.log(vid);
+
+			content.append(new VideoItem({
+				...vid,
+				source: {
+					source: 'pornhub',
+					type: 'search',
+					data: vid.downloaded
+					      ? '📦 In Library'
+								: '💾 Download'
+				}
+			}))
 		}
 
 		page ++;
