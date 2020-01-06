@@ -6,7 +6,7 @@ class VideoItem extends LitElement {
 	constructor(video) {
 		super();
 		this.video = video;
-		console.log('created VideoItem for', video)
+		// console.log('created VideoItem for', video)
 	}
 
 	static get styles() {
@@ -101,7 +101,7 @@ span.subtitle {
 				<div class="lazy"><img class="lazy" width="160"
 						class="placeholder"
 						height="90"
-						src="${this.video.thumb}">
+						src="${this.video.thumb || "https://via.placeholder.com/1600x900/000000/808080?text=Loading..."}">
 				</img></div><!--
 				--><video onloadstart="this.volume=0"
 						volume="0"
