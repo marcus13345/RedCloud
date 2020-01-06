@@ -10,7 +10,7 @@ if(process.platform === 'darwin') {
 }
 const { EventEmitter } = require('events');
 const logFile = require('./../lib/LogFile');
-const __options = require('../../options.json');
+const __options = require('../../options');
 
 module.exports.online = function online(username) {
 	return new Promise(async (res) => {

@@ -3,9 +3,10 @@ const {execSync, exec, spawn} = require('child_process');
 // const {videoDetails, Errors: {E_VIDEO_NOT_FOUND}} = require('./details.js');
 const cred = require('./../cred.js');
 const fs = require('fs');
+// const options
 const savePath = 'vids';
 const createErrorClass = require('./../customError.js')
-const __options = require('../../options.json');
+const __options = require('../../options');
 const windowOptions = {
 	// headless: false,
 	// devtools: true
