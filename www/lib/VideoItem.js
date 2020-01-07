@@ -15,6 +15,7 @@ class VideoItem extends LitElement {
 :host {
 	margin: 16px;
 	display: inline-block;
+	cursor: pointer;
 }
 
 .videoItem {
@@ -136,17 +137,22 @@ span.subtitle {
 
 		return html`<!--
 			below is a hack to remove whitespace, html ugh
-			--><div class="video">
-			<a title="${this.video.title}" href="./watch.html?v=${this.video.vid}"><!-- 
+			--><div
+					@click=${this.go}
+					class="video"><!-- 
 				--><div class="videoItem">
 					${videoElement}
 					<br>
 					${this.getTextLine()}
 					<div style="clear:both"></div>
 				</div><!--
-			--></a>
-			</div><!--
+			--></div><!--
 		-->`;
+	}
+
+	go() {
+		console.log(this, this.video);
+		history.pushState({page: 'watch', video: this.video}, 'title', '#');
 	}
 
 	getTextLine() {
