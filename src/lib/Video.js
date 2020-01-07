@@ -10,7 +10,10 @@ const Struct = require('./Struct.js');
 /**
  * @typedef {object} Video
  * @property {string} vid
- * @property {string} source
+ * @property {object} source
+ * @property {string} source.source
+ * @property {string} source.type
+ * @property {string} source.data
  * @property {string} title
  * @property {string} duration
  * @property {object} tags
@@ -22,7 +25,7 @@ class Video extends Struct {
 	//TODO figure out how to make this static
 	properties() {
 		return {
-			source: 'string',
+			source: 'object',
 			vid: 'string',
 			title: 'string',
 			duration: 'string',

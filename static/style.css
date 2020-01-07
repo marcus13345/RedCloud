@@ -9,6 +9,10 @@ html, body {
 	--lumo-primary-text-color: #FF425E;
 }
 
+#navigation {
+	background-color: #242424;
+}
+
 vaadin-tab:not([selected]) {
 	color:white;
 }
@@ -26,4 +30,11 @@ vaadin-tab[selected]::before {
 .titlebar > div.window-appicon {
 	width: 100px;
 	background-size: 90px;
+}
+
+pre {
+    background: #222;
+    padding: 12px;
+    border-radius: 14px;
+    margin: 12px;
 }

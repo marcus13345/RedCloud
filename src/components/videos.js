@@ -15,7 +15,7 @@ module.exports = class Videos {
 
 		// Car brands page
 		router.get('/', async (req, res) => {
-			res.json(await this.getVideos(20));
+			res.json(await this.getVideos(60));
 		});
 
 		router.get('/stream/:vid', (req, res) => {
@@ -193,7 +193,7 @@ module.exports = class Videos {
 					...doc,
 					vid: doc._id
 				}
-			})
+			});
 			// NORMALIZE THE DOWNLOADED PARAMETER
 			await this.migrate({
 				filepath: null,
@@ -203,7 +203,7 @@ module.exports = class Videos {
 					...doc,
 					downloaded: false
 				}
-			})
+			});
 			await this.migrate({
 				addedTimestamp: {$exists: false}
 			}, doc => {
@@ -211,7 +211,7 @@ module.exports = class Videos {
 					...doc,
 					addedTimestamp: new Date().getTime()
 				}
-			})
+			});
 			await this.migrate({
 				filepath: {$exists: false}
 			}, doc => {
@@ -219,7 +219,7 @@ module.exports = class Videos {
 					...doc,
 					filepath: null
 				}
-			})
+			});
 			await this.migrate({
 				downloaded: {$exists: false}
 			}, doc => {
@@ -227,15 +227,55 @@ module.exports = class Videos {
 					...doc,
 					downloaded: !!doc.filepath
 				}
-			})
+			});
 			await this.migrate({
 				source: {$exists: false}
 			}, doc => {
 				return {
 					...doc,
-					source: 'pornhub'
+					source: {
+						source: 'pornhub',
+						type: 'unknown',
+						data: 'unknown'
+					}
 				}
-			})
+			});
+			await this.migrate({
+				source: 'pornhub'
+			}, doc => {
+				return {
+					...doc,
+					source: {
+						source: 'pornhub',
+						type: 'unknown',
+						data: 'unknown'
+					}
+				}
+			});
+			await this.migrate({
+				source: 'chaturbate'
+			}, doc => {
+				return {
+					...doc,
+					source: {
+						source: 'chaturbate',
+						type: 'unknown',
+						data: 'unknown'
+					}
+				}
+			});
+			// await this.migrate({
+			// 	vid: { $regex: new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i) }
+			// }, doc => {
+			// 	return {
+			// 		...doc,
+			// 		source: {
+			// 			source: 'chaturbate',
+			// 			type: 'unknown',
+			// 			data: 'unknown'
+			// 		}
+			// 	}
+			// });
 			await this.migrate({
 				transcode: {$exists: true}
 			}, doc => {
@@ -245,7 +285,7 @@ module.exports = class Videos {
 				}
 			})
 
-			const videos = await this.getVideos();
+			// const videos = await this.getVideos();
 			
 			// const videos = await this.getVideos();
 			// log.info('here?????')
@@ -270,7 +310,7 @@ module.exports = class Videos {
 			// for(const video of videos) {
 			// 	await this.addVideo(video);
 			// }
-			log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
+			// log.success(`checked ${videos.length} vids ${(new Date().getTime() - startTime) / 1000}s`);
 		})();
 		// startup.stop();
 	}
@@ -278,8 +318,7 @@ module.exports = class Videos {
 	async videoFromVid(source, vid) {
 		return (await new Promise((res => {
 			this.database.findOne({
-				vid,
-				source
+				vid
 			}, (err, doc) => {
 				if(doc) res(new Video(doc));
 				else res(null);
@@ -291,6 +330,7 @@ module.exports = class Videos {
 		return await new Promise(res => {
 			this.database.find({
 				source: {$exists: true},
+				// 'source.source': 'chaturbate',
 				vid: {$exists: true},
 				downloaded: true,
 				// source: 'chaturbate'

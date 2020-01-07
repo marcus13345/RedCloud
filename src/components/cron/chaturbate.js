@@ -44,6 +44,7 @@ module.exports = class ChaturbateCron {
 					const vid = path.parse(file).name;
 					const video = await this._links.Videos.videoFromVid('chaturbate', vid);
 					// log.info(video)
+					if(video === null) log.debug(vid)
 					this.queueTranscode(video);
 				}
 			})
@@ -63,7 +64,7 @@ module.exports = class ChaturbateCron {
 		if(!success) return;
 
 		await this._links.Videos.update({
-			source: 'chaturbate',
+			'source.source': 'chaturbate',
 			vid: video.vid
 		}, doc => {
 			const obj = {
@@ -111,7 +112,11 @@ module.exports = class ChaturbateCron {
 			this.currentRecorder = recorder;
 
 			const video = new Video({
-				source: 'chaturbate',
+				source: {
+					source: 'chaturbate',
+					type: 'stream',
+					data: this._data.data
+				},
 				vid, title, duration: null,
 				tags: null,
 				thumb: null,

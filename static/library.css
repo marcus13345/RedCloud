@@ -1,16 +1,7 @@
-.content .videoItem > * {
-    background: black;
-}
+
 
 .content {
 	/* border: 1px solid red; */
 	text-align: center;
-}
-
-.content .videoItem {
-	display: inline-block;
-    margin: 16px;
-    /* width: 320px; */
-    /* height: 180px; */
-    display: inline-block;
+    padding: 8px 0px;
 }

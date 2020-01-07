@@ -55,6 +55,8 @@ module.exports = class Util {
 
 	async stop() {
 		this.events.emit('kill');
+		this.transcoding = false;
+		this.running = false;
 	}
 
 	getRouter() {
@@ -63,6 +65,10 @@ module.exports = class Util {
 		router.get('/version', (req, res) => {
 			res.end(require('./../../package.json').version);
 		});
+
+		router.get('/settings', (req, res) => {
+			res.json(__options);
+		})
 
 		return router;
 	}

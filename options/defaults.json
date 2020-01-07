@@ -6,9 +6,6 @@
 		"id": "development",
 		"path": ""
 	},
-	"content": {
-		"censor": true
-	},
 	"tools": {
 		"handbrake":{
 			"output" : false

@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -22,7 +22,8 @@
     "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb",
     "compact": "node ./bin/db/compact",
     "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron",
-    "compile": "node webpack.js --once"
+    "compile": "node webpack.js --once",
+    "livereload": "node webpack.js"
   },
   "author": "",
   "license": "ISC",
