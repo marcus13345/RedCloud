@@ -1,13 +1,10 @@
 {
 	"api": {
-		"port": 52310
+		"port": 3333
 	},
 	"app": {
 		"id": "development",
 		"path": ""
-	},
-	"content": {
-		"censor": true
 	},
 	"tools": {
 		"handbrake":{

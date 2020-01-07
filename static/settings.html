@@ -1,10 +1,14 @@
-<h1>Settings</h1>
-
-<hr>
+<h1>Client Settings</h1>
 <label for="APIBasePath">API Base Path</label>
 <input type="text" name="apiBasePath" id="APIBasePath">
-
-<hr>
+<br>
+<input type="checkbox" name="censor" id="censor">
+<label for="censor">Censor content</label>
+<br>
 <button id="save">Save</button>
+
+<br><hr><br>
+<pre id="serverSettings"></pre>
+
 
 <script src="./settings.bundle.js"></script>

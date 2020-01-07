@@ -2,6 +2,7 @@ import $ from 'jquery'
 const content = $('.content')
 let searchText = "", page = 1;
 import VideoItem from './lib/VideoItem';
+const censor = redcloud.store.get('settings.censor');
 
 function clear() {
 	content.children().remove();

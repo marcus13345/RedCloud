@@ -1,4 +1,6 @@
 import $ from 'jquery'
+// console.log(__options)
+const censor = redcloud.store.get('settings.censor');
 import VideoItem from './lib/VideoItem';
 
 ajax('/videos').done((data) => {
