@@ -1,6 +1,6 @@
 import {html, LitElement, css} from 'lit-element';
 import exporter from './exporter.js';
-const __options = require('./../../options.json')
+const censor = redcloud.store.get('settings.censor');
 
 class VideoItem extends LitElement {
 	constructor(video) {
@@ -94,7 +94,7 @@ span.subtitle {
 	render() {
 
 		let videoElement;
-		if(__options.content.censor) {
+		if(censor) {
 			videoElement = html`<img class="placeholder" src="https://via.placeholder.com/1600x900/333333/800000?text=Hidden"></img>`;
 		} else if (this.video.downloaded) {
 			videoElement = html`
