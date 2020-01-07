@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo Error: no test specified && exit 0",
-    "postinstall": "./bin/postinstall",
+    "postinstall": "node ./bin/postinstall",
     "dev": "concurrently --success first --kill-others -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
     "api-hotreload-start": "npm run forever-restart && chokidar \"app.js\" \"src/**/*.js\" -c \"npm run release && npm run forever-restart\"",
     "pack": "webpack",
