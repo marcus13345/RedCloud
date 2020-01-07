@@ -255,7 +255,9 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 			}, 5000)`);
 			await page.waitForNavigation();
 		}
-
+		
+		// log.watch('navigated to user');
+		
 		try {
 			await Promise.race([
 				page.waitForSelector('ul.videos#moreData'),
@@ -292,15 +294,72 @@ PornHub.getUploads = async function getUploads(user, {authenticate = false, page
 
 	return (videos);
 }
+PornHub.getPornstar = async function getPornstar(user, {authenticate = false, page: pageNumber = 1} = {}) {
+	const browser = await puppeteer.launch({
+		// devtools: true
+	});
+	let videos = [];
+
+	try {
+		const page = await browser.newPage();
+		await page.goto(`https://www.pornhub.com/pornstar/${user}/videos/upload?page=${pageNumber}`);
+		
+		if(authenticate) {
+			await page.waitForSelector('ul.videos#moreData');
+
+			await page.evaluate(() => {
+				let loginButton = document.querySelector('#headerLoginLink');
+				loginButton.click();
+
+			})
+
+			await page.waitForNavigation();
+			
+			await page.waitForSelector('#submit');
+			await page.evaluate(`
+			let usernameInput = document.querySelector('#username');
+			let passwordInput = document.querySelector('#password');
+			usernameInput.value = '${cred.name}';
+			passwordInput.value = '${cred.pass}';
+			console.log('WAITING');
+			setTimeout(() => {
+				document.querySelector('#submit').click()
+				console.log('CLICKED');
+			}, 5000)`);
+			await page.waitForNavigation();
+		}
+		
+		try {
+			await Promise.race([
+				page.waitForSelector('ul.videos#moreData'),
+				page.waitForSelector('.empty'),
+				page.waitForSelector('#streamContent')
+			]);
+
+			videos = await page.evaluate(() => {
+				return (function map(children){
+					let arr = [];
+					for(let i = 0; i < children.length; i ++) {
+						let e = children[i];
+						arr.push(e.getAttribute('_vkey'))
+					}
+					return arr;
+				})(document.querySelector('ul.videos#moreData').children)
+			});
+		} catch (e) {
+			
+		}
+		
+
+	} catch (e) {
+		log.error(e);
+	}
 
 
+	await new Promise(res => {
+		setTimeout(res, 0);
+	});
+	browser.close();
 
-
-
-
-
-
-
-
-
-	
+	return (videos);
+}

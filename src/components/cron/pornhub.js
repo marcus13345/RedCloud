@@ -43,7 +43,20 @@ class PornhubCron {
 					videos.push(...newVideos);
 				}
 				for(const vid of videos) {
-					await this._links.Videos.addVideoByVid(vid)
+					await this.addVideo(vid)
+				}
+				break;
+			}
+			case 'pornstar': {
+				let count = -1;
+				let videos = [];
+				for(let page = 1; count !== 0 && page < PornhubCron.cap; page ++) {
+					let newVideos = await pornhub.getPornstar(username.replace(/ /g, "-"), {page});
+					count = newVideos.length;
+					videos.push(...newVideos);
+				}
+				for(const vid of videos) {
+					await this.addVideo(vid);
 				}
 				break;
 			}
