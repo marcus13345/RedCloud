@@ -153,6 +153,7 @@ span.subtitle {
 	go() {
 		console.log(this, this.video);
 		history.pushState({page: 'watch', video: this.video}, 'title', '#');
+		navigate('watch', {video: this.video});
 	}
 
 	getTextLine() {
