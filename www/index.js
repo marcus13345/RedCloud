@@ -4,15 +4,12 @@ import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js'
 
 import $ from 'jquery'
-
 import pkg from './../package.json';
-
 import LibraryPage from './pages/library';
 import NotFoundPage from './pages/notFound';
 import WatchPage from './pages/watch';
 
 function router(page) {
-	// console.log('router', page)
 	switch(page) {
 		case 'library': return LibraryPage;
 		case 'watch': return WatchPage;
@@ -42,7 +39,7 @@ $(document).ready(() => {
 		let pages = $('#navigation').find('vaadin-tab');
 		pages.on('click', (e) => {
 			// console.log($(e.target).attr('id'));
-			loadPage($(e.target).attr('id'));
+			navigate($(e.target).attr('id'));
 		});
 		
 		ajax('/util/version').done((version) => {
@@ -69,11 +66,6 @@ window.navigate = function navigate(page, data = {}) {
 	redcloud.store.set('navigation.currentPage', page);
 	redcloud.store.set('navigation.pageData', data);
 	window.pageData = data;
-	loadPage(page, data)
-}
-
-function loadPage(page, data) {
-	// console.log($('#viewport'))
 	const pages = $('#navigation').find('vaadin-tab');
 	const pageNames = pages.toArray().map(v => $(v).attr('id'));
 	document.title = page;
@@ -88,6 +80,3 @@ function loadPage(page, data) {
 	if($('#navigation')[0].selected != pageIndex)
 		$('#navigation')[0].selected = pageIndex;
 }
-
-
-// console.log(pkg);

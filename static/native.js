@@ -12,10 +12,11 @@ if (window && window.process && window.process.type) {
 	}
 
 	document.addEventListener('pageLoad', () => {
-		window.titlebar.updateTitle();
+		if(process.platform === 'win32')
+			window.titlebar.updateTitle();
 	});
 
-	console.log('defining redcloud');
+	// console.log('defining redcloud');
 	window.redcloud = {
 		store: new Store({
 			defaults: {
