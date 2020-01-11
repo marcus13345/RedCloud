@@ -9,12 +9,13 @@ import pkg from './../package.json';
 
 import LibraryPage from './pages/library';
 import NotFoundPage from './pages/notFound';
-// import WatchPage from './pages/watch';
+import WatchPage from './pages/watch';
 
 function router(page) {
+	// console.log('router', page)
 	switch(page) {
 		case 'library': return LibraryPage;
-		// case 'watch': return WatchPage;
+		case 'watch': return WatchPage;
 		default: return NotFoundPage;
 	}
 }
@@ -68,10 +69,10 @@ window.navigate = function navigate(page, data = {}) {
 	redcloud.store.set('navigation.currentPage', page);
 	redcloud.store.set('navigation.pageData', data);
 	window.pageData = data;
-	loadPage(page)
+	loadPage(page, data)
 }
 
-function loadPage(page) {
+function loadPage(page, data) {
 	// console.log($('#viewport'))
 	const pages = $('#navigation').find('vaadin-tab');
 	const pageNames = pages.toArray().map(v => $(v).attr('id'));
@@ -79,7 +80,7 @@ function loadPage(page) {
 	setTimeout(_ => {
 		// $('#viewport').load(page + '.html');
 		$('#viewport').children().remove();
-		$('#viewport').append(new (router(page)))
+		$('#viewport').append(new (router(page))(data))
 	}, 0);
 	redcloud.store.set('navigation.currentPage', page)
 	document.dispatchEvent(new CustomEvent('pageLoad', {}));
