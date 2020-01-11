@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit-element';
 import exporter from './../lib/exporter';
 
-class Library extends LitElement {
-	static styles() {
+class NotFound extends LitElement {
+	static get styles() {
 		return css`
 
 		`;
@@ -14,9 +14,7 @@ class Library extends LitElement {
 <p> Not sure how you got here, or really even where here is.</p>
 		`;
 	}
-
-
 }
 
 
-export default exporter('library-page', Library);
+export default exporter('not-found-page', NotFound);

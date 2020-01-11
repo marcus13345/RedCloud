@@ -8,11 +8,13 @@ import $ from 'jquery'
 import pkg from './../package.json';
 
 import LibraryPage from './pages/library';
+import NotFoundPage from './pages/notFound';
+// import WatchPage from './pages/watch';
 
 function router(page) {
 	switch(page) {
 		case 'library': return LibraryPage;
-
+		// case 'watch': return WatchPage;
 		default: return NotFoundPage;
 	}
 }
