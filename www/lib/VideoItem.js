@@ -138,7 +138,7 @@ span.subtitle {
 		return html`<!--
 			below is a hack to remove whitespace, html ugh
 			--><div
-					@click=${this.go}
+					@click=${this.click}
 					class="video"><!-- 
 				--><div class="videoItem">
 					${videoElement}
@@ -150,8 +150,7 @@ span.subtitle {
 		-->`;
 	}
 
-	go() {
-		console.log(this, this.video);
+	click() {
 		history.pushState({page: 'watch', video: this.video}, 'title', '#');
 		navigate('watch', {video: this.video});
 	}

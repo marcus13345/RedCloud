@@ -43,7 +43,8 @@
 			`;
 			case 'chaturbate': return `<img src="./logos/chaturbate.jpg" style="
 			--size: 64px;
-			width: 200px;
+			--aspect: 2.5;
+			width: calc(var(--size) * var(--aspect));
 			height: var(--size);
 			background: white;
 			object-fit: contain;
