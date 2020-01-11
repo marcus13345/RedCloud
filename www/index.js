@@ -39,8 +39,25 @@ $(document).ready(() => {
 		})
 	}, 0);
 
-	loadPage(redcloud.store.get('navigation.currentPage'))
+	navigate(
+		redcloud.store.get('navigation.currentPage'),
+		redcloud.store.get('navigation.pageData')
+	);
 })
+
+window.addEventListener('popstate', e => {
+	if (!e.data) return;
+	const {data: {url, data = {}}} = e;
+	navigate(url, data);
+});
+
+window.navigate = function navigate(page, data = {}) {
+	console.log('navigating', page, data);
+	redcloud.store.set('navigation.currentPage', page);
+	redcloud.store.set('navigation.pageData', data);
+	window.pageData = data;
+	loadPage(page)
+}
 
 function loadPage(page) {
 	// console.log($('#viewport'))

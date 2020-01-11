@@ -239,6 +239,30 @@ module.exports = class Videos {
 						data: 'unknown'
 					}
 				}
+			})
+			await this.migrate({
+				source: 'pornhub'
+			}, doc => {
+				return {
+					...doc,
+					source: {
+						source: 'pornhub',
+						type: 'unknown',
+						data: 'unknown'
+					}
+				}
+			})
+			await this.migrate({
+				source: 'chaturbate'
+			}, doc => {
+				return {
+					...doc,
+					source: {
+						source: 'chaturbate',
+						type: 'unknown',
+						data: 'unknown'
+					}
+				}
 			});
 			await this.migrate({
 				source: 'pornhub'
