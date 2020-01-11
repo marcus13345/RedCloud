@@ -7,6 +7,16 @@ import $ from 'jquery'
 
 import pkg from './../package.json';
 
+import LibraryPage from './pages/library';
+
+function router(page) {
+	switch(page) {
+		case 'library': return LibraryPage;
+
+		default: return NotFoundPage;
+	}
+}
+
 window.ajax = function ajax(url) {
 	if(typeof url === 'string') {
 		const fullUrl = redcloud.store.get('settings.apiBasePath') + url;
@@ -65,7 +75,9 @@ function loadPage(page) {
 	const pageNames = pages.toArray().map(v => $(v).attr('id'));
 	document.title = page;
 	setTimeout(_ => {
-		$('#viewport').load(page + '.html');
+		// $('#viewport').load(page + '.html');
+		$('#viewport').children().remove();
+		$('#viewport').append(new (router(page)))
 	}, 0);
 	redcloud.store.set('navigation.currentPage', page)
 	document.dispatchEvent(new CustomEvent('pageLoad', {}));
