@@ -13,6 +13,7 @@ html, body {
 
 #viewport {
 	height: calc(100% - 44px);
+	overflow: scroll;
 }
 
 #navigation {

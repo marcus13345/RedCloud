@@ -2,18 +2,6 @@ import $ from 'jquery';
 import { html } from 'lit-element';
 
 $(document).ready(_ => {
-	ajax('/sources').done(data => {
-		for(const source of data) {
-			$('#sourcesTable').append(`
-				<tr>
-					<td><a href="/api/sources/delete/${source._id}">delete</a></td>
-					<td>${source.source}</td>
-					<td>${source.type}</td>
-					<td>${source.data}</td>
-				</tr>
-			`)
-		}
-	});
 
 	$('#addSource').click(_ => {
 		const obj = {
