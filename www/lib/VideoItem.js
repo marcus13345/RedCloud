@@ -151,8 +151,18 @@ span.subtitle {
 	}
 
 	click() {
-		history.pushState({page: 'watch', video: this.video}, 'title', '#');
-		navigate('watch', {video: this.video});
+
+		if(this.video.downloaded) {
+			history.pushState({page: 'watch', video: this.video}, 'title', '#');
+			navigate('watch', {video: this.video});
+		} else {
+			ajax({
+				url: '/videos/' + this.video.vid,
+				method: 'POST'
+			}).done(_ => {
+				console.log('asdfasdf', this.video.vid)
+			});
+		}
 	}
 
 	getTextLine() {

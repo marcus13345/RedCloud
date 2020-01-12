@@ -18,7 +18,6 @@ class Library extends LitElement {
 		super();
 		this.videos = [];
 		ajax('/videos').done((data) => {
-			// console.log(data)
 			const videos = data;
 			this.videos = videos;
 		});
@@ -35,7 +34,6 @@ class Library extends LitElement {
 			<div class="content">${
 				this.videos.map(video => {
 					return new VideoItem(video);
-					// return html;
 				})
 			}</div>
 			<link rel="stylesheet" href="./library.css">

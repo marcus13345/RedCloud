@@ -8,11 +8,13 @@ import pkg from './../package.json';
 import LibraryPage from './pages/library';
 import NotFoundPage from './pages/notFound';
 import WatchPage from './pages/watch';
+import DiscoverPage from './pages/discover';
 
 function router(page) {
 	switch(page) {
 		case 'library': return LibraryPage;
 		case 'watch': return WatchPage;
+		case 'discover': return DiscoverPage;
 		default: return NotFoundPage;
 	}
 }
