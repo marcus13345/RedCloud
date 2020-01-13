@@ -3,7 +3,8 @@ node_js:
   - 12
 
 before_install:
-  - echo "Testing Docker Hub credentials"
+  - git config --global user.name marcus13345
+  - git config --global user.email marcus@valnet.xyz
 
 script:
   - npm test
