@@ -26,14 +26,6 @@
     "livereload": "node webpack.js",
     "deploy": "release-it"
   },
-  "release-it": {
-    "github": {
-      "release": true
-    },
-    "npm": {
-      "release": false
-    }
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -90,6 +82,9 @@
   "release-it": {
     "github": {
       "release": true
+    },
+    "npm": {
+      "release": false
     }
   },
   "devDependencies": {
