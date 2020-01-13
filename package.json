@@ -87,7 +87,8 @@
       "upstream": "origin"
     },
     "git":{
-      "commit": false
+      "commit": false,
+      "requireUpstream": false
     },
     "npm": {
       "publish": false
