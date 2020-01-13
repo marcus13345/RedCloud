@@ -25,8 +25,8 @@
     "compile": "node webpack.js --once",
     "livereload": "node webpack.js",
     "release": "release-it",
-    "deploy:dry": "npm run release -- --no-increment --no-npm --dry-run --ci",
-    "deploy": "npm run release -- --no-increment --no-npm --ci"
+    "deploy:dry": "npm run release -- --no-increment --dry-run --ci",
+    "deploy": "npm run release -- --no-increment --ci"
   },
   "author": "",
   "license": "ISC",
