@@ -8,9 +8,9 @@
     "test": "echo Error: no test specified && exit 0",
     "postinstall": "node ./bin/postinstall",
     "dev": "concurrently --success first --kill-others -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
-    "api-hotreload-start": "npm run forever-restart && chokidar \"app.js\" \"src/**/*.js\" -c \"npm run release && npm run forever-restart\"",
+    "api-hotreload-start": "npm run forever-restart && chokidar \"app.js\" \"src/**/*.js\" -c \"npm run increment && npm run forever-restart\"",
     "pack": "webpack",
-    "release": "npm test && node -e \"require('fs').writeFileSync('package.json', JSON.stringify({...(require('./package.json')), version: require('./package.json').version.split('.').map((v, i) => {if(i==2) return Number(v) + 1; return v}).join('.')}, null, 2))\"",
+    "increment": "npm test && node -e \"require('fs').writeFileSync('package.json', JSON.stringify({...(require('./package.json')), version: require('./package.json').version.split('.').map((v, i) => {if(i==2) return Number(v) + 1; return v}).join('.')}, null, 2))\"",
     "forever-start": "forever start --uid phub -a app.js --disable-electron --disable-cron",
     "forever-restart": "forever restart phub || npm run forever-start",
     "forever-stop": "forever stop phub",
@@ -24,7 +24,8 @@
     "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron",
     "compile": "node webpack.js --once",
     "livereload": "node webpack.js",
-    "deploy": "release-it"
+    "release": "release-it",
+    "deploy:dry": "npm run deploy -- --no-incrememnt --dry-run --ci"
   },
   "author": "",
   "license": "ISC",
