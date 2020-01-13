@@ -1,0 +1,10 @@
+language: nodejs
+
+before_install:
+  - echo "Testing Docker Hub credentials"
+
+script:
+  - npm test
+
+after_success:
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo -e "Push Container to Docker Hub"; fi
