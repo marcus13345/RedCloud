@@ -24,9 +24,6 @@ const logFile = require('./../lib/LogFile.js');
 const chalk = require('chalk');
 const { Router } = require('express')
 
-
-
-
 let handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
 if(process.platform === 'darwin') {
 	handbrake = path.resolve(__dirname, './../../tools/macos/HandBrakeCLI');

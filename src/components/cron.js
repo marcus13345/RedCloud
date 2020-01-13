@@ -48,6 +48,8 @@ module.exports = class Cron {
 			};
 
 			this.addSource(obj);
+
+			res.json({});
 		});
 
 		router.get('/delete/:id', async (req, res) => {

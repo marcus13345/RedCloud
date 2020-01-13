@@ -4,8 +4,24 @@ import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js'
 
 import $ from 'jquery'
-
 import pkg from './../package.json';
+import LibraryPage from './pages/library';
+import NotFoundPage from './pages/notFound';
+import WatchPage from './pages/watch';
+import DiscoverPage from './pages/discover';
+import SourcesPage from './pages/sources';
+import SettingsPage from './pages/settings';
+
+function router(page) {
+	switch(page) {
+		case 'library': return LibraryPage;
+		case 'watch': return WatchPage;
+		case 'discover': return DiscoverPage;
+		case 'sources': return SourcesPage;
+		case 'settings': return SettingsPage;
+		default: return NotFoundPage;
+	}
+}
 
 window.ajax = function ajax(url) {
 	if(typeof url === 'string') {
@@ -29,7 +45,7 @@ $(document).ready(() => {
 		let pages = $('#navigation').find('vaadin-tab');
 		pages.on('click', (e) => {
 			// console.log($(e.target).attr('id'));
-			loadPage($(e.target).attr('id'));
+			navigate($(e.target).attr('id'));
 		});
 		
 		ajax('/util/version').done((version) => {
@@ -56,16 +72,13 @@ window.navigate = function navigate(page, data = {}) {
 	redcloud.store.set('navigation.currentPage', page);
 	redcloud.store.set('navigation.pageData', data);
 	window.pageData = data;
-	loadPage(page)
-}
-
-function loadPage(page) {
-	// console.log($('#viewport'))
 	const pages = $('#navigation').find('vaadin-tab');
 	const pageNames = pages.toArray().map(v => $(v).attr('id'));
 	document.title = page;
 	setTimeout(_ => {
-		$('#viewport').load(page + '.html');
+		// $('#viewport').load(page + '.html');
+		$('#viewport').children().remove();
+		$('#viewport').append(new (router(page))(data))
 	}, 0);
 	redcloud.store.set('navigation.currentPage', page)
 	document.dispatchEvent(new CustomEvent('pageLoad', {}));
@@ -73,6 +86,3 @@ function loadPage(page) {
 	if($('#navigation')[0].selected != pageIndex)
 		$('#navigation')[0].selected = pageIndex;
 }
-
-
-// console.log(pkg);

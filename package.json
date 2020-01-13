@@ -1,7 +1,7 @@
 {
   "name": "redcloud",
   "formattedName": "RedCloud",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -73,7 +73,7 @@
     "terminal-kit": "^1.26.5",
     "tmp": "0.0.33",
     "uuid": "^3.3.3",
-    "webpack": "^4.35.0",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.3.5",
     "webpack-livereload-plugin": "^2.2.0",
     "youtube-dl": "^2.1.0"

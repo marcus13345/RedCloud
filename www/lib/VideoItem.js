@@ -1,12 +1,15 @@
 import {html, LitElement, css} from 'lit-element';
 import exporter from './exporter.js';
-const censor = redcloud.store.get('settings.censor');
 
 class VideoItem extends LitElement {
 	constructor(video) {
 		super();
 		this.video = video;
 		// console.log('created VideoItem for', video)
+	}
+
+	static get censor() {
+		return redcloud.store.get('settings.censor');
 	}
 
 	static get styles() {
@@ -95,7 +98,7 @@ span.subtitle {
 	render() {
 
 		let videoElement;
-		if(censor) {
+		if(VideoItem.censor) {
 			videoElement = html`<img class="placeholder" src="https://via.placeholder.com/1600x900/333333/800000?text=Hidden"></img>`;
 		} else if (this.video.downloaded) {
 			videoElement = html`
@@ -108,8 +111,16 @@ span.subtitle {
 						volume="0"
 						width="160"
 						height="90"
-						@mouseover=${function(e) {e.target.play()}}
-						@mouseleave=${function(e) {e.target.pause()}}
+						@mouseover=${function(e) {
+							const v = e.target;
+							if(v.paused && v.readyState === 4)
+								v.play()
+						}}
+						@mouseleave=${function(e) {
+							const v = e.target;
+							if(!v.paused && v.readyState === 4)
+								v.pause()
+						}}
 						
 						>
 				<source src="${
@@ -151,8 +162,18 @@ span.subtitle {
 	}
 
 	click() {
-		history.pushState({page: 'watch', video: this.video}, 'title', '#');
-		navigate('watch', {video: this.video});
+
+		if(this.video.downloaded) {
+			history.pushState({page: 'watch', video: this.video}, 'title', '#');
+			navigate('watch', {video: this.video});
+		} else {
+			ajax({
+				url: '/videos/' + this.video.vid,
+				method: 'POST'
+			}).done(_ => {
+				console.log('asdfasdf', this.video.vid)
+			});
+		}
 	}
 
 	getTextLine() {
@@ -193,7 +214,8 @@ function getSourceLogo(name) {
 		`;
 		case 'chaturbate': return html`<img src="./logos/chaturbate.jpg" style="
     --size: 32px;
-    width: 100px;
+		--aspect: 2.5;
+    width: calc(var(--size) * var(--aspect));
     height: var(--size);
     background: white;
     object-fit: contain;
