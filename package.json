@@ -86,6 +86,9 @@
       "release": true,
       "upstream": "origin"
     },
+    "git":{
+      "commit": false
+    },
     "npm": {
       "publish": false
     }
