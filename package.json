@@ -24,8 +24,6 @@
     "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron",
     "compile": "node webpack.js --once",
     "livereload": "node webpack.js",
-    "deploy:dry": "npm run release -- --no-increment --dry-run --ci",
-    "deploy": "npm run release -- --no-increment --ci",
     "semantic-release": "semantic-release"
   },
   "author": "",
