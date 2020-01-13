@@ -83,7 +83,8 @@
   },
   "release-it": {
     "github": {
-      "release": true
+      "release": true,
+      "upstream": "origin"
     },
     "npm": {
       "publish": false
