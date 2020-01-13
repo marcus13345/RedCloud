@@ -9,4 +9,4 @@ script:
   - npm test
 
 after_success:
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo -e "Push Container to Docker Hub"; else npm run deply:dry fi
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo -e "Push Container to Docker Hub"; else npm run deploy:dry; fi
