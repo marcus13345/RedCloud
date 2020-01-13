@@ -8,9 +8,9 @@
     "test": "echo Error: no test specified && exit 0",
     "postinstall": "node ./bin/postinstall",
     "dev": "concurrently --success first --kill-others -c green,yellow,cyan,blue -n FRVR,PHUB,PACK,ELCT \"npm run api-hotreload-start\" \"tail -f ./../.forever/phub.log\" \"node webpack.js\" \"npm run electron\"",
-    "api-hotreload-start": "npm run forever-restart && chokidar \"app.js\" \"src/**/*.js\" -c \"npm run release && npm run forever-restart\"",
+    "api-hotreload-start": "npm run forever-restart && chokidar \"app.js\" \"src/**/*.js\" -c \"npm run increment && npm run forever-restart\"",
     "pack": "webpack",
-    "release": "npm test && node -e \"require('fs').writeFileSync('package.json', JSON.stringify({...(require('./package.json')), version: require('./package.json').version.split('.').map((v, i) => {if(i==2) return Number(v) + 1; return v}).join('.')}, null, 2))\"",
+    "increment": "npm test && node -e \"require('fs').writeFileSync('package.json', JSON.stringify({...(require('./package.json')), version: require('./package.json').version.split('.').map((v, i) => {if(i==2) return Number(v) + 1; return v}).join('.')}, null, 2))\"",
     "forever-start": "forever start --uid phub -a app.js --disable-electron --disable-cron",
     "forever-restart": "forever restart phub || npm run forever-start",
     "forever-stop": "forever stop phub",
@@ -23,7 +23,10 @@
     "compact": "node ./bin/db/compact",
     "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron",
     "compile": "node webpack.js --once",
-    "livereload": "node webpack.js"
+    "livereload": "node webpack.js",
+    "release": "release-it",
+    "deploy:dry": "npm run release -- --no-increment --dry-run --ci",
+    "deploy": "npm run release -- --no-increment --ci"
   },
   "author": "",
   "license": "ISC",
@@ -77,5 +80,21 @@
     "webpack-cli": "^3.3.5",
     "webpack-livereload-plugin": "^2.2.0",
     "youtube-dl": "^2.1.0"
+  },
+  "release-it": {
+    "github": {
+      "release": true,
+      "upstream": "origin"
+    },
+    "git":{
+      "commit": false,
+      "requireUpstream": false
+    },
+    "npm": {
+      "publish": false
+    }
+  },
+  "devDependencies": {
+    "release-it": "^12.4.3"
   }
 }

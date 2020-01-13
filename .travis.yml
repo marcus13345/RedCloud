@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - 12
+
+before_install:
+  - echo "Testing Docker Hub credentials"
+
+script:
+  - npm test
+
+after_success:
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then npm run deploy; else npm run deploy:dry; fi
