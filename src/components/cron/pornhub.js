@@ -41,9 +41,11 @@ class PornhubCron {
 					let newVideos = await pornhub.getUploads(username, {page});
 					count = newVideos.length;
 					videos.push(...newVideos);
+					yield;
 				}
-				for(const vid of videos) {
-					await this._links.Videos.addVideoByVid(vid)
+				for (const vid of videos) {
+					await this.addVideo(vid)
+					yield;
 				}
 				break;
 			}
