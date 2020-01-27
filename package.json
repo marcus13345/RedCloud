@@ -81,7 +81,9 @@
     "youtube-dl": "^2.1.0"
   },
   "release": {
-    "branches": ["master"]
+    "branches": [
+      "master"
+    ]
   },
   "devDependencies": {
     "semantic-release": "^16.0.1"
