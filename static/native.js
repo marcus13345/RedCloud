@@ -1,15 +1,5 @@
 if (window && window.process && window.process.type) {
-	const customTitlebar = require('custom-electron-titlebar');
 	const Store = require('electron-store');
-	
-	if(process.platform === 'win32') {
-		window.titlebar = new customTitlebar.Titlebar({
-			backgroundColor: customTitlebar.Color.fromHex('#000'),
-			icon: './logo.png',
-			iconsTheme: customTitlebar.Themebar.win,
-			menu: null
-		});
-	}
 
 	document.addEventListener('pageLoad', () => {
 		if(process.platform === 'win32')
