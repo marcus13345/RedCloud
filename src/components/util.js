@@ -1,5 +1,4 @@
 const path = require('path');
-const {execSync, exec, spawn} = require('child_process');
 // const {videoDetails, Errors: {E_VIDEO_NOT_FOUND}} = require('./details.js');
 const cred = require('./../cred.js');
 const fs = require('fs');
@@ -37,7 +36,6 @@ module.exports = class Util {
 
 	transcodeQueue = Promise.resolve();
 	transcodeQueueSize = 0;
-	events = new EventEmitter();
 	transcoding = true;
 	running = true;
 
@@ -51,8 +49,6 @@ module.exports = class Util {
 	}
 
 	async stop() {
-		this.events.emit('kill');
-		this.transcoding = false;
 		this.running = false;
 	}
 
@@ -142,7 +138,7 @@ module.exports = class Util {
 					return res(filepath);
 				}
 				
-				// * remove all instances of part files, because resuming downloads if for plebs
+				// * remove all instances of part files, because resuming downloads is for plebs
 				try {
 					// log.info('trying to remove part files...')
 					let files = fs.readdirSync('vids');
@@ -163,10 +159,10 @@ module.exports = class Util {
 				];
 
 				// log.info('downloading ' + details.title);
-				let youtubedlProcess = spawn(youtubedl, args, {
+				let youtubedlProcess = this._links.Spawner.spawn(details.title, youtubedl, args, {
 					env: {
 						// ...process.env,
-						PATH: process.env.PATH + ";" + path.resolve(__dirname, '../../tools/axel')
+						PATH: process.env.PATH + ';' + path.resolve(__dirname, '../../tools/axel')
 					},
 					windowsHide: true,
 					// detached: true,
@@ -188,15 +184,12 @@ module.exports = class Util {
 					logStream.write(data);
 				})
 				
-				this.events.on('kill', youtubedlProcess.kill);
-				
 				// youtubedlProcess.stdout.pipe(logStream);
 				// youtubedlProcess.stderr.pipe(logStream);
 
 				youtubedlProcess.on('exit', async (code, signal) => {
-					this.events.off('kill', youtubedlProcess.kill);
 
-					if(code != 0) {
+					if(code !== 0) {
 						if(bufferErr.indexOf('Unable to download webpage: HTTP Error 404: Not Found') > -1) {
 							//THIS MEANS THE video is probably paid, private, or deleted.
 							return rej(new E_VIDEO_PAID_PRIVATE_OR_DELETED());
@@ -257,20 +250,11 @@ module.exports = class Util {
 
 	transcode(inputFile, outputFile) {
 		this.transcodeQueueSize ++;
-		if(!this.transcoding) {
-			// log.warn('no transcode jobs being accepted!', this.transcodeQueueSize, 'jobs left');
-			return Promise.resolve(false);
-		}
 		return this.transcodeQueue = this.transcodeQueue.then(() => {
 			return new Promise(async (res, rej) => {
-				if(!this.transcoding) {
-					this.transcodeQueueSize --;
-					// log.warn('skipping job', this.transcodeQueueSize, 'jobs left');
-					return res(false);
-				}
 				log.info('transcode starting', inputFile);
 
-				const transcoder = spawn(handbrake, [
+				const transcoder = this._links.Spawner.spawn('transcode ' + inputFile, handbrake, [
 					'-i', inputFile,
 					'-o', outputFile
 				], {
@@ -291,17 +275,7 @@ module.exports = class Util {
 					}
 				});
 
-				// for abrupt stops
-				let killJob = () => {
-					this.transcodeQueueSize --;
-					transcoder.kill('SIGINT');
-					this.transcoding = false;
-					this.events.off('kill', killJob);
-					res(false);
-				}
-				this.events.on('kill', killJob);
 				const exitCode = await new Promise(res => transcoder.once('exit', res));
-
 
 				const logStream = logFile.createStream('transcode', inputFile);
 				logStream.write(buffer);

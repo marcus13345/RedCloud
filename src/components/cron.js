@@ -6,7 +6,7 @@ const {Signale} = require('signale');
 const bodyParser = require('body-parser');
 const createSemaphore = require('./../lib/semaphore.js')
 const log = new Signale({
-	scope: 'CRON'
+	scope: '⏰'
 });
 const uuid = require('uuid').v4;
 // const EventEmitter = require('events')
@@ -142,8 +142,10 @@ module.exports = class Cron {
 			await this.createJob(source.source, source.type, source.data)
 		}
 
+		log.debug('YARR', process.yargv);
 		// unpause it, if we dont specify to disable cron
-		if (!process.yargv['--disable-cron'])
+		const disableCron = (process.yargv.cron && process.yargv.cron === 'false');
+		if (!disableCron)
 			this.pauseSemaphore.resolve();
 
 		// boot up the cron loop
@@ -167,6 +169,7 @@ module.exports = class Cron {
 			await this.pausePoint();
 			const generator = this.generators[id];
 			const taskInstance = this.cronTasks[id];
+			log.debug('ragin', taskInstance._data)
 
 
 			// tell the task it should run

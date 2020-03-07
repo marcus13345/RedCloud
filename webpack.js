@@ -4,13 +4,15 @@ const chokidar = require('chokidar');
 const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
-let queue = Promise.resolve();
-const once = process.argv.indexOf('--once') !== -1;
-const REGISTER_LISTENER = once ? 'once' : 'on';
 const glob = require('glob');
 
-console.log('once', once)
-if(once) {
+// default true, unless --watch specified
+const watch = process.argv.indexOf('--watch') >= 0;
+console.log('watching', watch)
+
+let queue = Promise.resolve();
+
+if(!watch) {
 
 	glob('./www/*.js', (err, files) => {
 		for(const filepath of files) {
@@ -59,11 +61,11 @@ async function copy(filepath) {
 async function queueCompile(filepath) {
 	// await queue;
 	queue = queue.then(async function() {
-		console.log('-'.repeat(80));
+		console.log('-'.repeat(process.stdout.columns));
 		console.log(filepath);
-		console.time('webpack')
+		console.time(filepath)
 		await compile(filepath);
-		console.timeEnd('webpack')
+		console.timeEnd(filepath)
 	});
 }
 
@@ -77,7 +79,7 @@ function compile(filepath) {
 				[name]: `./${filepath}`
 			},
 			performance: { hints: false },
-			watch: !once,
+			watch,
 			output: {
 				filename: '[name].bundle.js', 
 			},

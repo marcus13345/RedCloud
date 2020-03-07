@@ -13,6 +13,7 @@ const logFile = require('./../lib/LogFile');
 const __options = require('../../options');
 
 module.exports.online = function online(username) {
+	return Promise.resolve(false)
 	return new Promise(async (res) => {
 		const proc = spawn(streamlink, [`https://chaturbate.com/${username}`]);
 

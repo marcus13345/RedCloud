@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const log = new (require('signale').Signale)({
 	scope: '_APP'
 });
+log.debug('YARR', process.yargv);
 try {
 	const __options = require('./options') || {};
 	global.__options = __options;

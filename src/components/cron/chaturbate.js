@@ -7,8 +7,6 @@ const Video = require('./../../lib/Video.js');
 const path = require('path');
 const fs = require('fs');
 
-const { spawn } = require('child_process');
-
 module.exports = class ChaturbateCron {
 	online = false;
 
