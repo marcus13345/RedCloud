@@ -5,13 +5,15 @@ const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
 let queue = Promise.resolve();
-const once = process.argv.indexOf('--once') !== -1;
+const yargs = require('yargs').argv;
+const once = !yargs.watch;
 const REGISTER_LISTENER = once ? 'once' : 'on';
 const glob = require('glob');
+const log = require('signale');
+const notifier = require('node-notifier');
+const ICON = path.join(__dirname, 'icon.png');
 
-console.log('once', once)
 if(once) {
-
 	glob('./www/*.js', (err, files) => {
 		for(const filepath of files) {
 			queueCompile(filepath);
@@ -24,18 +26,20 @@ if(once) {
 		}
 	});
 } else {
-	
+	const watchPath = __dirname + '/dist';
 	require('livereload')
 		.createServer()
-		.watch(__dirname + "/dist");
+		.watch(watchPath);
 
+	log.info('livereload running on', watchPath)
+	
 	chokidar.watch('./www/*.js', {
 		persistent: true
 	}).on('all', (evt, filepath) => {
-		if(evt === 'add') {
-			console.log(`${evt}: ${filepath}`);
-			queueCompile(filepath);
-		}
+		if(evt !== 'add') return;
+
+		console.log(`${evt}: ${filepath}`);
+		queueCompile(filepath);
 	});
 
 	chokidar.watch('./static/**/*.*', {
@@ -52,22 +56,27 @@ if(once) {
 async function copy(filepath) {
 	const newpath = path.join('./dist', path.relative('./static', filepath));
 	fse.ensureDirSync(path.parse(newpath).dir);
-	console.log('copy', filepath.padEnd(30), '=>', newpath)
-	fs.copyFile(filepath, newpath, _ => _);
+	log.info('COPYING', filepath.padEnd(30), '=>', newpath)
+	await new Promise((res, rej) => {
+		fs.copyFile(filepath, newpath, (err) => {
+			if(err) rej(err);
+			else res();
+		});
+	});
 }
 
-async function queueCompile(filepath) {
+async function queueCompile(filepath, { watch = false } = {}) {
 	// await queue;
 	queue = queue.then(async function() {
 		console.log('-'.repeat(80));
 		console.log(filepath);
-		console.time('webpack')
+		console.time('webpack');
 		await compile(filepath);
-		console.timeEnd('webpack')
+		console.timeEnd('webpack');
 	});
 }
 
-function compile(filepath) {
+function compile(filepath, { watch = false } = {}) {
 	return new Promise ((res) => {
 		const name = path.parse(filepath).name;
 		webpack({
@@ -77,7 +86,7 @@ function compile(filepath) {
 				[name]: `./${filepath}`
 			},
 			performance: { hints: false },
-			watch: !once,
+			watch,
 			output: {
 				filename: '[name].bundle.js', 
 			},
@@ -85,10 +94,6 @@ function compile(filepath) {
 				new FriendlyErrorsWebpackPlugin({
 					clearConsole: false
 				}),
-				// new LiveReloadPlugin({}),
-				// new CopyPlugin([
-				//   { from: './static', to: './' },
-				// ]),
 			]
 		}, (err, stats) => {
 			res();

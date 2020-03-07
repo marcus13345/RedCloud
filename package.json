@@ -22,8 +22,7 @@
     "clear": "RMDIR /S /Q vids && RMDIR /S /Q temp && DEL /Q videos.nedb",
     "compact": "node ./bin/db/compact",
     "server": "(npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron",
-    "compile": "node webpack.js --once",
-    "livereload": "node webpack.js",
+    "webpack": "node webpack.js",
     "semantic-release": "semantic-release"
   },
   "author": "",
