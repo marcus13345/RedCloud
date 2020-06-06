@@ -1,7 +1,7 @@
 const nedb = require('nedb');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: 'VIDS'
+	scope: '📹'
 });
 const chalk = require('chalk')
 const express = require('express');

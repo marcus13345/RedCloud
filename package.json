@@ -58,6 +58,7 @@
     "minimist": "^1.2.0",
     "multi-progress": "^2.0.0",
     "nedb": "^1.8.0",
+    "node-notifier": "^6.0.0",
     "nodejs-dashboard": "^0.5.1",
     "npm-watch": "^0.6.0",
     "pace": "0.0.4",

@@ -2,7 +2,7 @@ const pornhub = require('./../lib/pornhub.js');
 const express = require('express');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: 'SRCH'
+	scope: '🔍'
 });
 
 module.exports = class Search {

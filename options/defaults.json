@@ -6,6 +6,16 @@
 		"id": "development",
 		"path": ""
 	},
+	"electron": {
+		"logging": false
+	},
+	"services": {
+		"pornhub": {
+			"puppeteer": {
+				"devtools": false
+			}
+		}
+	},
 	"tools": {
 		"handbrake":{
 			"output" : false

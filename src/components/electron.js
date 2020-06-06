@@ -10,6 +10,7 @@ const { spawn } = require('child_process');
 const createSemaphore = require('../lib/semaphore.js')
 const { app, BrowserWindow, Tray, Menu, nativeImage } = require('electron');
 const electronReady = createSemaphore();
+const __options = require('./../../options')
 
 const path = require('path');
 
@@ -22,9 +23,10 @@ class Electron {
 			// 	this._links.Util.shutdown();
 			// });
 			this.electronProcess.stderr.on('data', _ => {
-				log.warn(_.toString().trim())
+				if(__options.electron.logging)
+					log.warn(_.toString().trim())
 			})
-			this.electronProcess.on('close', _ => {
+			this.electronProcess.on('exit', _ => {
 				// TODO SHUT DOWN GRACEFULLY
 				this._links.Util.shutdown();
 			});

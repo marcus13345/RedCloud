@@ -3,20 +3,18 @@ process.yargv = require('yargs').argv;
 const {Collexion} = require('collexion');
 const chalk = require('chalk');
 const log = new (require('signale').Signale)({
-	scope: '_APP'
+	scope: '🕋'
 });
-log.debug('YARR', process.yargv);
 try {
 	const __options = require('./options') || {};
 	global.__options = __options;
 
 	let lines = [
 		'',
-		chalk.red(' ____________________ '),
-		chalk.red('/                    \\ '),
-		chalk.red('|') + '      \033[3mRed' + chalk.red('Cloud') + '\033[0m      ' + chalk.red('|'),
-		chalk.red('|') + '    ' + chalk.grey(require('./package.json').version.padStart(10, ' ')) + '      ' + chalk.red('|') + ' ',
-		chalk.red('\\____________________/'),
+		chalk.red('╭────────────────────╮'),
+		chalk.red('│') + '      \033[3mRed' + chalk.red('Cloud') + '\033[0m      ' + chalk.red('│'),
+		// chalk.red('|') + '    ' + chalk.grey(require('./package.json').version.padStart(10, ' ')) + '      ' + chalk.red('|') + ' ',
+		chalk.red('╰────────────────────╯'),
 		'',
 		'',
 	]
@@ -61,6 +59,9 @@ try {
 		Util: {
 			Code: require('./src/components/util.js')
 		},
+		Spawner: {
+			Code: require('./src/components/spawn.js')
+		},
 		Cron: {
 			Code: require('./src/components/cron.js'),
 			Data: {
@@ -77,7 +78,7 @@ try {
 		}
 	};
 
-	if (process.yargv['disable-electron']) {
+	if (process.yargv.electron && process.yargv.electron === 'false') {
 		config['Electron'] = undefined;
 	}
 

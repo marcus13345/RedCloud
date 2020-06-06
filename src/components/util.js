@@ -17,7 +17,7 @@ const E_UNEXPECTED_HTTP_403 = createErrorClass('E_UNEXPECTED_HTTP_403');
 const E_INVALID_VIDEO_ID = createErrorClass('E_INVALID_VIDEO_ID');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: 'UTIL'
+	scope: '🛠 '
 });
 const logFile = require('./../lib/LogFile.js');
 const chalk = require('chalk');
@@ -145,7 +145,7 @@ module.exports = class Util {
 					files = files.filter(v => {return v.endsWith('.part')});
 					// console.dir(files)
 					for(const file of files) {
-						log.info('removing part file ' + file)
+						// log.info('removing part file ' + file)
 						fs.unlinkSync('./vids/' + file);
 					}
 				} catch (e) {

@@ -224,7 +224,7 @@ PornHub.getRecentlyViewed = async function getRecentlyViewed(user, {authenticate
 PornHub.getUploads = async function getUploads(user, {authenticate = false, page: pageNumber = 1} = {}) {
 	const browser = await puppeteer.launch({
 		handleSIGINT: false,
-		devtools: true
+		// devtools: true
 	});
 	let videos = [];
 

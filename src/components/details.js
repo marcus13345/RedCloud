@@ -2,7 +2,7 @@ const pornhub = require('./../lib/pornhub.js');
 const Database = require('nedb');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: 'DTLS'
+	scope: '📋'
 });
 const createErrorClass = require('./../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');

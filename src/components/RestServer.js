@@ -1,6 +1,6 @@
 const express = require('express');
 const log = new (require('signale').Signale)({
-	scope: 'HTTP'
+	scope: '🕸 '
 });
 const fs = require('fs');
 const chalk = require('chalk');

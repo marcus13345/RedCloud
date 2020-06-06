@@ -142,7 +142,6 @@ module.exports = class Cron {
 			await this.createJob(source.source, source.type, source.data)
 		}
 
-		log.debug('YARR', process.yargv);
 		// unpause it, if we dont specify to disable cron
 		const disableCron = (process.yargv.cron && process.yargv.cron === 'false');
 		if (!disableCron)
@@ -156,10 +155,10 @@ module.exports = class Cron {
 	// await this method to signify a stopping point for pausing
 	async pausePoint() {
 		if(this.pauseSemaphore.resolved === false) {
-			log.info('cron has been paused');
+			log.success('cron has been paused');
 			// this.emitter.emit('paused');
 			await this.pauseSemaphore;
-			log.info('cron unpaused');
+			log.success('cron unpaused');
 		}
 	}
 
@@ -169,11 +168,20 @@ module.exports = class Cron {
 			await this.pausePoint();
 			const generator = this.generators[id];
 			const taskInstance = this.cronTasks[id];
-			log.debug('ragin', taskInstance._data)
 
+			// this wont save infinite loops, but in cases where
+			// it gets stuck on a required event or some other async
+			// issue, thisll pop after 10 seconds waiting on the 
+			// task generator
+			const timeout = setTimeout(_ => {
+				log.warn('cron task taking too long', taskInstance._data)
+			}, 10 * 10000);
 
 			// tell the task it should run
 			await generator.next();
+
+			// cancel the timeout error from popping
+			clearTimeout(timeout);
 
 			// give it a sec to cool down
 			await new Promise(res => setTimeout(res, 1000));
@@ -183,6 +191,7 @@ module.exports = class Cron {
 	}
 
 	pause() {
+		log.info('cron pause signal sent')
 		if(this.pauseSemaphore.resolved) {
 			this.pauseSemaphore = createSemaphore();
 		} else {
