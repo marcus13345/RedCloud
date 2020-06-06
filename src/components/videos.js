@@ -1,7 +1,7 @@
 const nedb = require('nedb');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: '📹'
+	scope: __options.app.output.emoji ? '📹' : 'VIDS'
 });
 const chalk = require('chalk')
 const express = require('express');

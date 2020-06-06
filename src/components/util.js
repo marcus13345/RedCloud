@@ -17,7 +17,7 @@ const E_UNEXPECTED_HTTP_403 = createErrorClass('E_UNEXPECTED_HTTP_403');
 const E_INVALID_VIDEO_ID = createErrorClass('E_INVALID_VIDEO_ID');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: '🛠 '
+	scope: __options.app.output.emoji ? '🛠 ' : 'UTIL'
 });
 const logFile = require('./../lib/LogFile.js');
 const chalk = require('chalk');

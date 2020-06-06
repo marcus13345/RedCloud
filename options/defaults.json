@@ -13,7 +13,7 @@
 			"devtools": false
 		},
 		"server": true,
-		"cron": false
+		"cron": true
 	},
 	"electron": {
 		"logging": false

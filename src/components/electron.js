@@ -11,7 +11,6 @@ const { spawn } = require('child_process');
 const createSemaphore = require('../lib/semaphore.js')
 const { app, BrowserWindow, Menu, nativeImage } = require('electron');
 const electronReady = createSemaphore();
-const __options = require('./../../options')
 
 const path = require('path');
 

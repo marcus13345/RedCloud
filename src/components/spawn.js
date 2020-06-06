@@ -2,7 +2,7 @@ const { spawn } = require('child_process')
 
 const { Signale } = require('signale');
 const log = new Signale({
-	scope: '🖥 '
+	scope: __options.app.output.emoji ? '🖥 ' : 'SPWN'
 });
 
 class Spawn {

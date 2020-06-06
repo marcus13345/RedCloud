@@ -29,15 +29,19 @@ class Tray {
 		})
 
 		systray.onClick(action => {
-			log.debug(action)
 			if (action.seq_id === 0) {
 
 			} else if (action.seq_id === 1) {
 				this._links.Util.shutdown();
 			}
 		});
+
+		this.tray = systray;
 	}
 
+	stop() {
+		this.tray.kill();
+	}
 }
 
 module.exports = Tray;

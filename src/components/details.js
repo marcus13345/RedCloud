@@ -2,10 +2,13 @@ const pornhub = require('./../lib/pornhub.js');
 const Database = require('nedb');
 const {Signale} = require('signale');
 const log = new Signale({
-	scope: '📋'
+	scope: __options.app.output.emoji ? '📋' : 'DTLS'
 });
 const createErrorClass = require('./../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
+
+// TODO this whole thing should be a lib, supporting pornhub deatils
+// not its own top level entity...
 
 module.exports = class Details {
 	get errors(){
