@@ -4,9 +4,11 @@ const express = require('express');
 const Video = require('./../lib/Video.js');
 const {Signale} = require('signale');
 const bodyParser = require('body-parser');
-const createSemaphore = require('./../lib/semaphore.js')
+const createSemaphore = require('./../lib/semaphore.js');
+const __options = require('../../options');
+const disableCron = !__options.app.cron;
 const log = new Signale({
-	scope: '⏰'
+	scope: __options.app.output.emoji ? '⏰' : 'CRON'
 });
 const uuid = require('uuid').v4;
 // const EventEmitter = require('events')
@@ -142,9 +144,8 @@ module.exports = class Cron {
 			await this.createJob(source.source, source.type, source.data)
 		}
 
-		log.debug('YARR', process.yargv);
+		// log.debug('YARR', process.yargv);
 		// unpause it, if we dont specify to disable cron
-		const disableCron = (process.yargv.cron && process.yargv.cron === 'false');
 		if (!disableCron)
 			this.pauseSemaphore.resolve();
 

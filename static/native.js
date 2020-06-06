@@ -2,8 +2,8 @@ if (window && window.process && window.process.type) {
 	const Store = require('electron-store');
 
 	document.addEventListener('pageLoad', () => {
-		if(process.platform === 'win32')
-			window.titlebar.updateTitle();
+		// if(process.platform === 'win32')
+		// 	window.titlebar.updateTitle();
 	});
 
 	// console.log('defining redcloud');

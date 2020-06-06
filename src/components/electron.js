@@ -5,6 +5,7 @@
 const log = new (require('signale').Signale)({
 	scope: 'ELEC'
 });
+const __options = require('./../../options');
 
 const { spawn } = require('child_process');
 const createSemaphore = require('../lib/semaphore.js')
@@ -15,6 +16,8 @@ const path = require('path');
 
 class Electron {
 	async start() {
+		if(!__options.app.electron.enabled) return;
+
 		if(typeof require('electron') === 'string') {
 			this.electronProcess = spawn(require('electron'), [__filename]);
 			// this.electronProcess.stdout.on("end", _ => {
@@ -23,7 +26,7 @@ class Electron {
 			// });
 			this.electronProcess.stderr.on('data', _ => {
 				log.warn(_.toString().trim())
-			})
+			});
 			this.electronProcess.on('close', _ => {
 				// TODO SHUT DOWN GRACEFULLY
 				this._links.Util.shutdown();
@@ -38,24 +41,26 @@ class Electron {
 
 		const iconPath = path.resolve(__dirname, '../../static', 'tray.png');
 		const appIcon = // process.platform === 'darwin'
-		              // ? nativeImage.createEmpty() :
+		                // ? nativeImage.createEmpty() :
 									 nativeImage.createFromPath(iconPath)
 
 
 		const tray = new Tray(appIcon);
 		// const tray = new Tray();
-
 		// that.tray = tray;
 
 		const win = new BrowserWindow({
 			width: 800,
 			height: 600,
-			frame: process.platform !== 'win32',
+			// frame: process.platform !== 'win32',
 			webPreferences: {
 				nodeIntegration: true
 			},
 			show: false,
 		});
+		win.setMenu(null);
+		// win.webContents.openDevTools();
+
 		const contextMenu = Menu.buildFromTemplate([
 			{
 				label: 'Show App',
@@ -74,7 +79,6 @@ class Electron {
 			win.hide();
 		})
 
-		win.webContents.openDevTools();
 		win.on('ready-to-show', _ => win.show());
 
 		tray.setContextMenu(contextMenu)
@@ -101,7 +105,7 @@ class Electron {
 			if(this.electronProcess) {
 				this.electronProcess.kill('SIGINT');
 			} else {
-				log.warn('electron process undefined??');
+				log.warn('no electron process to kill');
 			}
 		} catch (e) {
 			log.error(e);

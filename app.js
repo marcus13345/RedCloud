@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const log = new (require('signale').Signale)({
 	scope: '_APP'
 });
-log.debug('YARR', process.yargv);
+// log.debug('YARR', process.yargv);
 try {
 	const __options = require('./options') || {};
 	global.__options = __options;
@@ -76,10 +76,6 @@ try {
 			Code: require('./src/components/electron.js')
 		}
 	};
-
-	if (process.yargv['disable-electron']) {
-		config['Electron'] = undefined;
-	}
 
 	const app = new Collexion(config)
 
