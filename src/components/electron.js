@@ -9,7 +9,7 @@ const __options = require('./../../options');
 
 const { spawn } = require('child_process');
 const createSemaphore = require('../lib/semaphore.js')
-const { app, BrowserWindow, Tray, Menu, nativeImage } = require('electron');
+const { app, BrowserWindow, Menu, nativeImage } = require('electron');
 const electronReady = createSemaphore();
 
 const path = require('path');
@@ -39,15 +39,10 @@ class Electron {
 		app.on('ready', _ => electronReady.resolve());
 		await electronReady;
 
-		const iconPath = path.resolve(__dirname, '../../static', 'tray.png');
-		const appIcon = // process.platform === 'darwin'
-		                // ? nativeImage.createEmpty() :
-									 nativeImage.createFromPath(iconPath)
-
-
-		const tray = new Tray(appIcon);
-		// const tray = new Tray();
-		// that.tray = tray;
+		// const iconPath = path.resolve(__dirname, '../../static', 'tray.png');
+		// const appIcon = // process.platform === 'darwin'
+		//                 // ? nativeImage.createEmpty() :
+		// 							 nativeImage.createFromPath(iconPath)
 
 		const win = new BrowserWindow({
 			width: 800,
@@ -61,27 +56,7 @@ class Electron {
 		win.setMenu(null);
 		// win.webContents.openDevTools();
 
-		const contextMenu = Menu.buildFromTemplate([
-			{
-				label: 'Show App',
-				click: function () {
-					win.show()
-				}
-			},
-			{
-				label: 'Quit',
-				click: function () {
-					process.exit(0);
-				}
-			}
-		]);
-		tray.on('balloon-click', _ => {
-			win.hide();
-		})
-
 		win.on('ready-to-show', _ => win.show());
-
-		tray.setContextMenu(contextMenu)
 
 		win.on('close', evt => {
 			evt.preventDefault();
@@ -90,8 +65,6 @@ class Electron {
 		});
 
 		win.on('show', function () {
-			tray.setToolTip('RedCloud');
-			// appIcon.
 		});
 		
 		process.on('exit', function() {

@@ -34,7 +34,7 @@ try {
 
 	const config = {
 		Server: {
-			Code: require('./src/components/RestServer.js'),
+			Code: require('./src/components/RestServer'),
 			Data: {
 				routes: {
 					videos: 'Videos',
@@ -47,33 +47,36 @@ try {
 			}
 		},
 		Eval: {
-			Code: require('./src/components/eval.js')
+			Code: require('./src/components/eval')
 		},
 		Videos: {
-			Code: require('./src/components/videos.js')
+			Code: require('./src/components/videos')
 		},
 		Search: {
-			Code: require('./src/components/search.js')
+			Code: require('./src/components/search')
 		},
 		Details: {
-			Code: require('./src/components/details.js')
+			Code: require('./src/components/details')
 		},
 		Util: {
-			Code: require('./src/components/util.js')
+			Code: require('./src/components/util')
 		},
 		Cron: {
-			Code: require('./src/components/cron.js'),
+			Code: require('./src/components/cron'),
 			Data: {
 				cron: {
 					types: {
-						pornhub: require('./src/components/cron/pornhub.js'),
-						chaturbate: require('./src/components/cron/chaturbate.js'),
+						pornhub: require('./src/components/cron/pornhub'),
+						chaturbate: require('./src/components/cron/chaturbate'),
 					}
 				}
 			}
 		},
 		Electron: {
-			Code: require('./src/components/electron.js')
+			Code: require('./src/components/electron')
+		},
+		Tray: {
+			Code: require('./src/components/Tray')
 		}
 	};
 
