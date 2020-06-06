@@ -7,20 +7,11 @@ const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
 // TODO this whole thing should be a lib, supporting pornhub deatils
 // not its own top level entity...
 
-module.exports = class Details {
+module.exports = class Details extends require('./component') {
 	get errors(){
 		return {
 			E_VIDEO_NOT_FOUND
 		}
-	}
-
-	async start() {
-		this.db = new Database({
-			filename: 'videoDetails.nedb'
-		});
-		this.db.loadDatabase();
-
-
 	}
 
 	async connected() {

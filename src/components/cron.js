@@ -8,16 +8,15 @@ const __options = require('../../options');
 const disableCron = !__options.app.cron;
 const log = __signale.scope(__options.app.output.emoji ? '⏰' : 'CRON');
 const uuid = require('uuid').v4;
-// const EventEmitter = require('events')
 
-module.exports = class Cron {
+module.exports = class Cron extends require('./component') {
 
 	cronTasks = {};
 	generators = {};
-	// emitter = new EventEmitter();
 
 	constructor() {
-		this.sources = new nedb({
+		super();
+		this.db = new nedb({
 			filename: `sources.nedb`
 		});
 		this.pauseSemaphore = createSemaphore();
@@ -71,14 +70,14 @@ module.exports = class Cron {
 	}
 
 	deleteSource(id) {
-		this.sources.remove({_id: id}, {}, (err, doc) => {
+		this.db.remove({_id: id}, {}, (err, doc) => {
 			log.success('removed source', id, doc);
 		});
 		// TODO remove this task from this.cronTasks
 	}
 
 	addSource(obj) {
-		this.sources.insert(obj, async (err, doc) => {
+		this.db.insert(obj, async (err, doc) => {
 			await this.createJob(obj.source, obj.type, obj.data)
 			log.success('added source', obj);
 		})
@@ -86,7 +85,7 @@ module.exports = class Cron {
 
 	getSources() {
 		return new Promise(res => {
-			this.sources.find({}, (err, docs) => res(docs));
+			this.db.find({}, (err, docs) => res(docs));
 		})
 	}
 
@@ -128,11 +127,11 @@ module.exports = class Cron {
 
 		// load database and set it to maintain itself
 		// in what way is this setting the database to maintain itself?
-		await new Promise(res => this.sources.loadDatabase(res));
+		await new Promise(res => this.db.loadDatabase(res));
 
 		// contruct the list of cronTasks
 		const sources = await new Promise((res) => {
-			this.sources.find({}, async (err, sources) => {
+			this.db.find({}, async (err, sources) => {
 				res(sources);
 			});
 		});
@@ -202,7 +201,7 @@ module.exports = class Cron {
 		for(const job of this.cronTasks) {
 			await job.stop();
 		}
-		this.sources.persistence.compactDatafile()
-		await new Promise(res => this.sources.once('compaction.done', res));
+		this.db.persistence.compactDatafile()
+		await new Promise(res => this.db.once('compaction.done', res));
 	}
 }

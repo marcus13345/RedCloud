@@ -6,7 +6,7 @@ const express = require('express');
 const fs = require('fs');
 const Video = require('./../lib/Video.js');
 
-module.exports = class Videos {
+module.exports = class Videos extends require('./component') {
 	getRouter() {
 		// this.restServer = restServer;
 		const router = express.Router();
@@ -89,25 +89,10 @@ module.exports = class Videos {
 		return router;
 	}
 
-	async start() {
-		// await new Promise(res => setTimeout(res, 3000));
-
-		// console.log(__dirname);
-		this.database = new nedb({
-			filename: `videos.nedb`
-		});
-		await new Promise(res => {
-			this.database.loadDatabase(() => {
-				res();
-			});
-		});
-		
-	}
-
 	async migrate(search, transform) {
 
 		let videos = await new Promise(res => {
-			this.database.find(search, (err, docs) => {
+			this.db.find(search, (err, docs) => {
 				res(docs);
 			})
 		})
@@ -121,15 +106,15 @@ module.exports = class Videos {
 
 		for(let video of videos) {
 			await new Promise(res => {
-				this.database.insert(video, _ => res());
+				this.db.insert(video, _ => res());
 			})
 		}
 
 		await new Promise(res => {
-			this.database.remove(search, {multi: true}, _ => res())
+			this.db.remove(search, {multi: true}, _ => res())
 		});
 
-		await this.database.persistence.compactDatafile();
+		await this.db.persistence.compactDatafile();
 
 		if(videos.length > 0)
 			log.success(chalk.blue('migrated ' + videos.length + ' videos'), search);
@@ -141,7 +126,7 @@ module.exports = class Videos {
 	async update(search, transform) {
 
 		let videos = await new Promise(res => {
-			this.database.find(search, (err, docs) => {
+			this.db.find(search, (err, docs) => {
 				res(docs);
 			})
 		})
@@ -157,17 +142,17 @@ module.exports = class Videos {
 
 		for(let video of videos) {
 			await new Promise(res => {
-				this.database.insert(video, _ => res());
+				this.db.insert(video, _ => res());
 			})
 		}
 
 		await new Promise(res => {
-			this.database.remove({
+			this.db.remove({
 				_id: { $in: oldIds }
 			}, {multi: true}, _ => res())
 		});
 
-		await this.database.persistence.compactDatafile();
+		await this.db.persistence.compactDatafile();
 
 		log.success('updated ' + videos.length + ' videos', search);
 
@@ -178,7 +163,7 @@ module.exports = class Videos {
 			log.info(`sanity checking database...`);
 			const startTime = new Date().getTime();
 			// const vids = await new Promise(res => {
-			// 	this.database.find({}, (err, docs) => {
+			// 	this.db.find({}, (err, docs) => {
 			// 		res(docs.map(v => v._id));
 			// 	})
 			// });
@@ -322,7 +307,7 @@ module.exports = class Videos {
 			// 	newDoc.source = 'pornhub';
 			// 	newDoc._id = undefined;
 			// 	await new Promise(res => {
-			// 		this.database.insert(newDoc, (err, doc) => {
+			// 		this.db.insert(newDoc, (err, doc) => {
 			// 			res();
 			// 		});
 			// 	});
@@ -339,7 +324,7 @@ module.exports = class Videos {
 
 	async videoFromVid(source, vid) {
 		return (await new Promise((res => {
-			this.database.findOne({
+			this.db.findOne({
 				vid
 			}, (err, doc) => {
 				if(doc) res(new Video(doc));
@@ -350,7 +335,7 @@ module.exports = class Videos {
 
 	async getVideos(limit = Number.POSITIVE_INFINITY) {
 		return await new Promise(res => {
-			this.database.find({
+			this.db.find({
 				source: {$exists: true},
 				// 'source.source': 'chaturbate',
 				vid: {$exists: true},
@@ -371,7 +356,7 @@ module.exports = class Videos {
 
 	async exists(source, vid) {
 		return (await new Promise((res => {
-			this.database.findOne({
+			this.db.findOne({
 				vid,
 				source
 			}, (err, doc) => {
@@ -394,7 +379,7 @@ module.exports = class Videos {
 			//make it
 
 			await new Promise((res, rej) => {
-				this.database.insert(video, (err, doc) => {
+				this.db.insert(video, (err, doc) => {
 					if(err) return rej(err);
 					else res(doc);
 				});
@@ -414,7 +399,7 @@ module.exports = class Videos {
 			// 	log.debug('downloaded', video.title);
 			// }
 			await new Promise((res, rej) => {
-				this.database.update(
+				this.db.update(
 					video,
 					{
 						$set: {
@@ -446,8 +431,8 @@ module.exports = class Videos {
 	}
 
 	async stop() {
-		this.database.persistence.compactDatafile()
-		await new Promise(res => this.database.once('compaction.done', res));
+		this.db.persistence.compactDatafile()
+		await new Promise(res => this.db.once('compaction.done', res));
 	}
 	// } catch(e) {
 	// 	// log.error(e);
