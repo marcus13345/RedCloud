@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+
+// (npm run forever-stop >nul 2>&1 || true) && node app.js --disable-electron
+
+
+require('../app');
