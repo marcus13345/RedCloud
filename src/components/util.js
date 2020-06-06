@@ -15,10 +15,8 @@ const E_YOUTUBE_DL_UNEXPECTED_TERMINATION = createErrorClass('E_YOUTUBE_DL_UNEXP
 const E_VIDEO_PAID_PRIVATE_OR_DELETED = createErrorClass('E_VIDEO_PAID_PRIVATE_OR_DELETED');
 const E_UNEXPECTED_HTTP_403 = createErrorClass('E_UNEXPECTED_HTTP_403');
 const E_INVALID_VIDEO_ID = createErrorClass('E_INVALID_VIDEO_ID');
-const {Signale} = require('signale');
-const log = new Signale({
-	scope: __options.app.output.emoji ? '🛠 ' : 'UTIL'
-});
+
+const log = __signale.scope(__options.app.output.emoji ? '🛠 ' : 'UTIL');
 const logFile = require('./../lib/LogFile.js');
 const chalk = require('chalk');
 const { Router } = require('express')

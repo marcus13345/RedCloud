@@ -2,9 +2,8 @@
 // process.env.ELECTRON_ENABLE_LOGGING = false;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true"
 // process.env.ELECTRON_RUN_AS_NODE = "true";
-const log = new (require('signale').Signale)({
-	scope: 'ELEC'
-});
+
+const log = __signale.scope('ELEC');
 const __options = require('./../../options');
 
 const { spawn } = require('child_process');

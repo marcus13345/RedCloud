@@ -1,9 +1,8 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const log = new (require('signale').Signale)({
-	scope: 'CHBT'
-});
+const log = __signale.scope('CHBT');
+
 let streamlink = path.resolve(__dirname, './../../tools/streamlink/Streamlink_Portable/Streamlink.exe');
 if(process.platform === 'darwin') {
 	streamlink = path.resolve(__dirname, './../../tools/macos/streamlink/streamlink/Streamlink.py');

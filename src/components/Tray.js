@@ -1,8 +1,7 @@
 const SysTray = require('systray').default;
 const fs = require('fs');
-const log = new (require('signale').Signale)({
-	scope: 'TRAY'
-});
+
+const log = __signale.scope('TRAY');
 
 class Tray {
 	start() {

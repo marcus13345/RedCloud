@@ -4,11 +4,7 @@ const cheerio = require("cheerio"),
 		qs = require("querystring"),
 		URL = require("url");
 
-const {Signale} = require('signale');
-const log = new Signale({
-	scope: 'PHUB'
-});
-
+const log = __signale.scope('PHUB');
 var request = require('request');
 
 const puppeteer = require('puppeteer');

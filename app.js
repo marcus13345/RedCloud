@@ -3,11 +3,20 @@ const chalk = require('chalk');
 header();
 process.yargv = require('yargs').argv;
 const {Collexion} = require('collexion');
+// const { Duplex, Writable } = require('stream');
+// const loggerProxy = new Writable();
+// Writable.prototype._write = function(chunk, data){
+// 	console.log(data);
+// }
+global.__signale = new (require('signale').Signale)({
+	scope: 'PARENT',
+	stream: {
+		write: (str) =>	console.log(str.trim())
+	}
+});
 const __options = require('./options') || {};
 global.__options = __options;
-const log = new (require('signale').Signale)({
-	scope: __options.app.output.emoji ? '🕋' : '_APP'
-});
+const log = __signale.scope(__options.app.output.emoji ? '🕋' : '_APP');
 // log.debug('YARR', process.yargv);
 try {
 	const config = {
@@ -58,6 +67,9 @@ try {
 		},
 		Tray: {
 			Code: require('./src/components/Tray')
+		},
+		Readline: {
+			Code: require('./src/components/Readline')
 		}
 	};
 

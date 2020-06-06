@@ -1,9 +1,6 @@
 const pornhub = require('./../lib/pornhub.js');
 const Database = require('nedb');
-const {Signale} = require('signale');
-const log = new Signale({
-	scope: __options.app.output.emoji ? '📋' : 'DTLS'
-});
+const log = __signale.scope(__options.app.output.emoji ? '📋' : 'DTLS');
 const createErrorClass = require('./../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
 

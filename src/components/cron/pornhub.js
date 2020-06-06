@@ -1,6 +1,5 @@
-const log = new (require('signale').Signale)({
-	scope: 'PHCR'
-});
+
+const log = __signale.scope('PHCR');
 const pornhub = require('./../../lib/pornhub.js');
 const Video = require('./../../lib/Video.js');
 

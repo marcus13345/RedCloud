@@ -1,9 +1,6 @@
 const merge = require('deepmerge');
 const yargs = require('yargs').argv;
-const {Signale} = require('signale');
-const log = new Signale({
-	scope: 'OPTS'
-});
+const log = __signale.scope('OPTS');
 // console.dir(yargs);
 
 // careful, this gets modified by the map function

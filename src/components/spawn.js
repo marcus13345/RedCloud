@@ -1,10 +1,6 @@
 const { spawn } = require('child_process')
 
-const { Signale } = require('signale');
-const log = new Signale({
-	scope: __options.app.output.emoji ? '🖥 ' : 'SPWN'
-});
-
+const log = __signale.scope(__options.app.output.emoji ? '🖥 ' : 'SPWN');
 class Spawn {
 	processes = [];
 	open = true;
