@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Security-Policy" content="
+		default-src 'none';
+		script-src 'self' http://localhost:* 'unsafe-inline';
+		img-src https://*:* http://*:* 'self';
+		media-src http://*:* https://*:*;
+		connect-src http://*:* ws://localhost:35729;
+		style-src-elem 'self' 'unsafe-inline';
+		font-src data:;
+		">
+		<script src="http://localhost:35729/livereload.js"></script>
+		<link rel="stylesheet" href="./style.css">
+	</head>
+	<body>
+		<vaadin-tabs slot="menu" id="navigation">
+			<vaadin-tab id="library">
+				Library
+			</vaadin-tab><!--
+			<vaadin-tab id="discover">
+				Discover
+			</vaadin-tab>-->
+			<vaadin-tab id="sources">
+				Sources
+			</vaadin-tab>
+			<vaadin-tab id="settings">
+				Settings
+			</vaadin-tab>
+		</vaadin-tabs>
+		<div id="viewport">
+		</div>
+		<script src="./native.js"></script>
+		<script src="./index.bundle.js"></script>
+	</body>
+</html>

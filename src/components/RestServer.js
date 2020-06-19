@@ -1,7 +1,5 @@
 const express = require('express');
-const log = new (require('signale').Signale)({
-	scope: 'HTTP'
-});
+const log = __signale.scope(__options.app.output.emoji ? '🕸 ' : 'HTTP');
 const fs = require('fs');
 const chalk = require('chalk');
 

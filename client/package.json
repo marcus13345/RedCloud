@@ -1,0 +1,9 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "main": "client.js",
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^5.2.0"
+  }
+}

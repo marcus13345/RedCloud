@@ -1,26 +1,17 @@
 const pornhub = require('./../lib/pornhub.js');
 const Database = require('nedb');
-const {Signale} = require('signale');
-const log = new Signale({
-	scope: 'DTLS'
-});
+const log = __signale.scope(__options.app.output.emoji ? '📋' : 'DTLS');
 const createErrorClass = require('./../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
 
-module.exports = class Details {
+// TODO this whole thing should be a lib, supporting pornhub deatils
+// not its own top level entity...
+
+module.exports = class Details extends require('./component') {
 	get errors(){
 		return {
 			E_VIDEO_NOT_FOUND
 		}
-	}
-
-	async start() {
-		this.db = new Database({
-			filename: 'videoDetails.nedb'
-		});
-		this.db.loadDatabase();
-
-
 	}
 
 	async connected() {

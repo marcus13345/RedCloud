@@ -4,11 +4,7 @@ const cheerio = require("cheerio"),
 		qs = require("querystring"),
 		URL = require("url");
 
-const {Signale} = require('signale');
-const log = new Signale({
-	scope: 'PHUB'
-});
-
+const log = __signale.scope('PHUB');
 var request = require('request');
 
 const puppeteer = require('puppeteer');
@@ -215,7 +211,7 @@ PornHub.getRecentlyViewed = async function getRecentlyViewed(user, {authenticate
 	browser.close();
 
 	await new Promise(res => {
-		setTimeout(res, 3000);
+		setTimeout(res, 	3000);
 	});
 	return (videos);
 }
@@ -223,12 +219,16 @@ PornHub.getRecentlyViewed = async function getRecentlyViewed(user, {authenticate
 
 PornHub.getUploads = async function getUploads(user, {authenticate = false, page: pageNumber = 1} = {}) {
 	const browser = await puppeteer.launch({
+		handleSIGINT: false,
 		// devtools: true
 	});
 	let videos = [];
 
 	try {
 		const page = await browser.newPage();
+		page.on('error', (a, b, c) => {
+			console.log(a, b, c);
+		})
 		await page.goto(`https://www.pornhub.com/model/${user}/videos/upload?page=${pageNumber}`);
 		
 		if(authenticate) {

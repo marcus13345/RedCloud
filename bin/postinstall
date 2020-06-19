@@ -2,10 +2,18 @@
 
 const fs = require('fs-extra');
 const path = require('path')
-
+const { execSync } = require('child_process');
 
 //create empty local options
 const locaFilepath = path.join(__dirname, '../options/local.json');
 // // console.log(locaFilepath)
 if(!fs.existsSync(locaFilepath))
 	fs.writeFileSync(locaFilepath, '{}');
+
+execSync('yarn compile', {
+	stdio: 'inherit'
+});
+
+execSync('yarn build', {
+	stdio: 'inherit'
+});

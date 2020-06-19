@@ -4,11 +4,30 @@
 	},
 	"app": {
 		"id": "development",
-		"path": ""
+		"path": "",
+		"output": {
+			"emoji": false
+		},
+		"electron": {
+			"enabled": true,
+			"devtools": false
+		},
+		"server": true,
+		"cron": true
+	},
+	"electron": {
+		"logging": false
+	},
+	"services": {
+		"pornhub": {
+			"puppeteer": {
+				"devtools": false
+			}
+		}
 	},
 	"tools": {
 		"handbrake":{
-			"output" : false
+			"output": false
 		},
 		"axel": {
 			"output": false

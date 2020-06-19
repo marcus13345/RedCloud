@@ -1,9 +1,8 @@
 const Router = require('express').Router;
 const bodyParser = require('body-parser');
 const fss = require('fast-safe-stringify');
-const log = new (require('signale').Signale)({
-	scope: 'EVAL'
-});
+
+const log = __signale.scope('EVAL');
 
 module.exports = class Eval {
 	constructor() {}

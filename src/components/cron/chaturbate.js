@@ -1,13 +1,10 @@
 const uuid = require('uuid/v4');
 const chaturbate = require('./../../lib/chaturbate.js')
-const log = new (require('signale').Signale)({
-	scope: 'CBCR'
-});
+
+const log = __signale.scope('CBCR');
 const Video = require('./../../lib/Video.js');
 const path = require('path');
 const fs = require('fs');
-
-const { spawn } = require('child_process');
 
 module.exports = class ChaturbateCron {
 	online = false;
