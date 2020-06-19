@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
-import exporter from './../lib/exporter';
-import VideoItem from './../lib/VideoItem'
+import exporter from '../lib/exporter';
+import VideoItem from '../lib/VideoItem'
 
 class DiscoverPage extends LitElement {
 	constructor({query: {searchText = 'porn'} = {}} = {}) {

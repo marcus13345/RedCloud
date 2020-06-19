@@ -20,7 +20,8 @@ module.exports = class Videos extends require('./component') {
 			res.setHeader("WWW-Authenticate", "Basic");
 			// res.contentType = 'video/mp4'
 			
-			this._links.Videos.database.findOne({vid: req.params.vid}, (err, doc) => {
+			// TODO this is just bad form guys cmon...
+			this._links.Videos.db.findOne({vid: req.params.vid}, (err, doc) => {
 				try {
 					if(err || !doc || doc.length == 0) {
 						res.statusCode = 404;
@@ -431,8 +432,8 @@ module.exports = class Videos extends require('./component') {
 	}
 
 	async stop() {
-		this.db.persistence.compactDatafile()
-		await new Promise(res => this.db.once('compaction.done', res));
+		// this.db.persistence.compactDatafile()
+		// await new Promise(res => this.db.once('compaction.done', res));
 	}
 	// } catch(e) {
 	// 	// log.error(e);

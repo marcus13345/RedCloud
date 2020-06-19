@@ -16,3 +16,6 @@ logs
 options/local.json
 
 *.log
+
+out
+releases

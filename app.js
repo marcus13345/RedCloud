@@ -1,3 +1,5 @@
+// global.WHY = require('why-is-node-running');
+
 process.env.FORCE_COLOR = 1;
 const chalk = require('chalk');
 header();
@@ -20,22 +22,18 @@ const log = __signale.scope(__options.app.output.emoji ? '🕋' : '_APP');
 // log.debug('YARR', process.yargv);
 try {
 	const config = {
-		Server: {
-			Code: require('./src/components/RestServer'),
-			Data: {
-				routes: {
-					videos: 'Videos',
-					search: 'Search',
-					sources: 'Cron',
-					eval: 'Eval',
-					util: 'Util'
-				},
-				port: __options.api.port
-			}
-		},
-		Eval: {
-			Code: require('./src/components/eval')
-		},
+		// Server: {
+		// 	Code: require('./src/components/RestServer'),
+		// 	Data: {
+		// 		routes: {
+		// 			videos: 'Videos',
+		// 			search: 'Search',
+		// 			sources: 'Cron',
+		// 			util: 'Util'
+		// 		},
+		// 		port: __options.api.port
+		// 	}
+		// },
 		Videos: {
 			Code: require('./src/components/videos')
 		},

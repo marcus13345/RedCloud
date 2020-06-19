@@ -12,4 +12,8 @@ if(!fs.existsSync(locaFilepath))
 
 execSync('yarn compile', {
 	stdio: 'inherit'
-})
+});
+
+execSync('yarn build', {
+	stdio: 'inherit'
+});

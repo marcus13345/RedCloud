@@ -39,7 +39,8 @@ class Tray {
 	}
 
 	stop() {
-		this.tray.kill();
+		// false to not kill node process...
+		this.tray.kill(false);
 	}
 }
 

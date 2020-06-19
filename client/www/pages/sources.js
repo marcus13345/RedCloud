@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
-import exporter from './../lib/exporter';
+import exporter from '../lib/exporter';
 import $ from 'jquery';
 
 const config = {

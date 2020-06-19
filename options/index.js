@@ -1,6 +1,6 @@
 const merge = require('deepmerge');
 const yargs = require('yargs').argv;
-const log = __signale.scope('OPTS');
+// const log = __signale.scope('OPTS');
 // console.dir(yargs);
 
 // careful, this gets modified by the map function
@@ -25,7 +25,7 @@ const overriddenOptions = argMappings.reduce((acc, [type, cliName, jsonName]) =>
 	if (cliName in yargs) {// if opt is present, create an object withit, and merge it!
 		// console.log(typify(yargs[cliName], type));
 		const value = typify(yargs[cliName], type);
-		log.note(`${cliName}: ${value}`);
+		// log.note(`${cliName}: ${value}`);
 		return merge(acc, createNestedObject(jsonName, value));
 	}
 	return acc;

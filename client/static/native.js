@@ -18,7 +18,7 @@ if (window && window.process && window.process.type) {
 					currentPage: 'library'
 				}
 			},
-			name: require('./../options').app.id
+			name: 'xyz.valnet.redcloud'
 		})
 	};
 

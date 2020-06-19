@@ -66,6 +66,7 @@ class Readline {
 
 	stop() {
 		// clearInterval(this.logger);
+		this.serverline.close();
 	}
 }
 

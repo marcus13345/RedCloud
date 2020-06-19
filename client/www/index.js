@@ -4,7 +4,7 @@ import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-grid/vaadin-grid-sorter.js'
 
 import $ from 'jquery'
-import pkg from './../package.json';
+import pkg from '../../package.json';
 import LibraryPage from './pages/library';
 import NotFoundPage from './pages/notFound';
 import WatchPage from './pages/watch';

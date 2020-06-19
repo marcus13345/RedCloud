@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
-import exporter from './../lib/exporter';
+import exporter from '../lib/exporter';
 
 class NotFound extends LitElement {
 	static get styles() {

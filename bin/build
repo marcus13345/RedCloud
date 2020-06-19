@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+
+const { execSync } = require('child_process');
+const { writeFileSync, readFileSync, copyFileSync, existsSync } = require('fs');
+const { red, green, cyan, yellow } = require('chalk');
+const { ensureDirSync, copySync } = require('fs-extra');
+const { parse, join } = require('path');
+const { compile } = require('nexe');
+const buildRoot = 'build';
+
+(async () => {
+	//server side
+	await new Promise(res => {
+		compile({
+			input: './app.js',
+			output: 'releases/server',
+			resources: [ './src/**/*' ]
+		}).then(() => {
+			console.log('success');
+			res();
+		})
+	});
+
+	execSync('yarn compile', { stdio: 'inherit' });
+
+	// client side!
+	await new Promise(res => {
+		const packager = require('electron-packager');
+		const options = {
+				'arch': 'ia32',
+				'platform': 'win32',
+				'dir': './client',
+				'app-copyright': 'Paulo Galdo',
+				'app-version': '2.1.6',
+				'asar': true,
+				'icon': './client/static/appicon.ico',
+				'name': 'RedCloud',
+				'out': './releases/client',
+				'overwrite': true,
+				'prune': true,
+				'version': '1.3.4',
+				'version-string': {
+						'CompanyName': 'Valnet',
+						'FileDescription': 'RedCloud', /*This is what display windows on task manager, shortcut and process*/
+						'OriginalFilename': 'RedCloud',
+						'ProductName': 'RedCloud',
+						'InternalName': 'RedCloud'
+				}
+		};
+		packager(options, (err, appPaths) => {
+				console.log("Error: ", err);
+				console.log("appPaths: ", appPaths);
+				res();
+		});
+	})
+
+
+})()
+
