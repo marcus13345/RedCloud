@@ -21,7 +21,8 @@ class Readline {
 		this.serverline.setPrompt('> ')
 		
 		this.serverline.on('line', (line) => {
-			this.processCommand(line);
+			// console.log("\"", typeof line, "\"");
+			this.processCommand(line.trim());
 		})
 		
 		this.serverline.on('SIGINT', (a) => {
@@ -35,6 +36,7 @@ class Readline {
 	}
 
 	processCommand(commandString) {
+		if(commandString === '') return;
 		const parts = commandString.split(' ');
 		const [module, fn, ...args] = parts;
 		if(parts.length === 0) return;

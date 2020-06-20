@@ -10,6 +10,21 @@ class PornhubCron {
 		
 	}
 
+	connected() {
+		this.ready = false;
+		if(!('Details' in this._links)) {
+			this.ready = false;
+			log.warn('pornhub cron connected without Videos database');
+			return;
+		}
+		if(!('Videos' in this._links)) {
+			this.ready = false;
+			log.warn('pornhub cron connected without Details database');
+			return;
+		}
+		this.ready = true;
+	}
+
 	async * evoke() {
 		const username = this._data.data;
 		switch(this._data.type) {
@@ -52,6 +67,9 @@ class PornhubCron {
 	}
 
 	async addVideo(vid) {
+		if(!this.ready) {
+			return;
+		}
 		try {
 			const details = {
 				...await this._links.Details.videoDetails(vid),

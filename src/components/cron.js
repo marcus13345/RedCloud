@@ -22,12 +22,6 @@ module.exports = class Cron extends require('./component') {
 		this.pauseSemaphore = createSemaphore();
 	}
 
-	getLibrary() {
-		return {
-			cron: this
-		}
-	}
-
 	getRouter() {
 		const router = express.Router();
 
@@ -182,10 +176,10 @@ module.exports = class Cron extends require('./component') {
 			clearTimeout(timeout);
 
 			// give it a sec to cool down
-			await new Promise(res => setTimeout(res, 1000));
+			// await new Promise(res => setTimeout(res, 1000));
 		}
 
-		setTimeout(this.cronLoop.bind(this), 1000);
+		setTimeout(this.cronLoop.bind(this), 0);
 	}
 
 	pause() {

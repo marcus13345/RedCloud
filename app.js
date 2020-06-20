@@ -13,7 +13,7 @@ const {Collexion} = require('collexion');
 global.__signale = new (require('signale').Signale)({
 	scope: 'PARENT',
 	stream: {
-		write: (str) =>	console.log(str.trim())
+		write(str) { console.log(str.trim()) }
 	}
 });
 const __options = require('./options') || {};
@@ -22,18 +22,18 @@ const log = __signale.scope(__options.app.output.emoji ? '🕋' : '_APP');
 // log.debug('YARR', process.yargv);
 try {
 	const config = {
-		// Server: {
-		// 	Code: require('./src/components/RestServer'),
-		// 	Data: {
-		// 		routes: {
-		// 			videos: 'Videos',
-		// 			search: 'Search',
-		// 			sources: 'Cron',
-		// 			util: 'Util'
-		// 		},
-		// 		port: __options.api.port
-		// 	}
-		// },
+		Server: {
+			Code: require('./src/components/RestServer'),
+			Data: {
+				routes: {
+					videos: 'Videos',
+					search: 'Search',
+					sources: 'Cron',
+					util: 'Util'
+				},
+				port: __options.api.port
+			}
+		},
 		Videos: {
 			Code: require('./src/components/videos')
 		},
@@ -60,9 +60,9 @@ try {
 				}
 			}
 		},
-		Electron: {
-			Code: require('./src/components/electron')
-		},
+		// Electron: {
+		// 	Code: require('./src/components/electron')
+		// },
 		Tray: {
 			Code: require('./src/components/Tray')
 		},
