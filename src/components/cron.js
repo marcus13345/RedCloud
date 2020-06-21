@@ -117,7 +117,6 @@ module.exports = class Cron extends require('./component') {
 	}
 
 	async connected () {
-		log.info('Cron connected');
 
 		// load database and set it to maintain itself
 		// in what way is this setting the database to maintain itself?

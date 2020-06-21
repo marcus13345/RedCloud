@@ -16,14 +16,15 @@ global.__signale = new (require('signale').Signale)({
 		write(str) { console.log(str.trim()) }
 	}
 });
-const __options = require('./options') || {};
+
+const __options = require('../options') || {};
 global.__options = __options;
 const log = __signale.scope(__options.app.output.emoji ? '🕋' : '_APP');
 // log.debug('YARR', process.yargv);
 try {
 	const config = {
 		Server: {
-			Code: require('./src/components/RestServer'),
+			Code: require('./components/RestServer'),
 			Data: {
 				routes: {
 					videos: 'Videos',
@@ -35,27 +36,27 @@ try {
 			}
 		},
 		Videos: {
-			Code: require('./src/components/videos')
+			Code: require('./components/videos')
 		},
 		Search: {
-			Code: require('./src/components/search')
+			Code: require('./components/search')
 		},
 		Details: {
-			Code: require('./src/components/details')
+			Code: require('./components/details')
 		},
 		Util: {
-			Code: require('./src/components/util')
+			Code: require('./components/util')
 		},
 		Spawner: {
-			Code: require('./src/components/spawn.js')
+			Code: require('./components/spawn.js')
 		},
 		Cron: {
-			Code: require('./src/components/cron'),
+			Code: require('./components/cron'),
 			Data: {
 				cron: {
 					types: {
-						pornhub: require('./src/components/cron/pornhub'),
-						chaturbate: require('./src/components/cron/chaturbate'),
+						pornhub: require('./components/cron/pornhub'),
+						chaturbate: require('./components/cron/chaturbate'),
 					}
 				}
 			}
@@ -64,10 +65,15 @@ try {
 		// 	Code: require('./src/components/electron')
 		// },
 		Tray: {
-			Code: require('./src/components/Tray')
+			Code: require('./components/Tray')
 		},
 		Readline: {
-			Code: require('./src/components/Readline')
+			Code: require('./components/Readline'),
+			Data: {
+				aliases: {
+					'stop': 'Util shutdown'
+				}
+			}
 		}
 	};
 

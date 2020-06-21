@@ -9,7 +9,7 @@ class Tray {
 		const systray = new SysTray({
 			menu: {
 					// you should using .png icon in macOS/Linux, but .ico format in windows
-					icon: fs.readFileSync(join( __dirname, './tray.ico'), 'base64'),
+					icon: fs.readFileSync(join( __dirname, './appicon.ico'), 'base64'),
 					title: "RedCloud",
 					tooltip: "RedCloud",
 					items: [{

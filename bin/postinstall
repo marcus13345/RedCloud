@@ -10,9 +10,9 @@ const locaFilepath = path.join(__dirname, '../options/local.json');
 if(!fs.existsSync(locaFilepath))
 	fs.writeFileSync(locaFilepath, '{}');
 
-execSync('yarn compile', {
-	stdio: 'inherit'
-});
+// execSync('yarn compile', {
+// 	stdio: 'inherit'
+// });
 
 execSync('yarn build', {
 	stdio: 'inherit'

@@ -13,8 +13,8 @@ const notifier = require('node-notifier');
 const ICON = path.join(__dirname, 'icon.png');
 
 //these're tested, aight?
-const sources = __dirname + '/www/';
-const static  = __dirname + '/static/';
+const sources = __dirname.replace(/\\/g, '/') + '/www/';
+const static  = __dirname.replace(/\\/g, '/') + '/static/';
 const outPath = __dirname + '/dist';
 
 log.info('hot reload:', !!watch)
@@ -37,14 +37,14 @@ if(!watch) {
 		.watch(outPath);
 
 	log.info('livereload running on', outPath)
-	
+
 	chokidar.watch(sources + '*.js', {
 		persistent: true
 	}).on('all', (evt, filepath) => {
 		if(evt !== 'add') return;
 
-		console.log(`${evt}: ${filepath}`);
-		queueCompile(filepath);
+		// console.log(`${evt}: ${filepath}`);
+		queueCompile(filepath, { watch: true });
 	});
 
 	chokidar.watch(static + '**/*.*', {
@@ -78,8 +78,7 @@ async function copy(filepath) {
 async function queueCompile(filepath, { watch = false } = {}) {
 	// await queue;
 	queue = queue.then(async () => {
-		await compile(filepath);
-		log.success('webpack compiled ', filepath);
+		await compile(filepath, { watch });
 	});
 }
 
@@ -98,7 +97,15 @@ function compile(filepath, { watch = false } = {}) {
 				path: outPath,
 				filename: '[name].bundle.js', 
 			},
-			plugins: []
+			plugins: [
+				{
+					apply: (compiler) => {
+						compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
+							log.success('webpack compiled ', filepath);
+						});
+					}
+				}
+			]
 		}, (err, stats) => {
 			res();
 		});

@@ -5,15 +5,10 @@ function res(...strs) {
 
 class Readline {
 	start() {
-		// this.logger = setInterval(log.debug.bind(log, 'test'), 1000);
-		// this.buffer = '';
-		// process.stdin.on('data', (data) => {
-		// 	this.buffer += data.toString();
-		// 	this.processBuffer();
-		// });
+	}
 
-
-		
+	connected() {
+		if (!process.stdout.isTTY) return;
 		this.serverline = require('serverline')
 		
 		this.serverline.init()
@@ -23,20 +18,32 @@ class Readline {
 		this.serverline.on('line', (line) => {
 			// console.log("\"", typeof line, "\"");
 			this.processCommand(line.trim());
-		})
+		});
 		
 		this.serverline.on('SIGINT', (a) => {
 			this._links.Util.shutdown();
-		})
+		});
+		this.aliases = this._data.aliases || {};
+		this.serverline.setCompletion([
+			'help',
+			...Object.keys(this.aliases),
+			...Object.keys(this._links)
+		]);
 	}
 
-	connected() {
-		// log.debug('this happens right?');
-		this.serverline.setCompletion(['help', ...Object.keys(this._links)]);
-	}
-
-	processCommand(commandString) {
+	processCommand(commandString = '') {
+		// empty command
 		if(commandString === '') return;
+		
+		// log.debug(this.aliases);
+
+		// expand aliases
+		if(commandString in this.aliases) {
+			log.debug(this.aliases[commandString]);
+			log.debug(commandString);
+			return this.processCommand(this.aliases[commandString]);
+		}
+		
 		const parts = commandString.split(' ');
 		const [module, fn, ...args] = parts;
 		if(parts.length === 0) return;

@@ -14,10 +14,6 @@ module.exports = class Details extends require('./component') {
 		}
 	}
 
-	async connected() {
-		log.info('Details connected')
-	}
-
 	async videoDetails(vid) {
 		// await new Promise(res => setTimeout(res, 10));
 		// log.info('asdfasdfasdfasdf')

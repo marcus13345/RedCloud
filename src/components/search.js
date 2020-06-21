@@ -15,10 +15,6 @@ module.exports = class Search {
 		return router;
 	}
 
-	async connected() {
-		log.info('Search connected')
-	}
-
 	async search(str, page) {
 		return await new Promise(async (res) => {
 			pornhub.search({
