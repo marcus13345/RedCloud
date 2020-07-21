@@ -39,6 +39,9 @@ class RedcloudRoot extends LitElement {
 		})
 	}
 
+//coral
+// cornflowerblue
+//crimson
 	static get styles() {
 		return css`
 
@@ -47,10 +50,30 @@ class RedcloudRoot extends LitElement {
 }
 
 .viewport {
-	background: blueviolet;
+	/* background: blueviolet; */
 	height: 100%;
 	overflow-y: auto;
 }
+
+/* width */
+::-webkit-scrollbar {
+	width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: coral;
+}
+
+/* Handle on hover */
+/* ::-webkit-scrollbar-thumb:hover {
+	background: ;
+} */
 
 .root {
 	display: grid;

@@ -117,6 +117,8 @@ module.exports = class Videos extends require('./component') {
 			}, (err, docs) => {
 				const tagDict = {};
 				for(const {tags} of docs) {
+					//TODO normalize tags in videos db
+					if(!Array.isArray(tags)) continue;
 					for(const tag of tags) {
 						if(tag in tagDict) tagDict[tag] ++;
 						else tagDict[tag] = 1;
