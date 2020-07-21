@@ -1,5 +1,4 @@
 import { LitElement, html, css } from 'lit-element';
-import exporter from '../lib/exporter';
 import $ from 'jquery';
 
 class SettingsPage extends LitElement {
@@ -143,4 +142,4 @@ ${JSON.stringify(this.serverSettings, null, 2)}
 	}
 }
 
-export default exporter('settings-page', SettingsPage);
+customElements.define('settings-page', SettingsPage);

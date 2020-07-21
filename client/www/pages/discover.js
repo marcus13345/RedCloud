@@ -1,5 +1,4 @@
 import { LitElement, html, css } from 'lit-element';
-import exporter from '../lib/exporter';
 import VideoItem from '../lib/VideoItem'
 
 class DiscoverPage extends LitElement {
@@ -54,4 +53,4 @@ class DiscoverPage extends LitElement {
 }
 
 
-export default exporter('discover-page', DiscoverPage);
+customElements.define('discover-page', DiscoverPage);

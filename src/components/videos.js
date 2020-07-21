@@ -5,15 +5,27 @@ const chalk = require('chalk')
 const express = require('express');
 const fs = require('fs');
 const Video = require('./../lib/Video.js');
+const fuse = require('fuse.js');
 
 module.exports = class Videos extends require('./component') {
 	getRouter() {
 		// this.restServer = restServer;
 		const router = express.Router();
 
-		// Car brands page
 		router.get('/', async (req, res) => {
 			res.json(await this.getVideos(60));
+			// res.json(await this.getRandomVideos(60));
+		});
+
+		
+		router.get('/random', async (req, res) => {
+			// res.json(await this.getVideos(60));
+			res.json(await this.getRandomVideos(req.query.n || 1));
+		});
+		
+		router.get('/recent', async (req, res) => {
+			res.json(await this.getVideos(req.query.n || 1));
+			// res.json(await this.getRandomVideos(60));
 		});
 
 		router.get('/stream/:vid', (req, res) => {
@@ -85,9 +97,34 @@ module.exports = class Videos extends require('./component') {
 		router.post('/:vid', (req, res) => {
 			this.addVideo(req.params.vid);
 			res.json({});
+		});
+
+		router.get('/tags', async (req, res) => {
+			res.json(await this.getTags());
 		})
 
 		return router;
+	}
+
+	async getTags() {
+		return await new Promise((res, rej) => {
+			this.db.find({
+				source: {$exists: true},
+				// 'source.source': 'chaturbate',
+				vid: {$exists: true},
+				downloaded: true,
+				// source: 'chaturbate'
+			}, (err, docs) => {
+				const tagDict = {};
+				for(const {tags} of docs) {
+					for(const tag of tags) {
+						if(tag in tagDict) tagDict[tag] ++;
+						else tagDict[tag] = 1;
+					}
+				}
+				res(tagDict);
+			})
+		})
 	}
 
 	async migrate(search, transform) {
@@ -332,6 +369,38 @@ module.exports = class Videos extends require('./component') {
 				else res(null);
 			})
 		})));
+	}
+
+	async getRandomVideos(limit = Number.POSITIVE_INFINITY) {
+		return await new Promise(res => {
+
+			const validDocumentsQuery = {
+				source: {$exists: true},
+				// 'source.source': 'chaturbate',
+				vid: {$exists: true},
+				downloaded: true,
+				// source: 'chaturbate'
+			}
+			log.debug('heya')
+			this.db.count(validDocumentsQuery, (err, count) => {
+				if (!err && count > 0) {
+					// count is the number of docs
+
+					// skip a random number between 0 to count-1
+					var skipCount = Math.floor(Math.random() * Math.max(count - limit, 0));
+
+					this.db.find(validDocumentsQuery).skip(skipCount).limit(limit).exec((err2, docs) => {
+						if(!err2 && docs) res(docs.map(doc => {
+							return new Video(doc);
+						}));
+						else {
+							log.error('y\'alls muthafuckas need jesus', err)
+							rej(null);
+						}
+					});
+				}
+			});
+		})
 	}
 
 	async getVideos(limit = Number.POSITIVE_INFINITY) {

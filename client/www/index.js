@@ -1,18 +1,22 @@
-import '@vaadin/vaadin-app-layout'
-import '@vaadin/vaadin-tabs'
-import '@vaadin/vaadin-grid'
-import '@vaadin/vaadin-grid/vaadin-grid-sorter.js'
+document.write('<script src="http://localhost:35729/livereload.js" async></script>')
+
+import './pages'
+import './elements';
+
+import css from './global.css'
+import html from './global.html'
+import pkg from './../../package.json';
+import './lib/native';
 
 import $ from 'jquery'
-import pkg from '../../package.json';
-import './pages'
+import axios from 'axios';
 
 window.ajax = function ajax(url) {
 	if(typeof url === 'string') {
 		const fullUrl = redcloud.store.get('settings.apiBasePath') + url;
 		return $.ajax(fullUrl);
 	} else {
-		const options = {...url};
+		const options = { ...url };
 		options.url = undefined;
 		url = url.url;
 		const fullUrl = redcloud.store.get('settings.apiBasePath') + url;
@@ -23,6 +27,11 @@ window.ajax = function ajax(url) {
 	}
 }
 
+document.write(`
+<style>${css}</style>
+${html}
+<redcloud-root></redcloud-root>
+`);
 // function router(page) {
 // 	switch(page) {
 // 		case 'library': return LibraryPage;

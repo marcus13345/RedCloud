@@ -1,5 +1,4 @@
 import { LitElement, html, css } from 'lit-element';
-import exporter from '../lib/exporter';
 
 class NotFound extends LitElement {
 	static get styles() {
@@ -17,4 +16,4 @@ class NotFound extends LitElement {
 }
 
 
-export default exporter('not-found-page', NotFound);
+customElements.define('not-found-page', NotFound);

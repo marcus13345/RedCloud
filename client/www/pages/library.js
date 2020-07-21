@@ -1,7 +1,6 @@
 import $ from 'jquery'
 import VideoItem from '../lib/VideoItem';
 import { LitElement, html, css } from 'lit-element';
-import exporter from '../lib/exporter';
 
 class Library extends LitElement {
 
@@ -43,4 +42,4 @@ class Library extends LitElement {
 }
 
 
-export default exporter('library-page', Library);
+customElements.define('library-page', Library);

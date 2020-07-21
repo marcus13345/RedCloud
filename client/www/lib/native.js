@@ -1,5 +1,6 @@
+
 if (window && window.process && window.process.type) {
-	const Store = require('electron-store');
+	const Store = window.require('electron-store');
 
 	document.addEventListener('pageLoad', () => {
 		// if(process.platform === 'win32')

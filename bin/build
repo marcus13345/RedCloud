@@ -21,7 +21,7 @@ const buildRoot = 'build';
 		})
 	});
 
-	execSync('yarn compile', { stdio: 'inherit' });
+	execSync('yarn client:compile', { stdio: 'inherit' });
 
 	// client side!
 	await new Promise(res => {

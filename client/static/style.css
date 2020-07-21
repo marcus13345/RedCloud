@@ -40,8 +40,8 @@ vaadin-tab[selected]::before {
 }
 
 pre {
-    background: #222;
-    padding: 12px;
-    border-radius: 14px;
-    margin: 12px;
+	background: #222;
+	padding: 12px;
+	border-radius: 14px;
+	margin: 12px;
 }
