@@ -1,4 +1,4 @@
-const pornhub = require('./../lib/pornhub.js');
+const pornhub = require('../lib/pornhub.js');
 const express = require('express');
 
 const log = __signale.scope(__options.app.output.emoji ? '🔍' : 'SRCH');

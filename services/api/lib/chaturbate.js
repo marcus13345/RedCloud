@@ -8,8 +8,8 @@ if(process.platform === 'darwin') {
 	streamlink = path.resolve(__dirname, './../../tools/macos/streamlink/streamlink/Streamlink.py');
 }
 const { EventEmitter } = require('events');
-const logFile = require('./../lib/LogFile');
-const __options = require('../../options');
+const logFile = require('./LogFile');
+const __options = require('../options');
 
 module.exports.online = function online(username) {
 	return Promise.resolve(false)

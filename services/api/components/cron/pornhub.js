@@ -1,7 +1,7 @@
 
 const log = __signale.scope('PHCR');
-const pornhub = require('./../../lib/pornhub.js');
-const Video = require('./../../lib/Video.js');
+const pornhub = require('../../lib/pornhub.js');
+const Video = require('../../lib/Video.js');
 
 class PornhubCron {
 	static cap = 2;

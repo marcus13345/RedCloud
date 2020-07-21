@@ -1,10 +1,10 @@
 const pornhub = require('../lib/pornhub.js');
 const nedb = require('nedb');
 const express = require('express');
-const Video = require('./../lib/Video.js');
+const Video = require('../lib/Video.js');
 const bodyParser = require('body-parser');
-const createSemaphore = require('./../lib/semaphore.js');
-const __options = require('../../options');
+const createSemaphore = require('../lib/semaphore.js');
+const __options = require('../options');
 const disableCron = !__options.app.cron;
 const log = __signale.scope(__options.app.output.emoji ? '⏰' : 'CRON');
 const uuid = require('uuid').v4;

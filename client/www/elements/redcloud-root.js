@@ -47,14 +47,17 @@ class RedcloudRoot extends LitElement {
 }
 
 .viewport {
-	background: blueviolet
+	background: blueviolet;
+	height: 100%;
+	overflow-y: auto;
 }
 
 .root {
 	display: grid;
 	grid-template-columns: min-content 1fr;
 	grid-template-rows: 50px 1fr;
-	height: 100%
+	height: 100%;
+	overflow: hidden;
 }
 
 .navbar {
@@ -64,6 +67,7 @@ class RedcloudRoot extends LitElement {
 
 .sidebar {
 	grid-column: span 0;
+	transition: width 200ms;
 	width: 300px;
 }
 
@@ -73,6 +77,10 @@ class RedcloudRoot extends LitElement {
 
 .sidebar[size=mini] {
 	width: 50px;
+}
+
+.sidebar:hover {
+	width: 300px;
 }
 
 .sidebar > ul {
@@ -136,7 +144,14 @@ ul li.indent {
 					@click=${evt => this.shadowRoot.querySelector('.sidebar').setAttribute('size', 'normal')}
 				>NORMAL</button>
 			</div>
-			<div class="sidebar">
+			<div
+				class="sidebar"
+				size="${
+					this.view === VIEWS.WATCH ?
+						'mini' :
+						'normal'
+				
+				}">
 				<ul @click=${this.navigate}>
 					<li ?selected=${this.view === VIEWS.HOME} view="${VIEWS.HOME}">Home</li>
 					<li>Recommended</li>
@@ -146,7 +161,7 @@ ul li.indent {
 					`)}
 				</ul>
 			</div>
-			<div id="viewport">
+			<div class="viewport">
 				<redcloud-page-index
 					@queueVideo=${evt => {this.video = evt.detail; this.view = VIEWS.WATCH}}
 					?hidden=${this.view !== VIEWS.HOME}

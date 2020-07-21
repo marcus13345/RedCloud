@@ -23,7 +23,8 @@ class WatchPage extends LitElement {
 
 #video video {
 	width: 100%;
-	height: calc(100% - 130px);
+	max-height: calc(100% - 130px);;
+	height: auto;
 	/* height: 10px; */
 	background: black;
 }

@@ -1,8 +1,8 @@
 const uuid = require('uuid/v4');
-const chaturbate = require('./../../lib/chaturbate.js')
+const chaturbate = require('../../lib/chaturbate.js')
 
 const log = __signale.scope('CBCR');
-const Video = require('./../../lib/Video.js');
+const Video = require('../../lib/Video.js');
 const path = require('path');
 const fs = require('fs');
 

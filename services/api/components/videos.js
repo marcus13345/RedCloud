@@ -4,7 +4,7 @@ const log = __signale.scope(__options.app.output.emoji ? '📹' : 'VIDS');
 const chalk = require('chalk')
 const express = require('express');
 const fs = require('fs');
-const Video = require('./../lib/Video.js');
+const Video = require('../lib/Video.js');
 const fuse = require('fuse.js');
 
 module.exports = class Videos extends require('./component') {

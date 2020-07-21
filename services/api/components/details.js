@@ -1,7 +1,7 @@
-const pornhub = require('./../lib/pornhub.js');
+const pornhub = require('../lib/pornhub.js');
 const Database = require('nedb');
 const log = __signale.scope(__options.app.output.emoji ? '📋' : 'DTLS');
-const createErrorClass = require('./../customError.js')
+const createErrorClass = require('../customError.js')
 const E_VIDEO_NOT_FOUND = createErrorClass('E_VIDEO_NOT_FOUND');
 
 // TODO this whole thing should be a lib, supporting pornhub deatils

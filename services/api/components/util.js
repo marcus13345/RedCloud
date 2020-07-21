@@ -1,11 +1,11 @@
 const path = require('path');
 // const {videoDetails, Errors: {E_VIDEO_NOT_FOUND}} = require('./details.js');
-const cred = require('./../cred.js');
+const cred = require('../cred.js');
 const fs = require('fs');
 // const options
 const savePath = 'vids';
-const createErrorClass = require('./../customError.js')
-const __options = require('../../options');
+const createErrorClass = require('../customError.js')
+const __options = require('../options');
 const windowOptions = {
 	// headless: false,
 	// devtools: true
@@ -17,15 +17,15 @@ const E_UNEXPECTED_HTTP_403 = createErrorClass('E_UNEXPECTED_HTTP_403');
 const E_INVALID_VIDEO_ID = createErrorClass('E_INVALID_VIDEO_ID');
 
 const log = __signale.scope(__options.app.output.emoji ? '🛠 ' : 'UTIL');
-const logFile = require('./../lib/LogFile.js');
+const logFile = require('../lib/LogFile.js');
 const chalk = require('chalk');
 const { Router } = require('express')
 
-let handbrake = path.resolve(__dirname, './../../tools/HandBrake/HandBrakeCLI.exe');
+let handbrake = path.resolve(__dirname, './../../../tools/HandBrake/HandBrakeCLI.exe');
 if(process.platform === 'darwin') {
-	handbrake = path.resolve(__dirname, './../../tools/macos/HandBrakeCLI');
+	handbrake = path.resolve(__dirname, './../../../tools/macos/HandBrakeCLI');
 }
-let youtubedl = path.resolve(__dirname, `./../../tools/youtube-dl/youtube-dl` + (process.platform == 'win32' ? '.exe' : ''));
+let youtubedl = path.resolve(__dirname, `./../../../tools/youtube-dl/youtube-dl` + (process.platform == 'win32' ? '.exe' : ''));
 
 log.info('youtubedl', youtubedl)
 log.info('handbrake', handbrake)
@@ -54,7 +54,7 @@ module.exports = class Util {
 		const router = new Router();
 
 		router.get('/version', (req, res) => {
-			res.end(require('./../../package.json').version);
+			res.end(require('../../../package.json').version);
 		});
 
 		router.get('/settings', (req, res) => {

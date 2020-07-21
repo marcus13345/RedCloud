@@ -1,5 +1,6 @@
 document.write('<script src="http://localhost:35729/livereload.js" async></script>')
 
+import './lib/native'
 import './pages'
 import './elements';
 

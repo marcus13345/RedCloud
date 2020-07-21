@@ -10,8 +10,11 @@ class PageIndex extends LitElement {
 	padding-top: 24px;
 }
 
+
 .grid {
 	display: grid;
+	/* margin: 0px auto;
+	max-width: 1000px; */
 	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 	grid-template-rows: auto;
 	grid-auto-flow: dense;
@@ -39,6 +42,10 @@ class PageIndex extends LitElement {
 hr {
 	border: none;
 	border-top: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+video-grid-thumb {
+	border-radius: 10px;
 }
 
 		`;

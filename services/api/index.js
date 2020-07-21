@@ -17,7 +17,7 @@ global.__signale = new (require('signale').Signale)({
 	}
 });
 
-const __options = require('../options') || {};
+const __options = require('./options');
 global.__options = __options;
 const log = __signale.scope(__options.app.output.emoji ? '🕋' : '_APP');
 // log.debug('YARR', process.yargv);
