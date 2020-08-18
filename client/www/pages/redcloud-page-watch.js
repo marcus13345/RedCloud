@@ -43,7 +43,7 @@ class WatchPage extends LitElement {
 	}
 
 	updated() {
-		console.log('asd')
+		// console.log('asd')
 		this.shadowRoot.querySelectorAll('video').forEach(v => v.load());
 	}
 

@@ -1,15 +1,19 @@
 import { LitElement, html, css } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
+const store = redcloud.store;
 
 const VIEWS = {
 	HOME: 'home',
 	SEARCH: 'search',
-	WATCH: 'watch'
+	WATCH: 'watch',
+	SETTINGS: 'settings'
 }
 
 class RedcloudRoot extends LitElement {
 
-	view = 'home';
+	view = store.get('app.view') || VIEWS.HOME;
+	video = store.get('app.video') || null;
+	// video = store.get('app.video');
 	tags = [];
 
 	static get properties() {
@@ -21,22 +25,26 @@ class RedcloudRoot extends LitElement {
 		};
 	}
 
-	firstUpdated() {
-		ajax('/videos/tags').done(res => {
-			// console.log(res)
-			const min = Math.min(...Object.values(res));
-			const max = Math.max(...Object.values(res));
-			const tags = Object.entries(res).map(([key, val]) => {
-				return { tag: key, count: val };
-			}).sort((a, b) => {
-				return b.count - a.count;
-			}).slice(0, 10);
+	updated() {
+		store.set('app.view', this.view);
+		store.set('app.video', this.video);
+		//refresh
+	}
 
-			this.tags = tags;
+	async firstUpdated() {
+		const res = await (await ajax('/videos/tags')).json();
+		
+		const min = Math.min(...Object.values(res));
+		const max = Math.max(...Object.values(res));
+		const tags = Object.entries(res).map(([key, val]) => {
+			return { tag: key, count: val };
+		}).sort((a, b) => {
+			return b.count - a.count;
+		}).slice(0, 10);
 
-			console.log(tags)
+		this.tags = tags;
 
-		})
+		console.log(tags)
 	}
 
 //coral
@@ -182,6 +190,8 @@ ul li.indent {
 					${this.tags.map(({tag, count}) => html`
 						<li class="indent">${tag} (${count})</li>
 					`)}
+					<br>
+					<li ?selected=${this.view === VIEWS.SETTINGS} view="${VIEWS.SETTINGS}">Settings</li>
 				</ul>
 			</div>
 			<div class="viewport">

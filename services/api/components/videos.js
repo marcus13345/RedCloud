@@ -383,7 +383,7 @@ module.exports = class Videos extends require('./component') {
 				downloaded: true,
 				// source: 'chaturbate'
 			}
-			log.debug('heya')
+			// log.debug('heya')
 			this.db.count(validDocumentsQuery, (err, count) => {
 				if (!err && count > 0) {
 					// count is the number of docs

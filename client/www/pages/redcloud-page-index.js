@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import { LitElement, html, css } from 'lit-element';
 
 class PageIndex extends LitElement {
@@ -58,16 +57,11 @@ video-grid-thumb {
 		this.reload();
 	}
 
-	reload() {
-		console.log('loading')
-		ajax('/videos/recent?n=12').done((videos) => {
-			console.log('aaaa')
-			this.recent = [...videos];
-		});
-		ajax('/videos/random?n=6').done((videos) => {
-			console.log('bbbb')
-			this.random = [...videos];
-		});
+	async reload() {
+		const recents = await ajax('/videos/recent?n=12');
+		this.recent = [...await recents.json()];
+		const randoms = await ajax('/videos/random?n=6');
+		this.random = [...await randoms.json()];
 	}
 
 	static get properties() {

@@ -18,6 +18,7 @@ class VideoItem extends LitElement {
 
 	updated() {
 		this.title = this.video.title;
+		this.shadowRoot.querySelectorAll('video').forEach(v => v.load());
 	}
 
 	firstUpdated() {
