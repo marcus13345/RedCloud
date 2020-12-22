@@ -70,7 +70,7 @@
     "multi-progress": "^2.0.0",
     "nedb": "^1.8.0",
     "nexe": "^3.3.2",
-    "node-notifier": "^6.0.0",
+    "node-notifier": "^8.0.1",
     "nodejs-dashboard": "^0.5.1",
     "pace": "0.0.4",
     "pornhub-api": "0.0.1",
