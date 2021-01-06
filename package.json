@@ -32,7 +32,7 @@
     "@github/time-elements": "^3.0.2",
     "@vaadin/vaadin": "^13.0.8",
     "asar": "^3.0.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "body-parser": "^1.19.0",
